@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DAO 2026-20 — Threatened Philippine Plants</title>
+<script>window.__VA_ENABLED=true;</script>
+<script defer src="/_vercel/insights/script.js" onerror="void(0)"></script>
 <meta name="description" content="Updated National List of Threatened Philippine Plants under DAO 2026-20. 1,237 taxa with CITES status, growth habit, and endemicity data.">
 <meta name="theme-color" content="#2d5a3d">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1120,6 +1122,13 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
         </svg>
         pranada55@gmail.com
       </a>
+      <a class="feedback-email-btn" id="shareBtn" href="#" style="background:#eff6ff;border-color:#93c5fd;color:#1d4ed8;margin-top:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        Share this tool
+      </a>
       <div class="feedback-note">
         This is a solo project maintained in a personal capacity.<br>
         Feedback on species data, distribution, or features is welcome.
@@ -2195,9 +2204,9 @@ function syncSheetChips(){
     if(sub)sub.style.display=(region===ig)?'flex':'none';
     if(region===ig)activeIgTab=ig;
   });
-  /* Sub-island chips */
-  document.querySelectorAll('.ig-sub .chip[data-r]').forEach(function(el){
-    el.className='chip sheet-chip'+(region===el.dataset.r?' on':'');
+  /* Sub-island chips — highlight only the specific selected island, not all in group */
+  document.querySelectorAll('.ig-sub .chip[data-isl]').forEach(function(el){
+    el.className='chip sheet-chip'+(island===el.dataset.isl?' on':'');
   });
 
   /* Flags */
@@ -2313,6 +2322,7 @@ document.getElementById('filterSheetClear').addEventListener('click',function(){
   var btn=document.getElementById('feedbackBtn');
   var panel=document.getElementById('feedbackPanel');
   var backdrop=document.getElementById('feedbackBackdrop');
+  var shareBtn=document.getElementById('shareBtn');
   if(btn&&panel){
     btn.addEventListener('click',function(e){
       e.stopPropagation();
@@ -2322,6 +2332,29 @@ document.getElementById('filterSheetClear').addEventListener('click',function(){
   if(backdrop&&panel){
     backdrop.addEventListener('click',function(){
       panel.classList.remove('open');
+    });
+  }
+  if(shareBtn){
+    shareBtn.addEventListener('click',function(e){
+      e.preventDefault();e.stopPropagation();
+      var shareData={
+        title:'DAO 2026-20 — Threatened Philippine Plants',
+        text:'Free app for all 1,237 threatened Philippine plant taxa — searchable, filterable, with CITES status, distribution, and live GBIF data.',
+        url:'https://phthreatenedplantsmobile.vercel.app'
+      };
+      if(navigator.share){
+        navigator.share(shareData).catch(function(){});
+      } else {
+        /* Fallback: copy URL to clipboard */
+        if(navigator.clipboard){
+          navigator.clipboard.writeText(shareData.url).then(function(){
+            shareBtn.textContent='Link copied!';
+            setTimeout(function(){
+              shareBtn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share this tool';
+            },2000);
+          });
+        }
+      }
     });
   }
 })();
