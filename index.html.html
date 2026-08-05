@@ -30,6 +30,7 @@ var T={
     sendFeedbackBtn:'Send feedback',shareTool:'Share this tool',linkCopied:'Link copied!',
     feedbackHelp:'Help improve this tool \u2014 report errors, missing data, or suggestions',
     feedbackNote:'This is a solo project maintained in a personal capacity. Feedback on species data, distribution, or features is welcome.',
+    disclaimer:'This tool is an independent reference application built on DAO 2026-20, an official issuance of the Department of Environment and Natural Resources (DENR), Philippines. The developer does not claim authorship of the legal instrument or the species list therein. All taxonomic and legal content is sourced from the official DAO.',
     botanist:'Botanist',
     analyticsTitle:'Dataset Analytics \u2014 DAO 2026-20',
     totalTaxa:'Total Taxa',phlEndemic:'PHL Endemic',infra:'Infraspecific Taxa',
@@ -40,8 +41,8 @@ var T={
     endemByDiv:'Endemicity by Division',globalOcc:'Global occurrences',
     phOcc:'Philippines occurrences',match:'Match',confidence:'Confidence',
     acceptedAs:'Accepted as',gbifName:'GBIF name',
-    hdrTitle:'DAO No. 2026-20 \u2014 Updated National List of Threatened Philippine Plants',
-    hdrSub:'Supersedes DAO 2017-11 \u2022 R.A. 9147 \u2022 1,237 native threatened vascular plants',
+    hdrTitle:'DAO 2026-20 \u2014 Threatened Philippine Plants',
+    hdrSub:'Supersedes DAO 2017-11 \u2022 1,237 threatened Philippine vascular plants',
     builtWith:'Built with Claude \u00B7 Anthropic'
   },
   fil:{
@@ -68,6 +69,7 @@ var T={
     linkCopied:'Nakopya ang link!',
     feedbackHelp:'Tulungan kaming mapabuti ang tool na ito \u2014 iulat ang mga pagkakamali, nawawalang datos, o mga mungkahi',
     feedbackNote:'Ito ay isang personal na proyekto. Tinatanggap ang mga puna tungkol sa datos ng species, distribusyon, o mga tampok.',
+    disclaimer:'Ang tool na ito ay isang independyenteng reference application na nakabatay sa DAO 2026-20, isang opisyal na kautusan ng Kagawaran ng Kapaligiran at Likas na Yaman (DENR), Pilipinas. Ang developer ay hindi nag-aangkin ng pagkaka-akda ng legal na instrumento o ng listahan ng mga species. Ang lahat ng taksonomikal at legal na nilalaman ay hango sa opisyal na DAO.',
     botanist:'Botanist',
     analyticsTitle:'Pagsusuri ng Dataset \u2014 DAO 2026-20',
     totalTaxa:'Kabuuang Taxa',phlEndemic:'Endemiko sa Pilipinas',infra:'Infraspecific na Taxa',
@@ -78,8 +80,8 @@ var T={
     endemByDiv:'Endemisidad ayon sa Dibisyon',globalOcc:'Pandaigdigang okurensya',
     phOcc:'Okurensya sa Pilipinas',match:'Tugma',confidence:'Kumpiyansa',
     acceptedAs:'Tinatanggap bilang',gbifName:'Pangalan sa GBIF',
-    hdrTitle:'DAO No. 2026-20 \u2014 Updated National List of Threatened Philippine Plants',
-    hdrSub:'Pinapalitan ang DAO 2017-11 \u2022 R.A. 9147 \u2022 1,237 katutubong nanganganib na vascular na halaman',
+    hdrTitle:'DAO 2026-20 \u2014 Threatened Philippine Plants',
+    hdrSub:'Pinapalitan ang DAO 2017-11 \u2022 1,237 nanganganib na vascular na halaman sa Pilipinas',
     builtWith:'Ginawa gamit ang Claude \u00B7 Anthropic'
   }
 };
@@ -113,6 +115,7 @@ function applyLang(){
   var fbTitle=document.getElementById('fbTitle');if(fbTitle)fbTitle.textContent=t('sendFeedback');
   var fbHelp=document.getElementById('fbHelp');if(fbHelp)fbHelp.textContent=t('feedbackHelp');
   var fbNote=document.getElementById('fbNote');if(fbNote)fbNote.textContent=t('feedbackNote');
+  var fbDisc=document.getElementById('fbDisclaimer');if(fbDisc)fbDisc.textContent=t('disclaimer');
   var fbRole=document.getElementById('fbRole');if(fbRole)fbRole.textContent=t('botanist');
   var fbShare=document.getElementById('shareBtn');
   if(fbShare){var spans=fbShare.querySelectorAll('span');spans.forEach(function(s){if(s.id!=='shareLinkLabel'&&s.textContent.trim())s.textContent=t('shareTool');});}
@@ -689,7 +692,7 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
   background:var(--sf);border-top:1px solid var(--bd);z-index:40;
   padding:0 0 env(safe-area-inset-bottom);
   padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);
-  box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+  box-shadow:0 -4px 20px rgba(0,0,0,.08);position:fixed}
 .mob-nav-items{display:flex;justify-content:space-around;align-items:center;height:56px}
 .mob-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
   cursor:pointer;padding:6px 4px;border:none;background:none;
@@ -829,13 +832,16 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
 .lang-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45);color:#fff}
 .lang-btn:active{transform:scale(.95)}
 
-/* MOBILE CREDIT STRIP */
-.mob-credit-strip{display:flex;justify-content:space-between;align-items:center;
-  padding:5px 14px;background:var(--sf);border-top:1px solid var(--bd);
-  font-size:8.5px;color:var(--fa);flex-wrap:wrap;gap:4px;flex-shrink:0}
-.mob-credit-left{font-family:"IBM Plex Mono",monospace;letter-spacing:.03em}
-.mob-credit-right{display:flex;align-items:center;gap:4px;font-weight:500;color:var(--mu)}
-.mob-credit-sep{opacity:.4}
+/* MOB NAV CREDIT */
+.mob-nav-credit{display:none}
+.mob-nav-dev{position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom) + 4px);
+  font-size:7.5px;color:var(--fa);font-family:Inter,sans-serif;
+  font-weight:500;letter-spacing:.01em;pointer-events:none}
+
+/* DISCLAIMER */
+.feedback-disclaimer{font-size:9.5px;color:var(--fa);line-height:1.6;
+  padding:10px 12px;background:var(--bg);border-radius:8px;
+  border:1px solid var(--bd);margin-top:4px;font-style:italic}
 </style>
 </head>
 <body>
@@ -845,9 +851,9 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
   <div class="hdr-top">
     <div class="hdr-ico">&#127807;</div>
     <div>
-      <div class="hdr-ey">Department of Environment and Natural Resources &mdash; Philippines</div>
-      <div class="hdr-t" id="hdrTitle">DAO No. 2026-20 &mdash; Updated National List of Threatened Philippine Plants</div>
-      <div class="hdr-s" id="hdrSub">Supersedes DAO 2017-11 &bull; R.A. 9147 &bull; 1,237 native threatened vascular plants</div>
+      <div class="hdr-ey">Philippine Plant Conservation Reference</div>
+      <div class="hdr-t" id="hdrTitle">DAO 2026-20 &mdash; Threatened Philippine Plants</div>
+      <div class="hdr-s" id="hdrSub">Supersedes DAO 2017-11 &bull; 1,237 threatened Philippine vascular plants</div>
     </div>
 
   </div>
@@ -1108,6 +1114,7 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
 <!-- ══ MOBILE BOTTOM NAV ══ -->
 <nav class="mob-nav" id="mobNav">
   <div class="mob-nav-items">
+
     <button class="mob-nav-item active" id="mnAll" data-c="ALL">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       <span>All</span>
@@ -1133,15 +1140,8 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
       <span>Feedback</span>
     </button>
   </div>
+  <div class="mob-nav-dev">Developed by Mc Andrew Pranada</div>
 </nav>
-<div class="mob-credit-strip">
-  <span class="mob-credit-left">DAO 2026-20 &bull; DENR Philippines</span>
-  <span class="mob-credit-right">
-    <span id="mobCreditName">Mc Andrew Pranada</span>
-    <span class="mob-credit-sep">&bull;</span>
-    <span id="hdrCredit">Built with Claude &middot; Anthropic</span>
-  </span>
-</div>
 <div class="mob-nav-spacer"></div>
 
 <!-- ══ MOBILE FILTER SHEET ══ -->
@@ -1286,6 +1286,9 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
         Share this tool
       </a>
       <div class="feedback-note" id="fbNote">This is a solo project maintained in a personal capacity. Feedback on species data, distribution, or features is welcome.</div>
+      <div class="feedback-disclaimer" id="fbDisclaimer">
+        This tool is an independent reference application built on DAO 2026-20, an official issuance of the Department of Environment and Natural Resources (DENR), Philippines. The developer does not claim authorship of the legal instrument or the species list therein. All taxonomic and legal content is sourced from the official DAO.
+      </div>
     </div>
   </div>
 </div>
