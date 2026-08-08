@@ -842,6 +842,239 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
 .feedback-disclaimer{font-size:9.5px;color:var(--fa);line-height:1.6;
   padding:10px 12px;background:var(--bg);border-radius:8px;
   border:1px solid var(--bd);margin-top:4px;font-style:italic}
+
+/* ══════════════════════════════════════════════════════════
+   DESKTOP/TABLET RESTORE — ≥769px
+══════════════════════════════════════════════════════════ */
+@media (min-width:769px){
+  /* Body — fixed viewport like desktop */
+  body{overflow:hidden;height:100vh}
+
+  /* ── HEADER ── */
+  .hdr-top{padding:14px 28px 0;gap:14px;flex-wrap:nowrap;align-items:flex-start}
+  .hdr-ico{width:40px;height:40px;font-size:18px;border-radius:10px}
+  .hdr-ey{font-size:8.5px;letter-spacing:.2em}
+  .hdr-t{font-size:17px;font-weight:700}
+  .hdr-s{font-size:10px;margin-top:2px;opacity:1}
+  .stat-row{padding:10px 28px 0;gap:2px;overflow-x:visible;flex-wrap:nowrap}
+  .sc{padding:9px 16px 10px;min-width:auto;flex:1;border-radius:8px 8px 0 0}
+  .sc-code{font-size:9px;letter-spacing:.1em}
+  .sc-lbl{display:block;font-size:9px}
+  .sc-n{font-size:20px}
+  .sc-sub{display:block}
+
+  /* ── TOOLBAR ── */
+  .toolbar{height:var(--toolbar-h);position:relative;box-shadow:none}
+  .toolbar-search{min-width:280px;flex:1;padding:0 16px;border-right:1px solid var(--bd);height:100%}
+  .srch{font-size:12.5px}
+  .rc{display:flex;font-size:9.5px}
+  .toolbar-filters{display:flex}
+  .toolbar-actions{height:100%;border-left:1px solid var(--bd);padding:0 12px;gap:2px}
+  .action-btn{padding:5px 9px;min-width:auto;justify-content:flex-start}
+  .btn-label{display:inline}
+  .mob-filter-btn{display:none!important}
+  .mob-hide{display:flex!important}
+
+  /* ── BODY ── */
+  .body-wrap{flex-direction:row;overflow:hidden}
+
+  /* ── SIDEBAR — restore ── */
+  .sb{display:flex;width:var(--sidebar)}
+
+  /* ── CONTENT ── */
+  .content{overflow:hidden}
+  .table-panel{display:flex;overflow:hidden}
+  .tw{overflow:auto}
+
+  /* ── TABLE — restore all columns ── */
+  table{table-layout:fixed;width:100%}
+  thead th:nth-child(1),tbody td:nth-child(1){display:table-cell} /* # */
+  thead th:nth-child(4),tbody td:nth-child(4){display:table-cell} /* division */
+  thead th:nth-child(5),tbody td:nth-child(5){display:table-cell} /* CITES */
+  thead th:nth-child(6),tbody td:nth-child(6){display:table-cell} /* habit */
+  thead th:nth-child(8),tbody td:nth-child(8){display:table-cell} /* common name */
+  thead th{padding:8px 12px;font-size:9px}
+  thead th:first-child{padding-left:20px}
+  tbody td{padding:9px 12px;vertical-align:top}
+  tbody td:first-child{padding-left:20px}
+  .csn{font-size:15px}
+  .cau{font-size:10.5px;margin-top:2px}
+  .cco{font-size:11.5px;max-width:160px}
+  .cf{font-size:11.5px;width:auto}
+  .mob-common{display:none} /* hide stacked common name on desktop */
+
+  /* ── PANEL — restore side panel ── */
+  .panel{position:relative;transform:none!important;border-radius:0;
+    box-shadow:none;border-left:1px solid var(--bd);
+    transition:width .22s cubic-bezier(.4,0,.2,1)}
+  .panel:not(.closed){width:var(--panel)}
+  .panel.closed{width:0;border-left:none}
+  .panel-inner{width:var(--panel);min-width:var(--panel)}
+  .panel-toolbar{padding:10px 14px 0;position:relative}
+  .panel-toolbar::before{display:none} /* no drag handle on desktop */
+  .panel-hdr{padding:12px 16px 14px}
+  .panel-sci{font-size:20px}
+
+  /* ── BOTTOM NAV — hide on desktop ── */
+  .mob-nav{display:none!important}
+  .mob-nav-spacer{display:none}
+  .mob-nav-dev{display:none}
+
+  /* ── FOOTER — show on desktop ── */
+  .ftr{display:flex}
+
+  /* ── FILTER SHEET — not needed on desktop ── */
+  .filter-sheet{display:none!important}
+
+  /* ── ANALYTICS MODAL ── */
+  .modal{width:min(920px,95vw);max-height:90vh;border-radius:14px;
+    position:relative;bottom:auto;left:auto;right:auto;margin:0;animation:modal-in .2s cubic-bezier(.4,0,.2,1)}
+  .modal-overlay{align-items:center}
+  .chart-grid{grid-template-columns:1fr 1fr;gap:16px}
+  .chart-card.wide{grid-column:1/-1}
+  .stat-grid{grid-template-columns:repeat(5,1fr)}
+
+  /* ── LANG TOGGLE — reposition on desktop ── */
+  .lang-btn{margin-top:0}
+}
+
+/* ══════════════════════════════════════════════════════════
+   STAGE 3 — DESKTOP TYPOGRAPHY & SPACING
+══════════════════════════════════════════════════════════ */
+@media (min-width:769px){
+
+  /* ── HEADER typography ── */
+  .hdr-ey{font-size:8.5px;letter-spacing:.2em}
+  .hdr-ico{width:40px;height:40px;font-size:18px}
+  .hdr-t{font-size:17px;line-height:1.2;font-weight:700}
+  .hdr-s{font-size:10px;opacity:1}
+  .hdr-credit-name{font-size:11.5px}
+  .hdr-credit-sub{font-size:8.5px;letter-spacing:.06em}
+
+  /* ── Stat tabs ── */
+  .sc-code{font-size:9px;letter-spacing:.1em}
+  .sc-lbl{font-size:9px}
+  .sc-n{font-size:20px;font-weight:700}
+  .sc-sub{font-size:8px;display:block}
+
+  /* ── Toolbar ── */
+  .tf-label{font-size:8.5px;letter-spacing:.12em}
+  .chip{font-size:11px;padding:4px 10px}
+  .action-btn{font-size:11px;padding:5px 9px}
+  .rc{font-size:9.5px}
+  .srch{font-size:12.5px}
+
+  /* ── Table ── */
+  .csn{font-size:15px;line-height:1.2}
+  .cau{font-size:10.5px;margin-top:2px}
+  .cco{font-size:11.5px}
+  .cf{font-size:11.5px}
+  .cn{font-size:10px}
+  thead th{font-size:9px;letter-spacing:.07em;padding:8px 12px}
+  tbody td{padding:9px 12px}
+  .pl{font-size:8.5px;padding:2px 6px}
+  .div-pill{font-size:9px;padding:2px 6px}
+  .cites-pill{font-size:8.5px;padding:2px 6px}
+  .endemic-badge{font-size:8px;padding:1px 5px}
+  .habit-pill{font-size:9px;padding:2px 7px}
+  .infra-badge{font-size:8.5px}
+
+  /* ── Sidebar ── */
+  .sb-title{font-size:8.5px;letter-spacing:.14em}
+  .fi{font-size:11.5px;padding:5px 13px}
+  .fi-n{font-size:9px}
+
+  /* ── Panel ── */
+  .panel-sci{font-size:20px;line-height:1.2}
+  .panel-auth{font-size:11px}
+  .panel-common{font-size:11.5px}
+  .panel-section-title{font-size:8.5px;letter-spacing:.15em}
+  .panel-nav-btn{font-size:12px;padding:4px 8px}
+  .live-stat-label{font-size:11px}
+  .live-stat-val{font-size:11px}
+  .ext-link-name{font-size:10.5px}
+  .ext-link-sub{font-size:9.5px}
+  .similar-name{font-size:13px}
+  .copy-cite-btn{font-size:10.5px}
+  .dist-island-label{font-size:8.5px;letter-spacing:.12em}
+  .dist-provinces{font-size:11px;line-height:1.7}
+  .dist-nodata{font-size:11px}
+  .dist-also{font-size:10px}
+  .cdfp-btn-name{font-size:11px}
+  .cdfp-btn-credit{font-size:9px}
+  .cdfp-btn-hint{font-size:9.5px}
+
+  /* ── Footer ── */
+  .ftr{font-size:9px;padding:7px 24px}
+
+  /* ── Analytics ── */
+  .modal-title{font-size:20px}
+  .chart-title{font-size:8.5px;letter-spacing:.14em}
+  .bar-label{font-size:10.5px;width:110px}
+  .bar-val{font-size:9.5px}
+  .stat-tile-n{font-size:24px}
+  .stat-tile-l{font-size:9px}
+  .legend-row{font-size:11px}
+
+  /* ── Lang toggle on desktop — move to stat row right ── */
+  .lang-btn{font-size:9px;padding:3px 10px}
+}
+
+/* DESKTOP FOOTER EXTRAS */
+.ftr-feedback-btn{padding:3px 10px;border-radius:12px;border:1px solid var(--bd);
+  background:var(--bg);font-size:9px;font-weight:500;cursor:pointer;
+  color:var(--mu);font-family:Inter,sans-serif;transition:var(--transition)}
+.ftr-feedback-btn:hover{border-color:var(--gl);color:var(--g);background:var(--gbg)}
+.ftr-credit{font-size:9px;color:var(--fa);margin-left:8px;white-space:nowrap}
+.ftr-credit strong{color:var(--mu);font-weight:600}
+
+/* ══════════════════════════════════════════════════════════
+   STAGE 4 — DESKTOP POLISH
+══════════════════════════════════════════════════════════ */
+@media (min-width:769px){
+  /* Feedback panel — desktop centered modal style */
+  .feedback-panel{justify-content:center;align-items:center}
+  .feedback-backdrop{position:fixed}
+  .feedback-inner{border-radius:14px;max-width:440px;width:100%;
+    animation:modal-in .2s cubic-bezier(.4,0,.2,1)}
+  .feedback-handle{display:none}
+
+  /* Lang toggle — clean position in stat row */
+  .lang-btn{font-size:9px;padding:4px 11px;border-radius:20px;
+    border:1.5px solid rgba(255,255,255,.3);
+    background:rgba(255,255,255,.12);letter-spacing:.08em}
+
+  /* Filter sheet never shows on desktop */
+  .filter-sheet{display:none!important}
+
+  /* Mob nav credit strip never shows */
+  .mob-nav-dev{display:none!important}
+
+  /* Ensure ig-sub filter chips work in toolbar context */
+  .ig-sub{position:absolute;top:100%;left:0;z-index:30;background:var(--sf);
+    border:1px solid var(--bd);border-radius:8px;box-shadow:var(--shadow-md);
+    padding:8px;display:none;flex-wrap:wrap;gap:5px;min-width:280px}
+  .ig-sub.open{display:flex}
+
+  /* Compact mode still works on desktop */
+  .compact-mode tbody td{padding-top:5px;padding-bottom:5px}
+  .compact-mode tbody .cau{display:none}
+
+  /* Non-endemic highlight works on desktop */
+  .show-nonendem tbody tr.sp-row:not([data-endemic="1"]){background:#fffbeb}
+
+  /* Scrollbar styling for webkit */
+  .tw::-webkit-scrollbar{width:6px;height:6px}
+  .tw::-webkit-scrollbar-track{background:transparent}
+  .tw::-webkit-scrollbar-thumb{background:var(--bd-strong);border-radius:3px}
+  .tw::-webkit-scrollbar-thumb:hover{background:var(--fa)}
+  .sb-l::-webkit-scrollbar{width:4px}
+  .sb-l::-webkit-scrollbar-track{background:transparent}
+  .sb-l::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+  .panel-body::-webkit-scrollbar{width:4px}
+  .panel-body::-webkit-scrollbar-track{background:transparent}
+  .panel-body::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+}
 </style>
 </head>
 <body>
@@ -1087,7 +1320,10 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
 
 <!-- ══ FOOTER ══ -->
 <footer class="ftr">
-  <div>DAO 2026-20 &bull; DENR Philippines &bull; R.A. 9147 &bull; 1,237 species &bull; Click any row to explore</div>
+  <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <span>DAO 2026-20 &bull; 1,237 species</span>
+    <button class="ftr-feedback-btn" id="ftrFeedbackBtn">&#128172; Send Feedback</button>
+  </div>
   <div class="leg">
     <div class="li"><span class="endemic-badge">&#9733; PHL ENDEMIC</span></div>
     <div class="li"><span class="div-pill div-pill-A">Angiosperm</span></div>
@@ -1096,6 +1332,7 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
     <div class="li"><span class="cites-pill cites-I">CITES I</span></div>
     <div class="li"><span class="cites-pill cites-II">CITES II</span></div>
     <div class="li"><span class="pl CR">CR</span>&nbsp;<span class="pl EN">EN</span>&nbsp;<span class="pl VU">VU</span>&nbsp;<span class="pl OTS">OTS</span></div>
+    <div class="li ftr-credit">Developed by <strong>Mc Andrew Pranada</strong></div>
   </div>
 </footer>
 
@@ -1645,12 +1882,15 @@ function openPanel(s,fromNav){
 function closePanel(){
   document.getElementById('panel').classList.add('closed');
   activeSpecies=null;
+  if(window.innerWidth<769){var p=document.getElementById('panel');if(p)p.style.transform='';}
   document.querySelectorAll('.active-row').forEach(function(r){r.classList.remove('active-row');});
   /* Sync table row highlight and scroll into view when navigating */
   var matchRow=document.querySelector('tr.sp-row[data-no="'+s.no+'"][data-cat="'+s.cat+'"]');
   if(matchRow){
     matchRow.classList.add('active-row');
-    matchRow.scrollIntoView({block:'nearest',behavior:'smooth'});
+    if(window.innerWidth>=769){
+      matchRow.scrollIntoView({block:'nearest',behavior:'smooth'});
+    }
   }
 }
 
@@ -2452,22 +2692,23 @@ document.getElementById('filterSheetClear').addEventListener('click',function(){
   buildFams();render();
 });
 
-/* ── Panel: swipe-to-close — scoped to toolbar/handle only ── */
+/* ── Panel: swipe-to-close — mobile only ── */
 (function(){
   var panel=document.getElementById('panel');
   var toolbar=document.getElementById('panel').querySelector('.panel-toolbar');
   var startY=0,isDragging=false;
   if(!toolbar)return;
   toolbar.addEventListener('touchstart',function(e){
+    if(window.innerWidth>=769)return;
     startY=e.touches[0].clientY;isDragging=true;
   },{passive:true});
   toolbar.addEventListener('touchmove',function(e){
-    if(!isDragging)return;
+    if(!isDragging||window.innerWidth>=769)return;
     var dy=e.touches[0].clientY-startY;
     if(dy>0)panel.style.transform='translateY('+dy+'px)';
   },{passive:true});
   toolbar.addEventListener('touchend',function(e){
-    if(!isDragging)return;
+    if(!isDragging||window.innerWidth>=769)return;
     isDragging=false;
     var dy=e.changedTouches[0].clientY-startY;
     if(dy>60){closePanel();panel.style.transform='';}
@@ -2479,9 +2720,17 @@ document.getElementById('filterSheetClear').addEventListener('click',function(){
 /* ── SEND FEEDBACK ── */
 (function(){
   var btn=document.getElementById('feedbackBtn');
+  var ftrBtn=document.getElementById('ftrFeedbackBtn');
   var panel=document.getElementById('feedbackPanel');
   var backdrop=document.getElementById('feedbackBackdrop');
   var shareBtn=document.getElementById('shareBtn');
+  /* Wire desktop footer feedback button */
+  if(ftrBtn&&panel){
+    ftrBtn.addEventListener('click',function(e){
+      e.stopPropagation();
+      panel.classList.add('open');
+    });
+  }
   if(btn&&panel){
     btn.addEventListener('click',function(e){
       e.stopPropagation();
