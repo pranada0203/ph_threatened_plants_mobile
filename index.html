@@ -190,6 +190,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-siz
 /* ══════════════════════════════════════════
    HEADER — brand zone with integrated stat navigation
 ══════════════════════════════════════════ */
+.hdr-toolbar-wrap{flex-shrink:0}
 .hdr{background:var(--g);color:#fff;flex-shrink:0;position:relative;z-index:10;
   box-shadow:0 2px 12px rgba(0,0,0,.2);
   padding-top:env(safe-area-inset-top)}
@@ -562,6 +563,9 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
   /* Body */
   body{overflow:auto;height:auto;min-height:100dvh;font-size:13px}
 
+  /* ── STICKY HEADER + TOOLBAR GROUP ── */
+  .hdr-toolbar-wrap{position:sticky;top:0;z-index:21}
+
   /* ── HEADER ── */
   .hdr-top{padding:12px 16px 0;gap:10px;flex-wrap:nowrap;align-items:flex-start}
   .hdr-ico{width:28px;height:28px;font-size:13px;border-radius:6px;flex-shrink:0;margin-top:2px}
@@ -589,7 +593,7 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
   .sc-sub{display:none}
 
   /* ── TOOLBAR ── */
-  .toolbar{height:48px;flex-wrap:nowrap;position:sticky;top:0;z-index:20;
+  .toolbar{height:48px;flex-wrap:nowrap;
     box-shadow:0 2px 8px rgba(0,0,0,.08)}
   .toolbar-search{min-width:0;flex:1;padding:0 10px;border-right:none;height:48px;gap:6px}
   .srch{font-size:15px}
@@ -1080,6 +1084,7 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
 <body>
 
 <!-- ══ HEADER ══ -->
+<div class="hdr-toolbar-wrap">
 <header class="hdr">
   <div class="hdr-top">
     <div class="hdr-ico">&#127807;</div>
@@ -1200,6 +1205,7 @@ mark{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px}
     <span class="kbd mob-hide" title="Escape to close panel">Esc</span>
     <span class="kbd mob-hide" title="Arrow keys to navigate panel">&#8593;&#8595;</span>
   </div>
+</div>
 </div>
 
 <!-- ══ BODY ══ -->
