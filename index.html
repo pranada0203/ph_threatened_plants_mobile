@@ -1831,12 +1831,6 @@ function openPanel(s,fromNav){
         +'<span class="pl '+x.cat+'" style="font-size:8.5px">'+x.cat+'</span>'
         +'</div>';
     }).join('');
-    simList.addEventListener('click',function(e){
-      var item=e.target.closest('.similar-item');if(!item)return;
-      var no=parseInt(item.dataset.no),c=item.dataset.cat;
-      var sp=DATA.find(function(x){return x.no===no&&x.cat===c;});
-      if(sp)openPanel(sp);
-    });
   } else if(simSec){simSec.style.display='none';}
   /* Citation */
   var cite=s.name+' '+s.authority+' ['+s.cat+'] — DAO 2026-20, DENR Philippines';
@@ -1881,23 +1875,37 @@ function openPanel(s,fromNav){
   /* Reset live blocks */
   document.getElementById('gbifBlock').innerHTML='<div class="live-status loading-dots">Fetching from GBIF</div>';
 
+  /* Sync table row highlight and scroll into view when navigating */
+  document.querySelectorAll('.active-row').forEach(function(r){r.classList.remove('active-row');});
+  var matchRow=document.querySelector('tr.sp-row[data-no="'+s.no+'"][data-cat="'+s.cat+'"]');
+  if(matchRow){
+    matchRow.classList.add('active-row');
+    if(fromNav&&window.innerWidth>=769){
+      matchRow.scrollIntoView({block:'nearest',behavior:'smooth'});
+    }
+  }
+
   /* Fire API calls */
   fetchGBIF(s);
 }
+
+/* Similar-species clicks — delegated once at startup, not per panel open */
+(function(){
+  var simList=document.getElementById('similarList');
+  if(!simList)return;
+  simList.addEventListener('click',function(e){
+    var item=e.target.closest('.similar-item');if(!item)return;
+    var no=parseInt(item.dataset.no),c=item.dataset.cat;
+    var sp=DATA.find(function(x){return x.no===no&&x.cat===c;});
+    if(sp)openPanel(sp,true);
+  });
+})();
 
 function closePanel(){
   document.getElementById('panel').classList.add('closed');
   activeSpecies=null;
   if(window.innerWidth<769){var p=document.getElementById('panel');if(p)p.style.transform='';}
   document.querySelectorAll('.active-row').forEach(function(r){r.classList.remove('active-row');});
-  /* Sync table row highlight and scroll into view when navigating */
-  var matchRow=document.querySelector('tr.sp-row[data-no="'+s.no+'"][data-cat="'+s.cat+'"]');
-  if(matchRow){
-    matchRow.classList.add('active-row');
-    if(window.innerWidth>=769){
-      matchRow.scrollIntoView({block:'nearest',behavior:'smooth'});
-    }
-  }
 }
 
 /* ── GBIF API ── */
@@ -2196,7 +2204,7 @@ document.querySelectorAll('.ig-tab').forEach(function(tab){
     var sub=document.getElementById(subId);
     if(activeIgTab===ig){
       /* Collapse and clear */
-      activeIgTab=null;region='';island='';
+      activeIgTab=null;SD.region='';SD.island='';
       tab.classList.remove('active');
       if(sub)sub.style.display='none';
       /* Clear sub-chip highlights */
@@ -2206,7 +2214,7 @@ document.querySelectorAll('.ig-tab').forEach(function(tab){
       document.querySelectorAll('.ig-tab').forEach(function(t){t.classList.remove('active');});
       document.querySelectorAll('.ig-sub').forEach(function(s){s.style.display='none';});
       /* Set region to this group, clear specific island */
-      activeIgTab=ig;region=ig;island='';
+      activeIgTab=ig;SD.region=ig;SD.island='';
       tab.classList.add('active');
       if(sub){sub.style.display='flex';
         /* Clear sub-chip highlights since we're at group level */
@@ -2553,70 +2561,92 @@ document.querySelectorAll('.sc').forEach(function(el){
   });
 });
 
+/* ── Filter sheet draft state ──
+   Sheet edits go to SD, not the live filter globals. Apply commits them;
+   dismissing the sheet discards them. Without this, a cancelled sheet left
+   the globals mutated and the table un-rendered, so the next unrelated
+   render() silently applied filters the user thought they had dropped. */
+var SD=null;
+function snapshotFilters(){
+  return {div:div,cites:cites,habit:habit,region:region,island:island,
+          endemic:endemic,nocommon:nocommon,nonendem:nonendem,fam:fam};
+}
+/* Reads fall back to live state when the sheet isn't open */
+function sd(){return SD||snapshotFilters();}
+function commitDraft(){
+  if(!SD)return;
+  div=SD.div;cites=SD.cites;habit=SD.habit;region=SD.region;island=SD.island;
+  endemic=SD.endemic;nocommon=SD.nocommon;nonendem=SD.nonendem;fam=SD.fam;
+  SD=null;
+}
+
 /* ── Filter sheet open/close ── */
 function openFilterSheet(){
   var sheet=document.getElementById('filterSheet');
   if(!sheet)return;
+  SD=snapshotFilters();
   /* Populate family chips */
   var famsEl=document.getElementById('filterSheetFams');
   if(famsEl){
     var allFams=Array.from(new Set(DATA.map(function(s){return s.family;}))).sort();
     famsEl.innerHTML=allFams.map(function(f){
-      return '<button class="fam-chip'+(fam===f?' on':'')+'" data-f="'+f.replace(/"/g,'&quot;')+'">'+f+'</button>';
+      return '<button class="fam-chip'+(SD.fam===f?' on':'')+'" data-f="'+f.replace(/"/g,'&quot;')+'">'+f+'</button>';
     }).join('');
     famsEl.onclick=function(e){
       var btn=e.target.closest('.fam-chip');if(!btn)return;
       var f=btn.dataset.f;
-      fam=(fam===f)?'':f;
-      famsEl.querySelectorAll('.fam-chip').forEach(function(x){x.classList.toggle('on',x.dataset.f===fam);});
+      SD.fam=(SD.fam===f)?'':f;
+      famsEl.querySelectorAll('.fam-chip').forEach(function(x){x.classList.toggle('on',x.dataset.f===SD.fam);});
     };
   }
   /* Sync chip states */
   syncSheetChips();
   sheet.style.display='flex';
 }
-function closeFilterSheet(){
+function closeFilterSheet(discard){
   var sheet=document.getElementById('filterSheet');
   if(!sheet)return;
+  if(discard!==false)SD=null; /* dismissing without Apply throws the draft away */
   sheet.style.display='none';
   /* Prevent ghost taps bleeding through to elements below */
   document.body.style.pointerEvents='none';
   setTimeout(function(){document.body.style.pointerEvents='';},350);
 }
 function syncSheetChips(){
+  var d=sd();
   /* Division */
   ['fsA','fsG','fsP'].forEach(function(id){
     var el=document.getElementById(id);
-    if(el)el.className='chip sheet-chip'+(div===el.dataset.d?' on-'+DIV_CODE[el.dataset.d]:'');
+    if(el)el.className='chip sheet-chip'+(d.div===el.dataset.d?' on-'+DIV_CODE[el.dataset.d]:'');
   });
   /* CITES */
   var c1=document.getElementById('fsC1');var c2=document.getElementById('fsC2');
-  if(c1)c1.className='chip sheet-chip'+(cites==='I'?' on-C1':'');
-  if(c2)c2.className='chip sheet-chip'+(cites==='II'?' on-C2':'');
+  if(c1)c1.className='chip sheet-chip'+(d.cites==='I'?' on-C1':'');
+  if(c2)c2.className='chip sheet-chip'+(d.cites==='II'?' on-C2':'');
   /* Habit */
   ['fsTree','fsShrub','fsHerb','fsVine','fsLiana'].forEach(function(id){
     var el=document.getElementById(id);
-    if(el)el.className='chip sheet-chip'+(habit===el.dataset.h?' on-'+el.dataset.h:'');
+    if(el)el.className='chip sheet-chip'+(d.habit===el.dataset.h?' on-'+el.dataset.h:'');
   });
   /* Island Group — sync tab active state */
   document.querySelectorAll('.ig-tab').forEach(function(tab){
     var ig=tab.dataset.ig;
-    tab.classList.toggle('active',region===ig);
+    tab.classList.toggle('active',d.region===ig);
     var subId='igSub'+ig.replace(' Group','').replace(' ','');
     var sub=document.getElementById(subId);
-    if(sub)sub.style.display=(region===ig)?'flex':'none';
-    if(region===ig)activeIgTab=ig;
+    if(sub)sub.style.display=(d.region===ig)?'flex':'none';
+    if(d.region===ig)activeIgTab=ig;
   });
   /* Sub-island chips — highlight only the specific selected island, not all in group */
   document.querySelectorAll('.ig-sub .chip[data-isl]').forEach(function(el){
-    el.className='chip sheet-chip'+(island===el.dataset.isl?' on':'');
+    el.className='chip sheet-chip'+(d.island===el.dataset.isl?' on':'');
   });
 
   /* Flags */
   var fe=document.getElementById('fsE');var fne=document.getElementById('fsNE');var fn=document.getElementById('fsN');
-  if(fe)fe.className='chip sheet-chip'+(endemic?' on-endemic':'');
-  if(fne)fne.className='chip sheet-chip'+(nonendem?' on-ne':'');
-  if(fn)fn.className='chip sheet-chip'+(nocommon?' on-nocommon':'');
+  if(fe)fe.className='chip sheet-chip'+(d.endemic?' on-endemic':'');
+  if(fne)fne.className='chip sheet-chip'+(d.nonendem?' on-ne':'');
+  if(fn)fn.className='chip sheet-chip'+(d.nocommon?' on-nocommon':'');
 }
 
 document.getElementById('mobFilterBtn').addEventListener('click',openFilterSheet);
@@ -2627,17 +2657,17 @@ document.getElementById('filterSheetBackdrop').addEventListener('click',closeFil
   var el=document.getElementById(id);if(!el)return;
   el.addEventListener('click',function(e){
     e.stopPropagation();
-    var d=el.dataset.d;
-    div=(div===d)?'':d;
+    var v=el.dataset.d;
+    SD.div=(SD.div===v)?'':v;
     syncSheetChips();
   });
 });
 /* CITES */
 document.getElementById('fsC1').addEventListener('click',function(){
-  cites=(cites==='I')?'':'I';syncSheetChips();
+  SD.cites=(SD.cites==='I')?'':'I';syncSheetChips();
 });
 document.getElementById('fsC2').addEventListener('click',function(){
-  cites=(cites==='II')?'':'II';syncSheetChips();
+  SD.cites=(SD.cites==='II')?'':'II';syncSheetChips();
 });
 /* Habit */
 ['fsTree','fsShrub','fsHerb','fsVine','fsLiana'].forEach(function(id){
@@ -2645,7 +2675,7 @@ document.getElementById('fsC2').addEventListener('click',function(){
   el.addEventListener('click',function(e){
     e.stopPropagation();
     var h=el.dataset.h;
-    habit=(habit===h)?'':h;
+    SD.habit=(SD.habit===h)?'':h;
     syncSheetChips();
   });
 });
@@ -2654,30 +2684,28 @@ document.querySelectorAll('.ig-sub .chip[data-isl]').forEach(function(el){
   el.addEventListener('click',function(e){
     e.stopPropagation();
     var isl=el.dataset.isl;
-    var parentGroup=el.dataset.r;
-    if(island===isl){
+    if(SD.island===isl){
       /* Deselect — go back to group level */
-      island='';
-      el.className='chip sheet-chip';
+      SD.island='';
     } else {
       /* Select this island — keep parent group in region */
-      island=isl;region=parentGroup;
-      /* Highlight only this chip */
-      el.closest('.ig-sub').querySelectorAll('.chip').forEach(function(c){c.className='chip sheet-chip';});
-      el.className='chip sheet-chip on';
+      SD.island=isl;SD.region=el.dataset.r;
     }
+    syncSheetChips();
   });
 });
 
 /* Flags */
-document.getElementById('fsE').addEventListener('click',function(){endemic=!endemic;syncSheetChips();});
-document.getElementById('fsNE').addEventListener('click',function(){nonendem=!nonendem;syncSheetChips();});
-document.getElementById('fsN').addEventListener('click',function(){nocommon=!nocommon;syncSheetChips();});
+document.getElementById('fsE').addEventListener('click',function(){SD.endemic=!SD.endemic;syncSheetChips();});
+document.getElementById('fsNE').addEventListener('click',function(){SD.nonendem=!SD.nonendem;syncSheetChips();});
+document.getElementById('fsN').addEventListener('click',function(){SD.nocommon=!SD.nocommon;syncSheetChips();});
 
 /* Apply & Clear */
 document.getElementById('filterSheetApply').addEventListener('click',function(e){
   e.preventDefault();e.stopPropagation();
-  closeFilterSheet();
+  commitDraft();
+  closeFilterSheet(false);
+  syncDesktopChips();
   /* Delay render slightly so sheet close animation completes before state applies */
   setTimeout(function(){
     buildFams();render();
@@ -2685,18 +2713,34 @@ document.getElementById('filterSheetApply').addEventListener('click',function(e)
     if(tw)tw.classList.toggle('show-nonendem',nonendem);
   },50);
 });
+/* Clear resets the draft only — Apply still commits it, so the sheet stays
+   one atomic transaction rather than half-live, half-draft. */
 document.getElementById('filterSheetClear').addEventListener('click',function(){
-  div='';cites='';habit='';region='';island='';endemic=false;nocommon=false;nonendem=false;fam='';
+  SD={div:'',cites:'',habit:'',region:'',island:'',endemic:false,nocommon:false,nonendem:false,fam:''};
+  activeIgTab=null;
+  var famsEl=document.getElementById('filterSheetFams');
+  if(famsEl)famsEl.querySelectorAll('.fam-chip').forEach(function(x){x.classList.remove('on');});
   syncSheetChips();
-  var tw=document.querySelector('.tw');
-  if(tw)tw.classList.remove('show-nonendem');
-  /* Reset desktop chips too */
-  document.querySelectorAll('.chip[data-d]:not(.sheet-chip),.chip[data-cites]:not(.sheet-chip),.chip[data-h]:not(.sheet-chip)').forEach(function(x){x.className='chip';});
-  document.getElementById('btnE').classList.remove('on-endemic');
-  document.getElementById('btnNE').classList.remove('on-ne');
-  document.getElementById('btnN').classList.remove('on-nocommon');
-  buildFams();render();
 });
+
+/* Mirror committed filter state onto the desktop toolbar chips */
+function syncDesktopChips(){
+  document.querySelectorAll('.chip[data-d]:not(.sheet-chip)').forEach(function(x){
+    x.className='chip'+(div&&x.dataset.d===div?' on-'+DIV_CODE[div]:'');
+  });
+  var c1=document.getElementById('dbC1'),c2=document.getElementById('dbC2');
+  if(c1)c1.className='chip'+(cites==='I'?' on-C1':'');
+  if(c2)c2.className='chip'+(cites==='II'?' on-C2':'');
+  document.querySelectorAll('.chip[data-h]:not(.sheet-chip)').forEach(function(x){
+    x.className='chip'+(habit&&x.dataset.h===habit?' on-'+habit:'');
+  });
+  document.querySelectorAll('.chip[data-r]:not(.sheet-chip)').forEach(function(x){
+    x.className='chip'+(region&&x.dataset.r===region?' on':'');
+  });
+  document.getElementById('btnE').classList.toggle('on-endemic',endemic);
+  document.getElementById('btnNE').classList.toggle('on-ne',nonendem);
+  document.getElementById('btnN').classList.toggle('on-nocommon',nocommon);
+}
 
 /* ── Panel: swipe-to-close — mobile only ── */
 (function(){
@@ -2784,18 +2828,6 @@ document.getElementById('filterSheetClear').addEventListener('click',function(){
   });
 })();
 </script>
-
-<!-- ANALYTICS MODAL -->
-<div class="modal-overlay" id="analyticsOverlay">
-  <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">Dataset Analytics — DAO 2026-20</div>
-      <button class="modal-close" id="analyticsClose">&#10005;</button>
-    </div>
-    <div class="modal-body" id="analyticsBody"></div>
-  </div>
-</div>
-
 
 </body>
 </html>
