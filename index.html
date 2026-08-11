@@ -571,13 +571,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   @page{margin:15mm}
 }
 
-/* DEVELOPER CREDIT */
-.hdr-credit{margin-top:10px;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.hdr-credit-name{font-size:12px;color:rgba(255,255,255,.92);font-weight:600;
-  font-family:"Cormorant Garamond",serif;letter-spacing:.02em;line-height:1}
-.hdr-credit-sub{font-size:10px;color:rgba(255,255,255,.35);font-family:Inter,sans-serif;
-  letter-spacing:.06em;text-transform:uppercase;line-height:1}
-.hdr-credit-sep{width:100%;height:1px;background:rgba(255,255,255,.1);margin:3px 0}
 
 /* INFRASPECIFIC BADGE */
 .infra-badge{display:inline-flex;align-items:center;padding:1px 6px;border-radius:6px;
@@ -603,10 +596,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   /* Show credit on mobile — pinned top right */
   .hdr-meta{display:block;margin-left:auto;flex-shrink:0;align-self:flex-start}
   .hdr-meta-item{display:none}
-  .hdr-credit{margin-top:0;align-items:flex-end;gap:1px;padding:4px 7px;border-radius:6px}
-  .hdr-credit-name{font-size:11px;letter-spacing:.01em}
-  .hdr-credit-sep{margin:2px 0;width:100%}
-  .hdr-credit-sub{font-size:10px;letter-spacing:.04em}
 
   /* Stat tabs — compact horizontal scroll */
   .stat-row{padding:6px 10px 0;gap:1px;overflow-x:auto;
@@ -864,11 +853,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .lang-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45);color:#fff}
 .lang-btn:active{transform:scale(.95)}
 
-/* MOB NAV CREDIT */
-.mob-nav-credit{display:none}
-.mob-nav-dev{position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom) + 4px);
-  font-size:10px;color:var(--fa);font-family:Inter,sans-serif;
-  font-weight:500;letter-spacing:.01em;pointer-events:none}
 
 /* DISCLAIMER */
 .feedback-disclaimer{font-size:10px;color:var(--fa);line-height:1.6;
@@ -950,7 +934,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   /* ── BOTTOM NAV — hide on desktop ── */
   .mob-nav{display:none!important}
   .mob-nav-spacer{display:none}
-  .mob-nav-dev{display:none}
 
   /* ── FOOTER — show on desktop ── */
   .ftr{display:flex}
@@ -980,8 +963,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .hdr-ico{width:40px;height:40px;font-size:15px}
   .hdr-t{font-size:15px;line-height:1.2;font-weight:700}
   .hdr-s{font-size:11px;opacity:1}
-  .hdr-credit-name{font-size:12px}
-  .hdr-credit-sub{font-size:10px;letter-spacing:.06em}
 
   /* ── Stat tabs ── */
   .sc-code{font-size:10px;letter-spacing:.1em}
@@ -1057,8 +1038,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   background:var(--bg);font-size:10px;font-weight:500;cursor:pointer;
   color:var(--mu);font-family:Inter,sans-serif;transition:var(--transition)}
 .ftr-feedback-btn:hover{border-color:var(--gl);color:var(--g);background:var(--gbg)}
-.ftr-credit{font-size:10px;color:var(--fa);margin-left:8px;white-space:nowrap}
-.ftr-credit strong{color:var(--mu);font-weight:600}
 
 /* ══════════════════════════════════════════════════════════
    STAGE 4 — DESKTOP POLISH
@@ -1079,8 +1058,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   /* Filter sheet never shows on desktop */
   .filter-sheet{display:none!important}
 
-  /* Mob nav credit strip never shows */
-  .mob-nav-dev{display:none!important}
 
   /* Ensure ig-sub filter chips work in toolbar context */
   .ig-sub{position:absolute;top:100%;left:0;z-index:30;background:var(--sf);
@@ -1441,7 +1418,6 @@ thead th{border-bottom-color:var(--bd)}
     <div class="li"><span class="cites-pill cites-I">CITES I</span></div>
     <div class="li"><span class="cites-pill cites-II">CITES II</span></div>
     <div class="li"><span class="pl CR">CR</span>&nbsp;<span class="pl EN">EN</span>&nbsp;<span class="pl VU">VU</span>&nbsp;<span class="pl OTS">OTS</span></div>
-    <div class="li ftr-credit">Developed by <strong>Mc Andrew Pranada</strong></div>
   </div>
 </footer>
 
@@ -1486,7 +1462,6 @@ thead th{border-bottom-color:var(--bd)}
       <span data-i18n="feedback">Feedback</span>
     </button>
   </div>
-  <div class="mob-nav-dev">Developed by Mc Andrew Pranada</div>
 </nav>
 <div class="mob-nav-spacer"></div>
 
