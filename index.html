@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>DAO 2026-20 — Threatened Philippine Plants</title>
+<title>Threatened Philippine Plants</title>
 <script>window.__VA_ENABLED=true;
 /* LANGUAGE SYSTEM */
 var LANG='en';
@@ -16,6 +16,7 @@ var T={
     noCommonName:'No common name',applyFilters:'Apply Filters',clearAll:'Clear all',
     flags:'Flags',family:'Family',status:'Status',
     taxonStatus:'Taxonomic status',
+    conservationStatus:'Conservation Status',classification:'Classification',
     scopeAll:'All taxa —',scopeFiltered:'Filtered view —',
     commonLabel:'Common: ',noCommon:'No common name on record',
     copyCite:'Copy citation',copied:'Copied!',
@@ -43,9 +44,17 @@ var T={
     endemByDiv:'Endemicity by Division',globalOcc:'Global occurrences',
     phOcc:'Philippines occurrences',match:'Match',confidence:'Confidence',
     acceptedAs:'Accepted as',gbifName:'GBIF name',
-    hdrTitle:'DAO 2026-20 \u2014 Threatened Philippine Plants',
-    hdrSub:'Supersedes DAO 2017-11 \u2022 1,237 threatened Philippine vascular plants',
-    builtWith:'Built with Claude \u00B7 Anthropic'
+    hdrTitle:'Threatened Philippine Plants',
+    builtWith:'Built with Claude \u00B7 Anthropic',
+    landingTitle:'Threatened Philippine Plants',
+    landingDesc:'An independent reference for threatened plant species of the Philippines, drawn from national and international conservation assessments. Choose a list to begin.',
+    landingStatLabel:'Threatened Philippine Vascular Plant Taxa',
+    landingSubstats:'920 Philippine endemic \u00B7 219 CITES-listed',
+    landingCta:'Explore the List',
+    landingIucnLabel:'Philippine plants assessed as threatened by the IUCN Red List',
+    comingSoon:'Coming Soon',
+    skipToCatalogue:'Skip to catalogue',
+    returnHome:'Return Home'
   },
   fil:{
     search:'Hanapin ang pangalan, awtor, karaniwang pangalan, pamilya\u2026',
@@ -55,6 +64,7 @@ var T={
     noCommonName:'Walang karaniwang pangalan',applyFilters:'Salain',
     clearAll:'Alisin lahat',flags:'Mga Palatandaan',family:'Pamilya',status:'Kategorya',
     taxonStatus:'Katayuang taksonomiko',
+    conservationStatus:'Katayuan sa Konserbasyon',classification:'Klasipikasyon',
     scopeAll:'Lahat ng taxa —',scopeFiltered:'Sinalang tingin —',
     commonLabel:'Karaniwang pangalan: ',noCommon:'Walang naitalang karaniwang pangalan',
     copyCite:'Kopyahin ang sitas',copied:'Nakopya!',
@@ -84,9 +94,17 @@ var T={
     endemByDiv:'Endemisidad ayon sa Dibisyon',globalOcc:'Pandaigdigang okurensya',
     phOcc:'Okurensya sa Pilipinas',match:'Tugma',confidence:'Kumpiyansa',
     acceptedAs:'Tinatanggap bilang',gbifName:'Pangalan sa GBIF',
-    hdrTitle:'DAO 2026-20 \u2014 Threatened Philippine Plants',
-    hdrSub:'Pinapalitan ang DAO 2017-11 \u2022 1,237 nanganganib na vascular na halaman sa Pilipinas',
-    builtWith:'Ginawa gamit ang Claude \u00B7 Anthropic'
+    hdrTitle:'Mga Nanganganib na Halaman ng Pilipinas',
+    builtWith:'Ginawa gamit ang Claude \u00B7 Anthropic',
+    landingTitle:'Mga Nanganganib na Halaman ng Pilipinas',
+    landingDesc:'Isang independiyenteng sanggunian para sa mga nanganganib na species ng halaman sa Pilipinas, mula sa mga pambansa at internasyonal na pagtatasa sa konserbasyon. Pumili ng listahan upang magsimula.',
+    landingStatLabel:'Nanganganib na Vascular na Halaman sa Pilipinas',
+    landingSubstats:'920 endemiko sa Pilipinas \u2022 219 nakalista sa CITES',
+    landingCta:'Tuklasin ang Listahan',
+    landingIucnLabel:'Mga halaman ng Pilipinas na itinuturing na nanganganib ayon sa IUCN Red List',
+    comingSoon:'Malapit na',
+    skipToCatalogue:'Lumaktaw sa katalogo',
+    returnHome:'Bumalik sa Simula'
   }
 };
 function t(key){return(T[LANG]&&T[LANG][key])||T.en[key]||key;}
@@ -122,12 +140,12 @@ function applyLang(){
 
 </script>
 <script defer src="/_vercel/insights/script.js" onerror="void(0)"></script>
-<meta name="description" content="Updated National List of Threatened Philippine Plants under DAO 2026-20. 1,237 taxa with CITES status, growth habit, and endemicity data.">
+<meta name="description" content="A reference for threatened plant species of the Philippines. Currently covers DAO 2026-20's 1,237 taxa with CITES status, growth habit, and endemicity data.">
 <meta name="theme-color" content="#2d5a3d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DAO 2026-20">
+<meta name="apple-mobile-web-app-title" content="Threatened PH Plants">
 <link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="logo_16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
@@ -161,7 +179,7 @@ function applyLang(){
   /* Layout */
   --panel:400px;
   --sidebar:216px;
-  --toolbar-h:44px;
+  --toolbar-h:48px;
 
   /* ── Type scale — 10px floor.
      24 sizes (7.5px to 40px, six of them hand-tuned half-pixel values)
@@ -178,6 +196,12 @@ function applyLang(){
   --t-lg:18px;      /* panel titles */
   --t-xl:22px;      /* modal titles, stat figures */
   --t-2xl:28px;     /* empty-state glyph */
+
+  /* ── Landing display sizes — outside the reference-table scale above.
+     Used only by the cover's title and hero statistic, which need to read
+     at a scale the dense table/panel typography never does. */
+  --t-landing-title:40px;
+  --t-landing-stat:76px;
 
   /* ── Radius scale — 13 ad-hoc values collapsed onto 5 + pill/circle */
   --r-2xs:4px;      /* inline marks, drag handles */
@@ -207,6 +231,13 @@ function applyLang(){
 body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;
   overflow:hidden;height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 
+/* Keyboard focus — one consistent ring in the brand accent, shown only
+   for keyboard navigation (:focus-visible) so mouse/touch interaction
+   is unaffected. The two search inputs keep their own :focus-within
+   treatment on top of this. */
+button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid var(--gl);outline-offset:1px}
+
 /* ══════════════════════════════════════════
    HEADER — brand zone with integrated stat navigation
 ══════════════════════════════════════════ */
@@ -216,11 +247,22 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-siz
   padding-top:env(safe-area-inset-top)}
 .hdr-top{display:flex;align-items:center;gap:14px;padding:14px 28px 0}
 .hdr-ico{width:40px;height:40px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
-  border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+  overflow:hidden}
+.hdr-ico img{width:100%;height:100%;object-fit:cover;display:block}
 .hdr-ey{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   color:rgba(255,255,255,.45);margin-bottom:2px}
-.hdr-t{font-family:"Cormorant Garamond",serif;font-size:15px;font-weight:700;line-height:1.2;color:#fff}
+.hdr-t{font-family:"Cormorant Garamond",serif;font-size:15px;font-weight:700;line-height:1.2;color:#fff;flex:1;min-width:0}
+.hdr-t-source{font-weight:400;opacity:.6;font-size:.85em;margin-left:3px}
 .hdr-s{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+
+.hdr-home-btn{flex-shrink:0;display:flex;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:var(--r-pill);
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);
+  color:rgba(255,255,255,.85);font-size:11px;font-weight:500;
+  cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
+.hdr-home-btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);color:#fff}
+.hdr-home-btn svg{width:13px;height:13px;flex-shrink:0}
 .hdr-meta{margin-left:auto;display:flex;gap:16px;flex-shrink:0;align-self:flex-start;margin-top:4px}
 .hdr-meta-item{font-size:10px;color:rgba(255,255,255,.45);line-height:1.5;max-width:180px}
 .hdr-meta-item b{color:rgba(255,255,255,.75);font-weight:500}
@@ -254,10 +296,16 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-siz
 .toolbar{height:var(--toolbar-h);background:var(--sf);border-bottom:1px solid var(--bd);
   display:flex;align-items:center;gap:0;flex-shrink:0;position:relative;z-index:9}
 
-/* Search — left zone */
-.toolbar-search{display:flex;align-items:center;padding:0 16px;border-right:1px solid var(--bd);
-  height:100%;min-width:280px;gap:8px}
-.si{color:var(--fa);font-size:12px;flex-shrink:0}
+/* Search — left zone. A soft inset card rather than a flush strip
+   separated by a hairline, matching the sidebar search / table / panel
+   cards elsewhere in the dashboard. */
+.toolbar-search{display:flex;align-items:center;padding:0 14px;
+  margin:7px 0 7px 12px;min-width:280px;gap:8px;
+  background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm);
+  transition:var(--transition)}
+.toolbar-search:focus-within{background:var(--sf);border-color:var(--gl);box-shadow:var(--shadow-xs)}
+.si{color:var(--fa);font-size:12px;flex-shrink:0;transition:var(--transition)}
+.toolbar-search:focus-within .si{color:var(--gl)}
 .srch{flex:1;border:none;outline:none;font-size:12px;font-family:Inter,sans-serif;
   background:transparent;color:var(--ink)}
 .srch::placeholder{color:var(--fa)}
@@ -307,22 +355,27 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-siz
 /* ══════════════════════════════════════════
    BODY LAYOUT
 ══════════════════════════════════════════ */
-.body-wrap{display:flex;flex:1;overflow:hidden}
+.body-wrap{display:flex;flex:1;overflow:hidden;padding:10px;gap:10px}
 
 /* ══════════════════════════════════════════
    SIDEBAR
+   A standalone soft card rather than a flush, hard-bordered column —
+   matches the table/panel card below it.
 ══════════════════════════════════════════ */
-.sb{width:var(--sidebar);flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);
+.sb{width:var(--sidebar);flex-shrink:0;background:var(--sf);border:1px solid var(--bd-soft);
+  border-radius:var(--r-md);box-shadow:var(--shadow-sm);
   display:flex;flex-direction:column;overflow:hidden}
 .sb-h{padding:10px 13px 8px;flex-shrink:0}
 .sb-title{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--fa);margin-bottom:6px;font-weight:500}
-.sb-search{display:flex;align-items:center;gap:5px;padding:5px 8px;border:1.5px solid var(--bd);
-  border-radius:10px;background:var(--bg)}
+.sb-search{display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid var(--bd-soft);
+  border-radius:10px;background:var(--bg);box-shadow:var(--shadow-xs);transition:var(--transition)}
+.sb-search:focus-within{border-color:var(--gl);background:var(--sf);box-shadow:var(--shadow-sm)}
 .sb-search input{border:none;outline:none;font-size:12px;background:transparent;
   color:var(--ink);width:100%;font-family:Inter,sans-serif}
 .sb-search input::placeholder{color:var(--fa)}
-.sb-search-ico{color:var(--fa);font-size:11px;flex-shrink:0}
+.sb-search-ico{color:var(--fa);font-size:11px;flex-shrink:0;transition:var(--transition)}
+.sb-search:focus-within .sb-search-ico{color:var(--gl)}
 .sb-l{overflow-y:auto;flex:1;padding:4px 0}
 .fi{display:flex;align-items:center;justify-content:space-between;padding:5px 13px;
   cursor:pointer;border-left:2px solid transparent;font-size:12px;color:var(--mu);
@@ -350,12 +403,18 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-siz
    CONTENT + TABLE
 ══════════════════════════════════════════ */
 .content{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.table-panel{display:flex;flex:1;overflow:hidden}
-.tw{overflow:auto;flex:1}
+/* The table and detail panel share one soft card — rounding/shadow live
+   on this shared wrapper so the panel sliding open never has to open a
+   gap or re-draw its own edge against the table. */
+.table-panel{display:flex;flex:1;overflow:hidden;position:relative;
+  background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-md);
+  box-shadow:var(--shadow-sm)}
+.tw{overflow:auto;flex:1;background:var(--sf)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
-thead th{background:var(--sf);padding:8px 12px;text-align:left;font-size:10px;font-weight:600;
+thead th{background:var(--sf);padding:10px 12px;text-align:left;font-size:10px;font-weight:600;
   letter-spacing:.07em;text-transform:uppercase;color:var(--fa);
-  border-bottom:1px solid var(--bd);white-space:nowrap;position:sticky;top:0;z-index:5}
+  border-bottom:1px solid var(--bd);white-space:nowrap;position:sticky;top:0;z-index:5;
+  transition:var(--transition)}
 thead th:first-child{padding-left:20px}
 thead th.sortable{cursor:pointer;user-select:none}
 thead th.sortable:hover{background:var(--bg);color:var(--mu)}
@@ -364,7 +423,7 @@ thead th.asc .sort-icon::after{content:"▲"}
 thead th.desc .sort-icon::after{content:"▼"}
 thead th:not(.asc):not(.desc) .sort-icon::after{content:"⇅"}
 tbody tr{border-bottom:1px solid var(--bd);transition:background .1s;cursor:pointer}
-tbody tr:hover{background:#f8f7f3}
+tbody tr:hover{background:var(--bg)}
 tbody tr.active-row{background:var(--g-light)}
 tbody td{padding:9px 12px;vertical-align:top}
 tbody td:first-child{padding-left:20px}
@@ -376,10 +435,10 @@ tbody td:first-child{padding-left:20px}
    11.5px and would bleed further at 13px. Width is deliberately left at
    124px — the fixed columns already sum past the available width at iPad
    portrait, so widening this one collapses the Scientific Name column. */
-.cf{width:124px;font-size:12px;color:var(--mu);overflow-wrap:break-word}
+.cf{width:124px;font-size:12px;color:var(--fa);overflow-wrap:break-word}
 .cdv{width:86px}.cct{width:62px}.chb{width:62px}
 .sci-wrap{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
-.csn{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;line-height:1.2;color:var(--ink)}
+.csn{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:600;font-size:var(--t-lg);line-height:1.25;color:var(--g)}
 .cau{font-size:11px;color:var(--fa);margin-top:2px}
 .cco{width:180px;max-width:180px;font-size:12px;color:var(--mu)}
 /* Pills */
@@ -421,7 +480,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* ══════════════════════════════════════════
    DETAIL PANEL
 ══════════════════════════════════════════ */
-.panel{width:0;flex-shrink:0;background:var(--sf);border-left:1px solid var(--bd);
+.panel{width:0;flex-shrink:0;background:var(--sf);border-left:1px solid var(--bd-soft);
   display:flex;flex-direction:column;overflow:hidden;
   transition:width .22s cubic-bezier(.4,0,.2,1);position:relative}
 .panel:not(.closed){width:var(--panel)}
@@ -445,9 +504,29 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .panel-sci{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:20px;
   line-height:1.2;color:var(--ink);margin-bottom:3px}
 .panel-auth{font-size:11px;color:var(--fa);margin-bottom:10px;letter-spacing:.01em}
-.panel-badges{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
-.panel-common{font-size:12px;color:var(--mu);font-style:italic;margin-bottom:8px}
-.habit-note{font-size:10px;color:var(--fa);font-style:italic;margin-bottom:6px;line-height:1.5}
+.panel-common{font-size:12px;color:var(--mu);font-style:italic;margin-bottom:10px}
+
+/* Header section labels sit tighter than body-section labels — same
+   mono-eyebrow language, less room since the header doesn't scroll. */
+.panel-hdr .panel-section-title{margin-bottom:5px}
+
+/* Conservation status — the dossier's headline fact, sized up from the
+   table/list pill so it reads before anything else in the header. */
+.panel-status{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.panel-status .pl{font-size:13px;padding:4px 11px;border-radius:var(--r-sm);letter-spacing:.05em}
+.panel-status-label{font-size:13px;font-weight:600;color:var(--ink)}
+/* Label text takes the same color as the status pill beside it, rather
+   than a fixed neutral — status and its name should read as one fact. */
+.panel-status .pl.CR + .panel-status-label{color:var(--cr)}
+.panel-status .pl.EN + .panel-status-label{color:var(--en)}
+.panel-status .pl.VU + .panel-status-label{color:var(--vu)}
+.panel-status .pl.OTS + .panel-status-label{color:var(--ots)}
+.panel-status .endemic-badge{font-size:11px;padding:3px 8px}
+
+/* Classification metadata — division, CITES, habit, infraspecific rank.
+   Same pill components used everywhere else; grouped and labeled
+   separately from status so the two don't read as one flat list. */
+.panel-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
 
 /* Copy citation */
 .copy-cite-btn{display:flex;align-items:center;gap:6px;padding:7px 10px;
@@ -509,7 +588,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* ══════════════════════════════════════════
    FOOTER
 ══════════════════════════════════════════ */
-.ftr{background:var(--sf);border-top:1px solid var(--bd);padding:7px 24px;font-size:10px;
+.ftr{background:var(--sf);border-top:1px solid var(--bd);padding:9px 24px;font-size:10px;
   color:var(--fa);display:flex;justify-content:space-between;align-items:center;
   flex-wrap:wrap;gap:5px;flex-shrink:0}
 .leg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -592,7 +671,11 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .hdr-ico{width:28px;height:28px;font-size:12px;border-radius:10px;flex-shrink:0;margin-top:2px}
   .hdr-ey{font-size:10px;letter-spacing:.1em}
   .hdr-t{font-size:13px;line-height:1.3;font-weight:700}
+  .hdr-t-source{display:block;margin-left:0;font-size:.8em}
   .hdr-s{font-size:10px;margin-top:2px;opacity:.75}
+  /* Icon-only on mobile — no room for the label next to a wrapping title */
+  .hdr-home-btn{padding:6px;border-radius:50%}
+  .hdr-home-label{display:none}
   /* Show credit on mobile — pinned top right */
   .hdr-meta{display:block;margin-left:auto;flex-shrink:0;align-self:flex-start}
   .hdr-meta-item{display:none}
@@ -612,7 +695,9 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   /* ── TOOLBAR ── */
   .toolbar{height:48px;flex-wrap:nowrap;
     box-shadow:0 2px 8px rgba(0,0,0,.08)}
-  .toolbar-search{min-width:0;flex:1;padding:0 10px;border-right:none;height:48px;gap:6px}
+  .toolbar-search{min-width:0;flex:1;padding:0 12px;margin:7px 8px 7px 8px;
+    height:auto;gap:6px;background:var(--bg);border:1px solid var(--bd-soft);
+    border-radius:var(--r-sm)}
   .srch{font-size:16px} /* 16px floor: below this iOS Safari zooms on focus */
   .rc{display:none}
   .toolbar-filters{display:none}
@@ -649,9 +734,15 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .cf{font-size:11px;width:100px}
   .csn{font-size:15px;line-height:1.3}
   .cau{font-size:11px;margin-top:3px}
-  .endemic-badge{font-size:10px;padding:1px 4px;margin-top:2px}
+  /* Table-row badge shrinks to just the star on mobile — the full "★
+     ENDEMIC" text, sitting alone on its own line at column width, was
+     reliably wider than short scientific names and read as the loudest
+     thing in the cell instead of a secondary marker. The star alone
+     still reads clearly once you know the color code, and stays inline
+     with the name instead of forcing a line of its own. */
+  .endemic-badge-row{padding:1px 4px;line-height:1.3}
+  .endemic-badge-row .badge-text{display:none}
   .infra-badge{font-size:10px}
-  .sci-wrap{flex-direction:column;align-items:flex-start;gap:3px}
   .mob-common{font-size:11px;color:var(--gl);margin-top:2px;
     font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     max-width:100%;display:block;font-weight:500}
@@ -757,12 +848,10 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
 
 /* CDFP PHOTO BUTTON */
-.cdfp-btn{display:flex;flex-direction:column;gap:3px;padding:10px 12px;
-  border:1.5px solid #86efac;border-radius:10px;text-decoration:none;
-  background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);
-  transition:var(--transition);margin-top:6px}
-.cdfp-btn:hover{border-color:var(--gl);background:linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%);
-  transform:translateX(2px)}
+.cdfp-btn{display:flex;flex-direction:column;gap:3px;padding:8px 10px;
+  border:1.5px solid var(--bd);border-radius:10px;text-decoration:none;
+  background:var(--bg);transition:var(--transition);margin-top:4px}
+.cdfp-btn:hover{border-color:var(--gl);background:var(--gbg);transform:translateX(2px)}
 .cdfp-btn-top{display:flex;align-items:center;gap:8px}
 .cdfp-btn-ico{font-size:15px;flex-shrink:0;line-height:1}
 .cdfp-btn-info{flex:1;min-width:0}
@@ -844,6 +933,11 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .panel-close:active{transform:scale(.88)}
 .feedback-email-btn:active{transform:scale(.97);opacity:.9}
 .cdfp-btn:active{transform:translateX(2px) scale(.98);opacity:.85}
+.landing-list-card:active{transform:translateY(-1px) scale(.99)}
+.hdr-home-btn:active{transform:scale(.95)}
+.landing-skip:active{transform:scale(.95)}
+.copy-cite-btn:active{transform:scale(.98);opacity:.85}
+.ftr-feedback-btn:active{transform:scale(.95)}
 
 /* LANGUAGE TOGGLE */
 .lang-btn{padding:3px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.25);
@@ -881,7 +975,8 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
   /* ── TOOLBAR ── */
   .toolbar{height:var(--toolbar-h);position:relative;box-shadow:none}
-  .toolbar-search{min-width:280px;flex:1;padding:0 16px;border-right:1px solid var(--bd);height:100%}
+  .toolbar-search{min-width:280px;flex:1;padding:0 14px;margin:7px 0 7px 12px;
+    height:auto;background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm)}
   .srch{font-size:12px}
   .rc{display:flex;font-size:10px}
   .toolbar-filters{display:flex}
@@ -909,11 +1004,11 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   thead th:nth-child(5),tbody td:nth-child(5){display:table-cell} /* CITES */
   thead th:nth-child(6),tbody td:nth-child(6){display:table-cell} /* habit */
   thead th:nth-child(8),tbody td:nth-child(8){display:table-cell} /* common name */
-  thead th{padding:8px 12px;font-size:10px}
+  thead th{padding:10px 12px;font-size:10px}
   thead th:first-child{padding-left:20px}
-  tbody td{padding:9px 12px;vertical-align:top}
+  tbody td{padding:12px 12px;vertical-align:top}
   tbody td:first-child{padding-left:20px}
-  .csn{font-size:15px}
+  .csn{font-size:var(--t-lg)}
   .cau{font-size:11px;margin-top:2px}
   .cco{font-size:12px;width:180px;max-width:180px}
   .cf{font-size:12px;width:124px}
@@ -921,7 +1016,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
   /* ── PANEL — restore side panel ── */
   .panel{position:relative;transform:none!important;border-radius:0;
-    box-shadow:none;border-left:1px solid var(--bd);
+    box-shadow:none;border-left:1px solid var(--bd-soft);
     transition:width .22s cubic-bezier(.4,0,.2,1)}
   .panel:not(.closed){width:var(--panel)}
   .panel.closed{width:0;border-left:none}
@@ -978,13 +1073,13 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .srch{font-size:12px}
 
   /* ── Table ── */
-  .csn{font-size:15px;line-height:1.2}
+  .csn{font-size:var(--t-lg);line-height:1.25;font-weight:600}
   .cau{font-size:11px;margin-top:2px}
   .cco{font-size:12px}
   .cf{font-size:12px}
   .cn{font-size:11px}
-  thead th{font-size:10px;letter-spacing:.07em;padding:8px 12px}
-  tbody td{padding:9px 12px}
+  thead th{font-size:10px;letter-spacing:.07em;padding:10px 12px}
+  tbody td{padding:12px 12px}
   .pl{font-size:10px;padding:2px 6px}
   .div-pill{font-size:10px;padding:2px 6px}
   .cites-pill{font-size:10px;padding:2px 6px}
@@ -1018,7 +1113,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .cdfp-btn-hint{font-size:10px}
 
   /* ── Footer ── */
-  .ftr{font-size:10px;padding:7px 24px}
+  .ftr{font-size:10px;padding:9px 24px}
 
   /* ── Analytics ── */
   .modal-title{font-size:18px}
@@ -1160,22 +1255,147 @@ thead th{border-bottom-color:var(--bd)}
   .cco{width:144px;max-width:144px}   /* fits the "Karaniwang Pangalan" header */
   tbody td,thead th{padding-left:9px;padding-right:9px}
   tbody td:first-child,thead th:first-child{padding-left:14px}
+
+  /* Detail panel floats as its own card instead of squeezing the table's
+     fixed columns. At this width there isn't room to dock it inline
+     without the Scientific Name column collapsing and Common Name
+     reflowing underneath it — floating keeps every column exactly where
+     it was, panel open or closed. */
+  .panel{position:absolute;top:10px;right:10px;bottom:10px;width:0;z-index:20;
+    border:1px solid var(--bd-soft);border-radius:var(--r-md)}
+  /* Matches the :not(.closed) specificity of the earlier desktop-shadow
+     rule above so this tablet shadow actually wins instead of losing to
+     it despite coming later in the file. */
+  .panel:not(.closed){width:min(var(--panel),85vw);box-shadow:var(--shadow-lg)}
+  .panel-inner{width:100%;min-width:0}
+}
+
+/* ══════════════════════════════════════════
+   LANDING / COVER
+   Shown on every load, ahead of the catalogue. Reuses the existing token
+   set and typeface pairing (Cormorant Garamond / IBM Plex Mono / Inter)
+   rather than introducing new components. A direct link with filter/species
+   hash state bypasses it entirely (see enterCatalogue() in the JS below),
+   so shared links still land on the catalogue.
+══════════════════════════════════════════ */
+.landing{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;background:var(--bg);overflow-y:auto;padding:48px 24px;text-align:center}
+body.view-landing .landing{display:flex}
+body.view-landing .hdr-toolbar-wrap,
+body.view-landing .body-wrap,
+body.view-landing .ftr,
+body.view-landing .mob-nav,
+body.view-landing .mob-nav-spacer{display:none!important}
+
+/* Entering the catalogue fades it in rather than snapping into view —
+   same display:none→flex animation-restart trick already used by
+   .modal, just a shorter, quieter fade for a full-view swap. */
+@keyframes app-in{from{opacity:0}to{opacity:1}}
+body.entering .hdr-toolbar-wrap,
+body.entering .body-wrap{animation:app-in .3s ease}
+
+.landing-skip{position:absolute;top:20px;right:20px;padding:5px 12px;border-radius:var(--r-pill);
+  border:1px solid var(--bd-strong);background:var(--sf);color:var(--mu);font-size:var(--t-xs);
+  font-weight:500;cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
+.landing-skip:hover{border-color:var(--gl);color:var(--g);background:var(--gbg)}
+
+.landing-inner{max-width:560px;display:flex;flex-direction:column;align-items:center}
+
+.landing-mark{width:64px;height:64px;background:var(--gbg);border:1.5px solid var(--g-light);
+  border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:22px;overflow:hidden}
+.landing-mark img{width:100%;height:100%;object-fit:cover;display:block}
+
+.landing-title{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:var(--t-landing-title);
+  line-height:1.05;color:var(--ink);margin:0 0 14px}
+
+.landing-desc{font-size:var(--t-base);line-height:1.65;color:var(--mu);max-width:440px;margin-bottom:36px}
+
+/* Two-list picker — DAO 2026-20 (live) and IUCN (not yet wired up).
+   Same soft-card language as the dashboard: r-md radius, soft border,
+   shadow-sm at rest, lifts slightly on hover for the live card. */
+.landing-lists{display:flex;gap:16px;width:100%}
+
+.landing-list-card{flex:1;text-align:left;display:flex;flex-direction:column;
+  padding:20px;background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-md);
+  box-shadow:var(--shadow-sm);cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
+.landing-list-card:hover{border-color:var(--gl);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+
+.landing-list-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:var(--t-xs);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gl);margin-bottom:10px;font-weight:500}
+
+.landing-list-stat{font-family:"Cormorant Garamond",serif;font-weight:700;
+  font-size:var(--t-landing-title);line-height:1;color:var(--g);margin-bottom:6px}
+
+.landing-list-label{font-size:var(--t-sm);color:var(--ink);line-height:1.4;margin-bottom:8px}
+
+.landing-list-sub{font-size:var(--t-xs);color:var(--mu)}
+
+.landing-list-go{margin-top:auto;padding-top:14px;font-size:var(--t-sm);font-weight:600;
+  color:var(--g);display:flex;align-items:center;gap:6px}
+.landing-list-go span[aria-hidden]{display:inline-block;transition:transform .16s}
+.landing-list-card:hover .landing-list-go span[aria-hidden]{transform:translateX(3px)}
+
+/* Coming soon — visually present, not yet interactive */
+.landing-list-card-soon{cursor:default;opacity:.65}
+.landing-list-card-soon:hover{border-color:var(--bd-soft);box-shadow:var(--shadow-sm);transform:none}
+.landing-list-soon-badge{align-self:flex-start;padding:2px 8px;border-radius:var(--r-pill);
+  background:var(--bg);border:1px solid var(--bd-strong);color:var(--fa);font-size:10px;
+  font-weight:600;letter-spacing:.04em;font-family:"IBM Plex Mono",monospace;
+  text-transform:uppercase;margin-bottom:10px}
+
+@media (max-width:768px){
+  .landing{padding:72px 20px 40px}
+  .landing-skip{top:calc(16px + env(safe-area-inset-top));right:16px;font-size:10px;padding:4px 10px}
+  .landing-mark{width:52px;height:52px;font-size:22px;margin-bottom:16px}
+  .landing-title{font-size:28px;margin-bottom:10px}
+  .landing-desc{font-size:var(--t-sm);margin-bottom:28px}
+  .landing-lists{flex-direction:column}
+  .landing-list-stat{font-size:32px}
 }
 </style>
 </head>
-<body>
+<body class="view-landing">
+
+<!-- ══ LANDING / COVER ══ -->
+<div class="landing" id="landing">
+  <button class="landing-skip" id="landingSkip" data-i18n="skipToCatalogue" title="Skip to catalogue">Skip to catalogue</button>
+  <div class="landing-inner">
+    <div class="landing-mark"><img src="logo_192.png" alt=""></div>
+    <h1 class="landing-title" data-i18n="landingTitle">Threatened Philippine Plants</h1>
+    <p class="landing-desc" data-i18n="landingDesc">An independent reference for threatened plant species of the Philippines, drawn from national and international conservation assessments. Choose a list to begin.</p>
+
+    <div class="landing-lists">
+      <button class="landing-list-card" id="landingCta">
+        <div class="landing-list-eyebrow">DAO 2026-20</div>
+        <div class="landing-list-stat">1,237</div>
+        <div class="landing-list-label" data-i18n="landingStatLabel">Threatened Philippine Vascular Plant Taxa</div>
+        <div class="landing-list-sub" data-i18n="landingSubstats">920 Philippine endemic &middot; 219 CITES-listed</div>
+        <div class="landing-list-go"><span data-i18n="landingCta">Explore the List</span> <span aria-hidden="true">&rarr;</span></div>
+      </button>
+
+      <div class="landing-list-card landing-list-card-soon" aria-disabled="true">
+        <div class="landing-list-eyebrow">IUCN Red List</div>
+        <div class="landing-list-soon-badge" data-i18n="comingSoon">Coming Soon</div>
+        <div class="landing-list-label" data-i18n="landingIucnLabel">Philippine plants assessed as threatened by the IUCN Red List</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ HEADER ══ -->
 <div class="hdr-toolbar-wrap">
 <header class="hdr">
   <div class="hdr-top">
-    <div class="hdr-ico">&#127807;</div>
-    <div>
-      <div class="hdr-ey">Philippine Plant Conservation Reference</div>
-      <div class="hdr-t" id="hdrTitle" data-i18n="hdrTitle">DAO 2026-20 &mdash; Threatened Philippine Plants</div>
-      <div class="hdr-s" id="hdrSub" data-i18n="hdrSub">Supersedes DAO 2017-11 &bull; 1,237 threatened Philippine vascular plants</div>
+    <div class="hdr-ico"><img src="logo_192.png" alt=""></div>
+    <div class="hdr-t">
+      <span id="hdrTitle" data-i18n="hdrTitle">Threatened Philippine Plants</span>
+      <span class="hdr-t-source">(DAO 2026-20)</span>
     </div>
-
+    <button class="hdr-home-btn" id="hdrHomeBtn" title="Return to home">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7.5l6-5 6 5"/><path d="M3.5 6.5V13a1 1 0 001 1h2.5v-4h2v4H11a1 1 0 001-1V6.5"/></svg>
+      <span class="hdr-home-label" data-i18n="returnHome">Return Home</span>
+    </button>
   </div>
   <div class="stat-row">
     <div class="sc on" data-c="ALL">
@@ -1348,9 +1568,14 @@ thead th{border-bottom-color:var(--bd)}
           <div class="panel-hdr">
             <div class="panel-sci" id="pSci"></div>
             <div class="panel-auth" id="pAuth"></div>
-            <div class="panel-badges" id="pBadges"></div>
-            <div class="habit-note" id="habitNote"></div>
             <div class="panel-common" id="pCommon"></div>
+
+            <div class="panel-section-title" data-i18n="conservationStatus">Conservation Status</div>
+            <div class="panel-status" id="pStatus"></div>
+
+            <div class="panel-section-title" data-i18n="classification">Classification</div>
+            <div class="panel-meta" id="pMeta"></div>
+
             <button class="copy-cite-btn" id="copyCiteBtn">
               <span>&#128203;</span><span id="copyCiteLabel">Copy citation</span>
             </button>
@@ -1358,6 +1583,20 @@ thead th{border-bottom-color:var(--bd)}
 
           <!-- Scrollable body -->
           <div class="panel-body">
+
+            <!-- Distribution -->
+            <div id="distSection" style="display:none">
+              <div class="panel-section-title"><span id="distSectionTitle" data-i18n="localDist">Local Distribution</span>
+                <span style="font-family:Inter,sans-serif;font-weight:400;font-size:10px;color:var(--fa);margin-left:6px;text-transform:none;letter-spacing:0">Co's Digital Flora of the Philippines</span>
+              </div>
+              <div id="distBlock"></div>
+            </div>
+
+            <!-- Similar Species -->
+            <div id="similarSection" style="display:none">
+              <div class="panel-section-title" id="simSectionTitle" data-i18n="similar">Similar &mdash; Same Family &amp; Status</div>
+              <div class="similar-list" id="similarList"></div>
+            </div>
 
             <!-- External databases -->
             <div>
@@ -1382,21 +1621,6 @@ thead th{border-bottom-color:var(--bd)}
               </div>
             </div>
 
-            <!-- Similar species -->
-            <!-- Distribution -->
-            <div id="distSection" style="display:none">
-              <div class="panel-section-title"><span id="distSectionTitle" data-i18n="localDist">Local Distribution</span>
-                <span style="font-family:Inter,sans-serif;font-weight:400;font-size:10px;color:var(--fa);margin-left:6px;text-transform:none;letter-spacing:0">Co's Digital Flora of the Philippines</span>
-              </div>
-              <div id="distBlock"></div>
-            </div>
-
-            <!-- Similar Species -->
-            <div id="similarSection" style="display:none">
-              <div class="panel-section-title" id="simSectionTitle" data-i18n="similar">Similar &mdash; Same Family &amp; Status</div>
-              <div class="similar-list" id="similarList"></div>
-            </div>
-
           </div>
         </div>
       </div>
@@ -1411,7 +1635,7 @@ thead th{border-bottom-color:var(--bd)}
     <button class="ftr-feedback-btn" id="ftrFeedbackBtn">&#128172; <span data-i18n="sendFeedback">Send Feedback</span></button>
   </div>
   <div class="leg">
-    <div class="li"><span class="endemic-badge">&#9733; PHL ENDEMIC</span></div>
+    <div class="li"><span class="endemic-badge">&#9733; ENDEMIC</span></div>
     <div class="li"><span class="div-pill div-pill-A">Angiosperm</span></div>
     <div class="li"><span class="div-pill div-pill-G">Gymnosperm</span></div>
     <div class="li"><span class="div-pill div-pill-P">Pteridophyte</span></div>
@@ -1620,6 +1844,7 @@ var DATA=[{"cat": "CR", "family": "Acanthaceae", "no": 1, "scientific": "Thunber
 var cat='ALL',fam='',endemic=false,nocommon=false,div='',cites='',habit='',region='',island='',activeRow=null,activeSpecies=null;
 var sortCol='',sortDir=1;
 var DIV_CODE={Angiosperm:'A',Gymnosperm:'G',Pteridophyte:'P'};
+var CAT_LABEL={CR:'Critically Endangered',EN:'Endangered',VU:'Vulnerable',OTS:'Other Threatened'};
 
 /* ── UTILITIES ── */
 function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1868,7 +2093,7 @@ function render(){
   }
   document.getElementById('tbl').style.display='';
   document.getElementById('empty').style.display='none';
-  var badge='<span class="endemic-badge">&#9733; PHL ENDEMIC</span>';
+  var badge='<span class="endemic-badge endemic-badge-row"><span class="badge-star">&#9733;</span><span class="badge-text"> ENDEMIC</span></span>';
   var buf=[];
   for(var i=0;i<rows.length;i++){
     var s=rows[i];
@@ -1928,7 +2153,7 @@ function openPanel(s,fromNav){
     simList.innerHTML=simPick.map(function(x){
       return '<div class="similar-item" data-no="'+x.no+'" data-cat="'+x.cat+'">'
         +'<span class="similar-name"><em>'+esc(x.name)+'</em></span>'
-        +'<span class="similar-fam">'+esc(x.common||'no common name')+'</span>'
+        +'<span class="similar-common">'+esc(x.common||'no common name')+'</span>'
         +'<span class="pl '+x.cat+'" style="font-size:10px">'+x.cat+'</span>'
         +'</div>';
     }).join('');
@@ -1943,18 +2168,20 @@ function openPanel(s,fromNav){
     if(citeLbl)citeLbl.textContent=t('copyCite');
   }
 
-  /* Badges */
+  /* Conservation status — the headline fact, kept separate from classification */
   var dc=DIV_CODE[s.division]||'A';
-  var badges='<span class="pl '+s.cat+'">'+s.cat+'</span> ';
-  badges+='<span class="div-pill div-pill-'+dc+'">'+s.division+'</span> ';
-  if(s.cites)badges+='<span class="cites-pill cites-'+s.cites+'">CITES App. '+s.cites+'</span> ';
-  if(s.endemic)badges+='<span class="endemic-badge">&#9733; PHL ENDEMIC</span> ';
+  var statusHtml='<span class="pl '+s.cat+'">'+s.cat+'</span>';
+  statusHtml+='<span class="panel-status-label">'+(CAT_LABEL[s.cat]||s.cat)+'</span>';
+  if(s.endemic)statusHtml+='<span class="endemic-badge">&#9733; ENDEMIC</span>';
+  document.getElementById('pStatus').innerHTML=statusHtml;
+
+  /* Classification metadata — division, CITES, infraspecific rank, habit */
   var infraRank=getInfraRank(s.scientific);
-  if(infraRank)badges+='<span class="infra-badge">'+infraRank+'</span> ';
-  badges+='<span class="habit-pill '+s.habit+'">' +s.habit+'</span>';
-  document.getElementById('pBadges').innerHTML=badges;
-  var habitNote=document.getElementById('habitNote');
-  if(habitNote){habitNote.textContent='';}
+  var metaHtml='<span class="div-pill div-pill-'+dc+'">'+s.division+'</span>';
+  if(s.cites)metaHtml+='<span class="cites-pill cites-'+s.cites+'">CITES App. '+s.cites+'</span>';
+  if(infraRank)metaHtml+='<span class="infra-badge">'+infraRank+'</span>';
+  metaHtml+='<span class="habit-pill '+s.habit+'">'+s.habit+'</span>';
+  document.getElementById('pMeta').innerHTML=metaHtml;
 
   /* External links */
   var q=encPlus(s.name);
@@ -2655,6 +2882,10 @@ buildFams();
 restoreHash();
 render();
 applyLang();
+/* A shared/deep link carries filter or search state in the hash — showing
+   the cover first would strand that link one extra click from the data
+   it was pointing at, so those loads skip straight to the catalogue. */
+if(location.hash&&location.hash.length>1)enterCatalogue();
 
 /* ══════════════════════════════════════════
    MOBILE JS
@@ -2928,8 +3159,8 @@ function syncDesktopChips(){
     shareBtn.addEventListener('click',function(e){
       e.preventDefault();e.stopPropagation();
       var shareData={
-        title:'DAO 2026-20 — Threatened Philippine Plants',
-        text:'Free app for all 1,237 threatened Philippine plant taxa — searchable, filterable, with CITES status, distribution, and live GBIF data.',
+        title:'Threatened Philippine Plants',
+        text:'Free app for threatened plant species of the Philippines — currently 1,237 DAO 2026-20 taxa, searchable and filterable with CITES status, distribution, and live GBIF data.',
         url:'https://phthreatenedplantsmobile.vercel.app'
       };
       if(navigator.share){
@@ -2958,6 +3189,41 @@ function syncDesktopChips(){
     LANG=(LANG==='en')?'fil':'en';
     applyLang();
   });
+})();
+
+/* ── LANDING / COVER ── */
+/* animate=true fades the catalogue in — only meaningful when a user is
+   actually watching the landing screen get dismissed. The deep-link
+   bypass below fires synchronously during the very first script tick,
+   before the browser's first paint; animating that path caused a
+   real Chrome layout bug (the closed detail panel would render at the
+   table's full width instead of 0 — verified by disabling the
+   animation, which fixed it). Skipping the animation there sidesteps
+   the bug entirely and is arguably better UX anyway: a shared link
+   should land on the data immediately, not fade in. */
+function enterCatalogue(animate){
+  document.body.classList.remove('view-landing');
+  document.body.classList.add('view-catalogue');
+  if(animate){
+    document.body.classList.add('entering');
+    setTimeout(function(){document.body.classList.remove('entering');},350);
+  }
+}
+(function(){
+  var cta=document.getElementById('landingCta');
+  var skip=document.getElementById('landingSkip');
+  if(cta)cta.addEventListener('click',function(){enterCatalogue(true);});
+  if(skip)skip.addEventListener('click',function(){enterCatalogue(true);});
+})();
+
+function returnToLanding(){
+  closePanel();
+  document.body.classList.remove('view-catalogue');
+  document.body.classList.add('view-landing');
+}
+(function(){
+  var home=document.getElementById('hdrHomeBtn');
+  if(home)home.addEventListener('click',returnToLanding);
 })();
 </script>
 
