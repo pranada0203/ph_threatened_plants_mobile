@@ -10,6 +10,7 @@ var LANG='en';
 var T={
   en:{
     search:'Search name, authority, common name, family\u2026',
+    searchMobile:'Search name\u2026',
     filters:'Filters',analytics:'Analytics',export:'Export',compact:'Compact',
     division:'Division',habit:'Habit',islandGroup:'Island Group',
     endemicOnly:'\u2605 Endemic only',nonEndemic:'\uD83C\uDF0E Non-endemic',
@@ -58,6 +59,7 @@ var T={
   },
   fil:{
     search:'Hanapin ang pangalan, awtor, karaniwang pangalan, pamilya\u2026',
+    searchMobile:'Hanapin ang pangalan\u2026',
     filters:'Salain',analytics:'Pagsusuri',export:'I-export',compact:'Compact',
     division:'Dibisyon',habit:'Ugali ng Paglaki',islandGroup:'Grupo ng Isla',
     endemicOnly:'\u2605 Endemiko lamang',nonEndemic:'\uD83C\uDF0E Hindi endemiko',
@@ -129,6 +131,12 @@ function applyLang(){
   /* Cases an attribute can't express */
   var langBtn=document.getElementById('langToggle');
   if(langBtn)langBtn.textContent=LANG==='en'?'FIL':'EN';
+  /* The full desktop placeholder ("Search name, authority, common name,
+     family…") doesn't fit the mobile search card — it overflows behind
+     the filter/analytics/export icons. Swap in the short form below
+     that breakpoint. */
+  var srchEl=document.getElementById('srch');
+  if(srchEl)srchEl.placeholder=t(window.matchMedia('(max-width:768px)').matches?'searchMobile':'search');
   document.documentElement.lang=LANG==='fil'?'fil':'en';
   try{localStorage.setItem('dao-lang',LANG);}catch(e){}
   /* Re-render everything built from JS strings */
@@ -511,22 +519,27 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .panel-hdr .panel-section-title{margin-bottom:5px}
 
 /* Conservation status — the dossier's headline fact, sized up from the
-   table/list pill so it reads before anything else in the header. */
+   table/list pill so it reads before anything else in the header, but
+   not so far up from the classification pills below it that the two
+   rows stop reading as one system. */
 .panel-status{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:12px}
-.panel-status .pl{font-size:13px;padding:4px 11px;border-radius:var(--r-sm);letter-spacing:.05em}
-.panel-status-label{font-size:13px;font-weight:600;color:var(--ink)}
+.panel-status .pl{font-size:12px;padding:3px 10px;border-radius:var(--r-sm);letter-spacing:.05em}
+.panel-status-label{font-size:12px;font-weight:600;color:var(--ink)}
 /* Label text takes the same color as the status pill beside it, rather
    than a fixed neutral — status and its name should read as one fact. */
 .panel-status .pl.CR + .panel-status-label{color:var(--cr)}
 .panel-status .pl.EN + .panel-status-label{color:var(--en)}
 .panel-status .pl.VU + .panel-status-label{color:var(--vu)}
 .panel-status .pl.OTS + .panel-status-label{color:var(--ots)}
-.panel-status .endemic-badge{font-size:11px;padding:3px 8px}
+.panel-status .endemic-badge{font-size:11px;padding:2px 7px}
 
 /* Classification metadata — division, CITES, habit, infraspecific rank.
-   Same pill components used everywhere else; grouped and labeled
-   separately from status so the two don't read as one flat list. */
+   Same pill components used everywhere else, nudged up half a step from
+   their table-row size so they sit closer to the status row above
+   instead of reading as a different, smaller component entirely. */
 .panel-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.panel-meta .div-pill,.panel-meta .cites-pill,.panel-meta .habit-pill,.panel-meta .infra-badge{
+  font-size:11px;padding:2px 7px}
 
 /* Copy citation */
 .copy-cite-btn{display:flex;align-items:center;gap:6px;padding:7px 10px;
@@ -670,8 +683,13 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .hdr-top{padding:12px 16px 0;gap:10px;flex-wrap:nowrap;align-items:flex-start}
   .hdr-ico{width:28px;height:28px;font-size:12px;border-radius:10px;flex-shrink:0;margin-top:2px}
   .hdr-ey{font-size:10px;letter-spacing:.1em}
-  .hdr-t{font-size:13px;line-height:1.3;font-weight:700}
-  .hdr-t-source{display:block;margin-left:0;font-size:.8em}
+  /* Bigger, bolder — this is the app's actual name and should read as
+     branding, not a caption. The DAO source stays inline next to it,
+     small and unbold, and only wraps to its own line if it truly
+     doesn't fit (flex:1 + min-width:0 on .hdr-t lets that happen
+     naturally instead of forcing it every time). */
+  .hdr-t{font-size:16px;line-height:1.3;font-weight:700}
+  .hdr-t-source{font-size:.62em;font-weight:400;margin-left:4px;white-space:nowrap}
   .hdr-s{font-size:10px;margin-top:2px;opacity:.75}
   /* Icon-only on mobile — no room for the label next to a wrapping title */
   .hdr-home-btn{padding:6px;border-radius:50%}
@@ -715,11 +733,20 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .body-wrap{flex-direction:column;overflow:visible}
   .sb{display:none}
   .content{overflow:visible}
-  .table-panel{display:block;overflow:visible}
+  /* overflow:hidden (not visible) so the card's rounded corners actually
+     clip content instead of the sharp-cornered table sitting flush on
+     top of them. The mobile detail panel is position:fixed, which
+     escapes this container's overflow entirely, so it's unaffected. */
+  .table-panel{display:block;overflow:hidden}
   .tw{overflow-x:hidden}
 
   /* ── TABLE ── */
-  table{table-layout:auto;width:100%}
+  /* table-layout:fixed (not auto) — with auto, the widths below are
+     only minimums, and content (especially the nowrap common-name
+     preview) was inflating the table past the viewport, getting
+     clipped by .tw's overflow-x:hidden mid-word. Fixed makes them
+     strict, same as desktop/tablet already rely on. */
+  table{table-layout:fixed;width:100%}
   thead th:nth-child(1),tbody td:nth-child(1){display:none} /* # */
   thead th:nth-child(4),tbody td:nth-child(4){display:none} /* division */
   thead th:nth-child(5),tbody td:nth-child(5){display:none} /* CITES */
@@ -730,6 +757,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   thead th:nth-child(3){width:100px}
   tbody td{padding:10px 8px;vertical-align:top}
   tbody td:nth-child(2){padding-left:12px}
+  tbody td:nth-child(3){padding-right:12px} /* a little more air before the scientific name */
   .cc{width:46px}
   .cf{font-size:11px;width:100px}
   .csn{font-size:15px;line-height:1.3}
@@ -811,7 +839,35 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   font-family:Inter,sans-serif;transition:var(--transition)}
 .mob-nav-item svg{width:20px;height:20px;color:var(--fa)}
 .mob-nav-item span{font-size:10px;color:var(--fa);font-weight:500}
-.mob-nav-item.active svg,.mob-nav-item.active span{color:var(--gl)}
+/* Feedback is the only item left with an icon+label pair — it never
+   gets .active (it opens a panel, not a filter), so this only needs
+   to cover it, not the status pills below. */
+.mob-feedback-btn.active svg,.mob-feedback-btn.active span{color:var(--gl)}
+
+/* Status pills replace the old grey icon+label pairing — each one shows
+   its real conservation-status color at all times, matching the pills
+   used in the table and dossier, instead of a generic icon that only
+   turned green on selection. The active item fills solid; the rest
+   stay quiet outlines. */
+.mob-nav-item .mob-nav-pill{display:inline-flex;align-items:center;justify-content:center;
+  min-width:34px;height:22px;padding:0 8px;border-radius:var(--r-sm);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;
+  letter-spacing:.02em;border:1.5px solid transparent;background:transparent;
+  transition:var(--transition)}
+/* Scoped under .mob-nav-item (not bare .mob-nav-pill-CR etc) so this
+   out-specifies the generic ".mob-nav-item span{color:var(--fa)}" rule
+   above — a bare single-class selector loses to it otherwise. */
+.mob-nav-item .mob-nav-pill-ALL{color:var(--g);border-color:var(--g-light)}
+.mob-nav-item .mob-nav-pill-CR{color:var(--cr);border-color:var(--cr-bd)}
+.mob-nav-item .mob-nav-pill-EN{color:var(--en);border-color:var(--en-bd)}
+.mob-nav-item .mob-nav-pill-VU{color:var(--vu);border-color:var(--vu-bd)}
+.mob-nav-item .mob-nav-pill-OTS{color:var(--ots);border-color:var(--ots-bd)}
+.mob-nav-item.active .mob-nav-pill-ALL{background:var(--gbg)}
+.mob-nav-item.active .mob-nav-pill-CR{background:var(--cr-bg)}
+.mob-nav-item.active .mob-nav-pill-EN{background:var(--en-bg)}
+.mob-nav-item.active .mob-nav-pill-VU{background:var(--vu-bg)}
+.mob-nav-item.active .mob-nav-pill-OTS{background:var(--ots-bg)}
+
 .mob-nav-spacer{height:64px;flex-shrink:0} /* pushes content above nav */
 @media (max-width:768px){
   .body-wrap{padding-bottom:64px}
@@ -1662,24 +1718,19 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <div class="mob-nav-items">
 
     <button class="mob-nav-item active" id="mnAll" data-c="ALL">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      <span>All</span>
+      <span class="mob-nav-pill mob-nav-pill-ALL">ALL</span>
     </button>
     <button class="mob-nav-item" id="mnCR" data-c="CR">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-      <span>CR</span>
+      <span class="mob-nav-pill mob-nav-pill-CR">CR</span>
     </button>
     <button class="mob-nav-item" id="mnEN" data-c="EN">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>EN</span>
+      <span class="mob-nav-pill mob-nav-pill-EN">EN</span>
     </button>
     <button class="mob-nav-item" id="mnVU" data-c="VU">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
-      <span>VU</span>
+      <span class="mob-nav-pill mob-nav-pill-VU">VU</span>
     </button>
     <button class="mob-nav-item" id="mnOTS" data-c="OTS">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span>OTS</span>
+      <span class="mob-nav-pill mob-nav-pill-OTS">OTS</span>
     </button>
     <button class="mob-nav-item mob-feedback-btn" id="feedbackBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
