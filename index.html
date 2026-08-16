@@ -51,7 +51,6 @@ var T={
     landingStatLabel:'Threatened Philippine Vascular Plant Taxa',
     landingSubstats:'920 Philippine endemic \u00B7 219 CITES-listed',
     landingCta:'Explore the List',
-    skipToCatalogue:'Skip to catalogue',
     returnHome:'Return Home',
     landingDocLink:'Official Document',
     datasetLabel:'Dataset',
@@ -103,7 +102,6 @@ var T={
     landingStatLabel:'Nanganganib na Vascular na Halaman sa Pilipinas',
     landingSubstats:'920 endemiko sa Pilipinas \u2022 219 nakalista sa CITES',
     landingCta:'Tuklasin ang Listahan',
-    skipToCatalogue:'Lumaktaw sa katalogo',
     returnHome:'Bumalik sa Simula',
     landingDocLink:'Opisyal na Dokumento',
     datasetLabel:'Datos',
@@ -421,9 +419,16 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   box-shadow:var(--shadow-sm)}
 .tw{overflow:auto;flex:1;background:var(--sf)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
+/* overflow:hidden + ellipsis is a safety net, not the primary fix for any
+   one column — column widths below are sized to fit real content. It
+   exists so a header label that doesn't fit (the Filipino translations
+   run noticeably longer than English, e.g. "Kategorya" vs "Status") gets
+   contained and truncated instead of visually bleeding into the next
+   column's cell, which is what "Status" was doing before. */
 thead th{background:var(--sf);padding:10px 12px;text-align:left;font-size:10px;font-weight:600;
   letter-spacing:.07em;text-transform:uppercase;color:var(--fa);
-  border-bottom:1px solid var(--bd);white-space:nowrap;position:sticky;top:0;z-index:5;
+  border-bottom:1px solid var(--bd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  position:sticky;top:0;z-index:5;
   transition:var(--transition)}
 thead th:first-child{padding-left:20px}
 thead th.sortable{cursor:pointer;user-select:none}
@@ -690,15 +695,17 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
   /* ── HEADER ── */
   .hdr-top{padding:12px 16px 0;gap:10px;flex-wrap:nowrap;align-items:flex-start}
-  .hdr-ico{width:28px;height:28px;font-size:12px;border-radius:10px;flex-shrink:0;margin-top:2px}
+  .hdr-ico{width:28px;height:28px;font-size:12px;border-radius:10px;flex-shrink:0;margin-top:-2px}
   .hdr-ey{font-size:10px;letter-spacing:.1em}
   /* Bigger, bolder — this is the app's actual name and should read as
-     branding, not a caption. The DAO source stays inline next to it,
-     small and unbold, and only wraps to its own line if it truly
-     doesn't fit (flex:1 + min-width:0 on .hdr-t lets that happen
-     naturally instead of forcing it every time). */
-  .hdr-t{font-size:16px;line-height:1.3;font-weight:700}
-  .hdr-t-source{font-size:.62em;font-weight:400;margin-left:4px;white-space:nowrap}
+     branding, not a caption. Title and DAO source are stacked as two
+     deliberate lines (not left to wrap inline) so the source always
+     lands in the same tidy spot under the title, in both languages —
+     including the much longer Filipino translation, which routinely
+     wraps to 2+ lines on its own. */
+  .hdr-t{font-size:18px;line-height:1.28;font-weight:700}
+  #hdrTitle{display:block}
+  .hdr-t-source{display:block;font-size:.6em;font-weight:400;margin-top:2px}
   .hdr-s{font-size:10px;margin-top:2px;opacity:.75}
   /* Icon-only on mobile — no room for the label next to a wrapping title */
   .hdr-home-btn{padding:6px;border-radius:50%}
@@ -761,14 +768,28 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   thead th:nth-child(5),tbody td:nth-child(5){display:none} /* CITES */
   thead th:nth-child(6),tbody td:nth-child(6){display:none} /* habit */
   thead th:nth-child(8),tbody td:nth-child(8){display:none} /* common name */
-  thead th{padding:8px 8px;font-size:10px}
-  thead th:nth-child(2){width:46px}
-  thead th:nth-child(3){width:100px}
+  /* Status header ("Status" + sort icon, uppercase + letter-spaced) no
+     longer fits an 8px-padded 46px column — it overflowed under the
+     Family header next to it. Tighter letter-spacing/icon gap plus a
+     wider column (below) clears it in both the unsorted and
+     actively-sorted states. */
+  thead th{padding:8px 8px;font-size:10px;letter-spacing:.02em}
+  thead th .sort-icon{margin-left:2px}
+  thead th:nth-child(2){width:68px}
+  /* Family: wide enough that "Pentaphragmataceae" — the longest family
+     in the dataset — renders on one line with no wrapped remainder.
+     Every shorter family name clears with room to spare, which also
+     kills the single/double-letter orphan line ("...aceae" -> "e")
+     that families like Rhizophoraceae or Podocarpaceae used to wrap
+     into at the old 100px. The extra width comes out of Scientific
+     Name, which already wraps its longest entries at the old width too
+     — a much less noticeable cost than an orphaned letter. */
+  thead th:nth-child(3){width:136px}
   tbody td{padding:10px 8px;vertical-align:top}
   tbody td:nth-child(2){padding-left:12px}
   tbody td:nth-child(3){padding-right:12px} /* a little more air before the scientific name */
-  .cc{width:46px}
-  .cf{font-size:11px;width:100px}
+  .cc{width:68px}
+  .cf{font-size:11px;width:136px}
   .csn{font-size:15px;line-height:1.3}
   .cau{font-size:11px;margin-top:3px}
   /* Table-row badge shrinks to just the star on mobile — the full "★
@@ -1003,7 +1024,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .landing-disclaimer-link:active{opacity:.7}
 .feedback-disclaimer:active{transform:scale(.98);opacity:.9}
 .hdr-home-btn:active{transform:scale(.95)}
-.landing-skip:active{transform:scale(.95)}
 .copy-cite-btn:active{transform:scale(.98);opacity:.85}
 .ftr-feedback-btn:active{transform:scale(.95)}
 
@@ -1364,11 +1384,6 @@ body.view-landing .mob-nav-spacer{display:none!important}
 body.entering .hdr-toolbar-wrap,
 body.entering .body-wrap{animation:app-in .3s ease}
 
-.landing-skip{position:absolute;top:20px;right:20px;padding:5px 12px;border-radius:var(--r-pill);
-  border:1px solid var(--bd-strong);background:var(--sf);color:var(--mu);font-size:var(--t-xs);
-  font-weight:500;cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
-.landing-skip:hover{border-color:var(--gl);color:var(--g);background:var(--gbg)}
-
 .landing-inner{max-width:560px;display:flex;flex-direction:column;align-items:center}
 
 .landing-mark{width:64px;height:64px;background:var(--gbg);border:1.5px solid var(--g-light);
@@ -1449,8 +1464,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 .landing-disclaimer-link:hover{color:var(--g)}
 
 @media (max-width:768px){
-  .landing{padding:72px 20px 40px}
-  .landing-skip{top:calc(16px + env(safe-area-inset-top));right:16px;font-size:10px;padding:4px 10px}
+  .landing{padding:48px 20px}
   .landing-mark{width:52px;height:52px;font-size:22px;margin-bottom:16px}
   .landing-title{font-size:28px;margin-bottom:10px}
   .landing-desc{font-size:var(--t-sm);margin-bottom:28px}
@@ -1463,7 +1477,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
 <!-- ══ LANDING / COVER ══ -->
 <div class="landing" id="landing">
-  <button class="landing-skip" id="landingSkip" data-i18n="skipToCatalogue" title="Skip to catalogue">Skip to catalogue</button>
   <div class="landing-inner">
     <div class="landing-mark"><img src="logo_192.png" alt=""></div>
     <h1 class="landing-title" data-i18n="landingTitle">Threatened Philippine Plants</h1>
@@ -3370,9 +3383,7 @@ function enterCatalogue(animate){
 }
 (function(){
   var cta=document.getElementById('landingCta');
-  var skip=document.getElementById('landingSkip');
   if(cta)cta.addEventListener('click',function(){enterCatalogue(true);});
-  if(skip)skip.addEventListener('click',function(){enterCatalogue(true);});
 })();
 
 function returnToLanding(){
