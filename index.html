@@ -34,7 +34,6 @@ var T={
     sendFeedbackBtn:'Send feedback',shareTool:'Share this tool',linkCopied:'Link copied!',
     feedbackHelp:'Help improve this tool \u2014 report errors, missing data, or suggestions',
     feedbackNote:'This is a solo project maintained in a personal capacity. Feedback on species data, distribution, or features is welcome.',
-    disclaimer:'This tool is an independent reference application built on DAO 2026-20, an official issuance of the Department of Environment and Natural Resources (DENR), Philippines. The developer does not claim authorship of the legal instrument or the species list therein. All taxonomic and legal content is sourced from the official DAO.',
     botanist:'Botanist',
     analyticsTitle:'Dataset Analytics \u2014 DAO 2026-20',
     totalTaxa:'Total Taxa',phlEndemic:'PHL Endemic',infra:'Infraspecific Taxa',
@@ -48,14 +47,16 @@ var T={
     hdrTitle:'Threatened Philippine Plants',
     builtWith:'Built with Claude \u00B7 Anthropic',
     landingTitle:'Threatened Philippine Plants',
-    landingDesc:'An independent reference for threatened plant species of the Philippines, drawn from national and international conservation assessments. Choose a list to begin.',
+    landingDesc:'An independent reference for the Updated National List of Threatened Philippine Plants under DAO 2026-20 \u2014 searchable by taxonomy, conservation status, distribution, and CITES listing.',
     landingStatLabel:'Threatened Philippine Vascular Plant Taxa',
     landingSubstats:'920 Philippine endemic \u00B7 219 CITES-listed',
     landingCta:'Explore the List',
-    landingIucnLabel:'Philippine plants assessed as threatened by the IUCN Red List',
-    comingSoon:'Coming Soon',
     skipToCatalogue:'Skip to catalogue',
-    returnHome:'Return Home'
+    returnHome:'Return Home',
+    landingDocLink:'Official Document',
+    datasetLabel:'Dataset',
+    disclaimerLabel:'Disclaimer',
+    readDisclaimer:'Read the full disclaimer →'
   },
   fil:{
     search:'Hanapin ang pangalan, awtor, karaniwang pangalan, pamilya\u2026',
@@ -85,7 +86,6 @@ var T={
     linkCopied:'Nakopya ang link!',
     feedbackHelp:'Tulungan kaming mapabuti ang tool na ito \u2014 iulat ang mga pagkakamali, nawawalang datos, o mga mungkahi',
     feedbackNote:'Ito ay isang personal na proyekto. Tinatanggap ang mga puna tungkol sa datos ng species, distribusyon, o mga tampok.',
-    disclaimer:'Ang tool na ito ay isang independyenteng reference application na nakabatay sa DAO 2026-20, isang opisyal na kautusan ng Kagawaran ng Kapaligiran at Likas na Yaman (DENR), Pilipinas. Ang developer ay hindi nag-aangkin ng pagkaka-akda ng legal na instrumento o ng listahan ng mga species. Ang lahat ng taksonomikal at legal na nilalaman ay hango sa opisyal na DAO.',
     botanist:'Botanist',
     analyticsTitle:'Pagsusuri ng Dataset \u2014 DAO 2026-20',
     totalTaxa:'Kabuuang Taxa',phlEndemic:'Endemiko sa Pilipinas',infra:'Infraspecific na Taxa',
@@ -99,14 +99,16 @@ var T={
     hdrTitle:'Mga Nanganganib na Halaman ng Pilipinas',
     builtWith:'Ginawa gamit ang Claude \u00B7 Anthropic',
     landingTitle:'Mga Nanganganib na Halaman ng Pilipinas',
-    landingDesc:'Isang independiyenteng sanggunian para sa mga nanganganib na species ng halaman sa Pilipinas, mula sa mga pambansa at internasyonal na pagtatasa sa konserbasyon. Pumili ng listahan upang magsimula.',
+    landingDesc:'Isang independiyenteng sanggunian para sa Updated National List of Threatened Philippine Plants sa ilalim ng DAO 2026-20 \u2014 mahahanap ayon sa taksonomiya, katayuan sa konserbasyon, distribusyon, at listahan ng CITES.',
     landingStatLabel:'Nanganganib na Vascular na Halaman sa Pilipinas',
     landingSubstats:'920 endemiko sa Pilipinas \u2022 219 nakalista sa CITES',
     landingCta:'Tuklasin ang Listahan',
-    landingIucnLabel:'Mga halaman ng Pilipinas na itinuturing na nanganganib ayon sa IUCN Red List',
-    comingSoon:'Malapit na',
     skipToCatalogue:'Lumaktaw sa katalogo',
-    returnHome:'Bumalik sa Simula'
+    returnHome:'Bumalik sa Simula',
+    landingDocLink:'Opisyal na Dokumento',
+    datasetLabel:'Datos',
+    disclaimerLabel:'Paunawa',
+    readDisclaimer:'Basahin ang buong paunawa →'
   }
 };
 function t(key){return(T[LANG]&&T[LANG][key])||T.en[key]||key;}
@@ -624,6 +626,13 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   padding:4px 8px;border-radius:6px;transition:var(--transition)}
 .modal-close:hover{background:var(--bg);color:var(--ink)}
 .modal-body{overflow-y:auto;padding:20px 24px;flex:1}
+
+.disclaimer-body p{font-size:12px;line-height:1.7;color:var(--mu);margin-bottom:16px}
+.disclaimer-body p:last-child{margin-bottom:0}
+.disclaimer-body h4{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--g);margin-bottom:6px;font-weight:600}
+.disclaimer-body a{color:var(--gl)}
+
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .chart-card{background:var(--bg);border-radius:16px;padding:16px;border:1px solid var(--bd)}
 .chart-card.wide{grid-column:1/-1}
@@ -990,6 +999,9 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .feedback-email-btn:active{transform:scale(.97);opacity:.9}
 .cdfp-btn:active{transform:translateX(2px) scale(.98);opacity:.85}
 .landing-list-card:active{transform:translateY(-1px) scale(.99)}
+.landing-ref-card:active{transform:scale(.98)}
+.landing-disclaimer-link:active{opacity:.7}
+.feedback-disclaimer:active{transform:scale(.98);opacity:.9}
 .hdr-home-btn:active{transform:scale(.95)}
 .landing-skip:active{transform:scale(.95)}
 .copy-cite-btn:active{transform:scale(.98);opacity:.85}
@@ -1004,10 +1016,12 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .lang-btn:active{transform:scale(.95)}
 
 
-/* DISCLAIMER */
-.feedback-disclaimer{font-size:10px;color:var(--fa);line-height:1.6;
-  padding:10px 12px;background:var(--bg);border-radius:10px;
-  border:1px solid var(--bd);margin-top:4px;font-style:italic}
+/* DISCLAIMER — a link into the full modal, not the text itself */
+.feedback-disclaimer{display:block;width:100%;text-align:left;font-size:11px;
+  color:var(--mu);font-weight:500;padding:10px 12px;background:var(--bg);
+  border-radius:10px;border:1px solid var(--bd-soft);margin-top:4px;
+  cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
+.feedback-disclaimer:hover{border-color:var(--gl);color:var(--g);background:var(--gbg)}
 
 /* ══════════════════════════════════════════════════════════
    DESKTOP/TABLET RESTORE — ≥769px
@@ -1367,12 +1381,16 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
 .landing-desc{font-size:var(--t-base);line-height:1.65;color:var(--mu);max-width:440px;margin-bottom:36px}
 
-/* Two-list picker — DAO 2026-20 (live) and IUCN (not yet wired up).
-   Same soft-card language as the dashboard: r-md radius, soft border,
-   shadow-sm at rest, lifts slightly on hover for the live card. */
-.landing-lists{display:flex;gap:16px;width:100%}
+/* Single entry-point card — DAO 2026-20. IUCN's terms prohibit
+   redistributing their dataset (only individual-lookup/link use is
+   permitted without a written waiver), so there's no second list to
+   pick between here; IUCN reference is handled per-species inside the
+   dossier instead, same pattern as GBIF. Same soft-card language as
+   the dashboard: r-md radius, soft border, shadow-sm at rest, lifts
+   slightly on hover. */
+.landing-lists{display:flex;justify-content:center;width:100%}
 
-.landing-list-card{flex:1;text-align:left;display:flex;flex-direction:column;
+.landing-list-card{width:100%;max-width:340px;text-align:left;display:flex;flex-direction:column;
   padding:20px;background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-md);
   box-shadow:var(--shadow-sm);cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
 .landing-list-card:hover{border-color:var(--gl);box-shadow:var(--shadow-md);transform:translateY(-2px)}
@@ -1387,18 +1405,48 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
 .landing-list-sub{font-size:var(--t-xs);color:var(--mu)}
 
+/* Category breakdown — same status colors used everywhere else (table
+   pills, bottom nav), so this reads as the same fact restated compactly
+   rather than a new visual language. */
+.landing-list-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--bd-soft)}
+.landing-list-cat{display:flex;flex-direction:column;gap:2px}
+.landing-list-cat-code{font-family:"IBM Plex Mono",monospace;font-size:10px;
+  font-weight:700;letter-spacing:.03em}
+.landing-list-cat-n{font-family:"Cormorant Garamond",serif;font-weight:700;
+  font-size:18px;color:var(--ink);line-height:1.1}
+.landing-list-cat-CR .landing-list-cat-code{color:var(--cr)}
+.landing-list-cat-EN .landing-list-cat-code{color:var(--en)}
+.landing-list-cat-VU .landing-list-cat-code{color:var(--vu)}
+.landing-list-cat-OTS .landing-list-cat-code{color:var(--ots)}
+
 .landing-list-go{margin-top:auto;padding-top:14px;font-size:var(--t-sm);font-weight:600;
   color:var(--g);display:flex;align-items:center;gap:6px}
 .landing-list-go span[aria-hidden]{display:inline-block;transition:transform .16s}
 .landing-list-card:hover .landing-list-go span[aria-hidden]{transform:translateX(3px)}
 
-/* Coming soon — visually present, not yet interactive */
-.landing-list-card-soon{cursor:default;opacity:.65}
-.landing-list-card-soon:hover{border-color:var(--bd-soft);box-shadow:var(--shadow-sm);transform:none}
-.landing-list-soon-badge{align-self:flex-start;padding:2px 8px;border-radius:var(--r-pill);
-  background:var(--bg);border:1px solid var(--bd-strong);color:var(--fa);font-size:10px;
-  font-weight:600;letter-spacing:.04em;font-family:"IBM Plex Mono",monospace;
-  text-transform:uppercase;margin-bottom:10px}
+/* Supporting references — smaller soft cards, same language as the DAO
+   card but lower visual weight, so they read as secondary without
+   falling back to bare text links. */
+.landing-refs{margin-top:16px;display:flex;gap:12px;width:100%;max-width:340px}
+.landing-ref-card{flex:1;display:flex;flex-direction:column;gap:4px;
+  padding:12px 14px;background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-sm);
+  box-shadow:var(--shadow-xs);cursor:pointer;font-family:Inter,sans-serif;
+  text-decoration:none;text-align:left;transition:var(--transition)}
+.landing-ref-card:hover{border-color:var(--gl);box-shadow:var(--shadow-sm)}
+.landing-ref-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--gl)}
+.landing-ref-label{font-size:var(--t-xs);font-weight:600;color:var(--ink);
+  display:flex;align-items:center;gap:5px}
+.landing-ref-label span[aria-hidden]{color:var(--fa);transition:transform .16s}
+.landing-ref-card:hover .landing-ref-label span[aria-hidden]{transform:translateX(2px);color:var(--gl)}
+
+/* Disclaimer stays a plain link, last in the flow — proportioned like a
+   standard terms/privacy footer link, not another card. */
+.landing-disclaimer-link{margin-top:20px;background:none;border:none;padding:0;
+  cursor:pointer;color:var(--fa);font-size:var(--t-xs);font-family:Inter,sans-serif;
+  transition:var(--transition)}
+.landing-disclaimer-link:hover{color:var(--g)}
 
 @media (max-width:768px){
   .landing{padding:72px 20px 40px}
@@ -1406,8 +1454,8 @@ body.entering .body-wrap{animation:app-in .3s ease}
   .landing-mark{width:52px;height:52px;font-size:22px;margin-bottom:16px}
   .landing-title{font-size:28px;margin-bottom:10px}
   .landing-desc{font-size:var(--t-sm);margin-bottom:28px}
-  .landing-lists{flex-direction:column}
   .landing-list-stat{font-size:32px}
+  .landing-refs{flex-direction:column}
 }
 </style>
 </head>
@@ -1419,7 +1467,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <div class="landing-inner">
     <div class="landing-mark"><img src="logo_192.png" alt=""></div>
     <h1 class="landing-title" data-i18n="landingTitle">Threatened Philippine Plants</h1>
-    <p class="landing-desc" data-i18n="landingDesc">An independent reference for threatened plant species of the Philippines, drawn from national and international conservation assessments. Choose a list to begin.</p>
+    <p class="landing-desc" data-i18n="landingDesc">An independent reference for the Updated National List of Threatened Philippine Plants under DAO 2026-20 &mdash; searchable by taxonomy, conservation status, distribution, and CITES listing.</p>
 
     <div class="landing-lists">
       <button class="landing-list-card" id="landingCta">
@@ -1427,15 +1475,28 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <div class="landing-list-stat">1,237</div>
         <div class="landing-list-label" data-i18n="landingStatLabel">Threatened Philippine Vascular Plant Taxa</div>
         <div class="landing-list-sub" data-i18n="landingSubstats">920 Philippine endemic &middot; 219 CITES-listed</div>
+        <div class="landing-list-breakdown">
+          <div class="landing-list-cat landing-list-cat-CR"><span class="landing-list-cat-code">CR</span><span class="landing-list-cat-n">270</span></div>
+          <div class="landing-list-cat landing-list-cat-EN"><span class="landing-list-cat-code">EN</span><span class="landing-list-cat-n">304</span></div>
+          <div class="landing-list-cat landing-list-cat-VU"><span class="landing-list-cat-code">VU</span><span class="landing-list-cat-n">433</span></div>
+          <div class="landing-list-cat landing-list-cat-OTS"><span class="landing-list-cat-code">OTS</span><span class="landing-list-cat-n">230</span></div>
+        </div>
         <div class="landing-list-go"><span data-i18n="landingCta">Explore the List</span> <span aria-hidden="true">&rarr;</span></div>
       </button>
-
-      <div class="landing-list-card landing-list-card-soon" aria-disabled="true">
-        <div class="landing-list-eyebrow">IUCN Red List</div>
-        <div class="landing-list-soon-badge" data-i18n="comingSoon">Coming Soon</div>
-        <div class="landing-list-label" data-i18n="landingIucnLabel">Philippine plants assessed as threatened by the IUCN Red List</div>
-      </div>
     </div>
+
+    <div class="landing-refs">
+      <a class="landing-ref-card" href="https://www.bmb.gov.ph/wp-content/uploads/2026/04/dao2026-20.pdf" target="_blank" rel="noopener">
+        <div class="landing-ref-eyebrow">DAO 2026-20</div>
+        <div class="landing-ref-label"><span data-i18n="landingDocLink">Official Document</span> <span aria-hidden="true">&#8599;</span></div>
+      </a>
+      <button class="landing-ref-card js-open-analytics" type="button">
+        <div class="landing-ref-eyebrow" data-i18n="datasetLabel">Dataset</div>
+        <div class="landing-ref-label"><span data-i18n="analytics">Analytics</span> <span aria-hidden="true">&rarr;</span></div>
+      </button>
+    </div>
+
+    <button class="landing-disclaimer-link js-open-disclaimer" type="button" data-i18n="disclaimerLabel">Disclaimer</button>
   </div>
 </div>
 
@@ -1713,6 +1774,31 @@ body.entering .body-wrap{animation:app-in .3s ease}
   </div>
 </div>
 
+<!-- DISCLAIMER MODAL -->
+<div class="modal-overlay" id="disclaimerOverlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Disclaimer</div>
+      <button class="modal-close" id="disclaimerClose">&#10005;</button>
+    </div>
+    <div class="modal-body disclaimer-body">
+      <p>This application is an independent personal project developed and maintained in a personal capacity.</p>
+
+      <h4>Source data</h4>
+      <p>The species list, conservation categories, and legal classifications presented here are drawn from DAO 2026-20, an official issuance of the Department of Environment and Natural Resources (DENR), Philippines. The developer does not claim authorship of the legal instrument or the species list it contains &mdash; all taxonomic and legal content originates from the official DAO. Growth habit annotations reflect the developer's own professional verification and judgment, and are not an official DENR determination.</p>
+
+      <h4>Distribution and photographs</h4>
+      <p>Local distribution information has been compiled by the developer from <a href="https://www.philippineplants.org" target="_blank" rel="noopener">Co&rsquo;s Digital Flora of the Philippines</a> (CDFP), and photographs linked from this tool are sourced from CDFP. Full credit for this data and imagery belongs to CDFP, Pelser et al. 2011&ndash;, and its contributors.</p>
+
+      <h4>Accuracy and currency</h4>
+      <p>This tool is provided as a reference only, without warranty of any kind. While care has been taken in compiling and presenting this information, no guarantee is made that the data is complete, current, or error-free.</p>
+
+      <h4>Third-party data</h4>
+      <p>Information sourced from external services (e.g., GBIF occurrence and taxonomic match data) is fetched live and is not independently verified. It reflects the state of those external databases at the time of viewing and may differ from official Philippine taxonomic determinations.</p>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MOBILE BOTTOM NAV ══ -->
 <nav class="mob-nav" id="mobNav">
   <div class="mob-nav-items">
@@ -1882,9 +1968,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <span data-i18n="shareTool">Share this tool</span>
       </a>
       <div class="feedback-note" id="fbNote" data-i18n="feedbackNote">This is a solo project maintained in a personal capacity. Feedback on species data, distribution, or features is welcome.</div>
-      <div class="feedback-disclaimer" id="fbDisclaimer" data-i18n="disclaimer">
-        This tool is an independent reference application built on DAO 2026-20, an official issuance of the Department of Environment and Natural Resources (DENR), Philippines. The developer does not claim authorship of the legal instrument or the species list therein. All taxonomic and legal content is sourced from the official DAO.
-      </div>
+      <button class="feedback-disclaimer js-open-disclaimer" id="fbDisclaimer" type="button" data-i18n="readDisclaimer">Read the full disclaimer →</button>
     </div>
   </div>
 </div>
@@ -2915,18 +2999,42 @@ function buildAnalytics(){
     +'</div>'; /* close chart-grid */
 }
 
-document.getElementById('btnAnalytics').addEventListener('click',function(){
+function openAnalytics(){
   buildAnalytics();
   document.getElementById('analyticsOverlay').classList.add('open');
-});
+}
+document.getElementById('btnAnalytics').addEventListener('click',openAnalytics);
 document.getElementById('analyticsClose').addEventListener('click',function(){
   document.getElementById('analyticsOverlay').classList.remove('open');
 });
 document.getElementById('analyticsOverlay').addEventListener('click',function(e){
   if(e.target===this)this.classList.remove('open');
 });
+/* Reachable from the landing footer too — same modal, no separate view
+   or duplicated markup, just another trigger. */
+document.querySelectorAll('.js-open-analytics').forEach(function(btn){
+  btn.addEventListener('click',openAnalytics);
+});
+
+/* ── DISCLAIMER MODAL ── */
+function openDisclaimer(){
+  document.getElementById('disclaimerOverlay').classList.add('open');
+}
+document.querySelectorAll('.js-open-disclaimer').forEach(function(btn){
+  btn.addEventListener('click',openDisclaimer);
+});
+document.getElementById('disclaimerClose').addEventListener('click',function(){
+  document.getElementById('disclaimerOverlay').classList.remove('open');
+});
+document.getElementById('disclaimerOverlay').addEventListener('click',function(e){
+  if(e.target===this)this.classList.remove('open');
+});
+
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape')document.getElementById('analyticsOverlay').classList.remove('open');
+  if(e.key==='Escape'){
+    document.getElementById('analyticsOverlay').classList.remove('open');
+    document.getElementById('disclaimerOverlay').classList.remove('open');
+  }
 });
 
 buildFams();
