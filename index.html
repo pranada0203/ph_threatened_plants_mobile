@@ -123,23 +123,37 @@ try{var _saved=localStorage.getItem('dao-lang');if(_saved==='en'||_saved==='fil'
    flex:1 (a long-standing WebKit quirk; Chrome handles the combination
    fine, which is why this only shows up on a real iPhone). Pinning the
    value from window.innerHeight instead sidesteps the unit entirely.
-   The very first call runs here (head, before body parses) so it's set
-   before first paint, but window.innerHeight isn't guaranteed to be
-   settled that early on every engine — confirmed by testing, where the
-   initial read came back at half the real height. 'load' re-reads it
-   once layout has actually finished; visualViewport (the API meant for
-   exactly this — tracking Safari's address bar collapsing/expanding)
-   keeps it correct afterward wherever it's available, falling back to
-   plain resize/orientationchange otherwise. */
-function setAppVH(){document.documentElement.style.setProperty('--vh',(window.innerHeight*0.01)+'px');}
+
+   Confirmed on-device: the box only actually resizes/recenters once
+   something (a scroll, a resize) forces it — which points at two
+   separate iOS quirks stacked on each other, not one. First,
+   window.innerHeight isn't reliably settled by 'load' on every engine
+   (reproduced in testing: the very first read came back at half the
+   real height). Second, WebKit doesn't always repaint a min-height
+   that's driven by a changed custom property until something else
+   forces a reflow — so even a *correct* value written to --vh can sit
+   there unapplied visually until the next scroll/resize does that
+   forcing incidentally. void(...offsetHeight) below forces that reflow
+   directly instead of waiting for one to happen by chance, and the
+   delayed re-checks catch late-settling viewport metrics without
+   needing the user to touch the screen first. */
+function setAppVH(){
+  document.documentElement.style.setProperty('--vh',(window.innerHeight*0.01)+'px');
+  void document.documentElement.offsetHeight;
+}
 setAppVH();
 window.addEventListener('load',setAppVH);
+setTimeout(setAppVH,50);
+setTimeout(setAppVH,300);
+setTimeout(setAppVH,1000);
 if(window.visualViewport){
   window.visualViewport.addEventListener('resize',setAppVH);
+  window.visualViewport.addEventListener('scroll',setAppVH);
 }else{
   window.addEventListener('resize',setAppVH);
   window.addEventListener('orientationchange',setAppVH);
 }
+window.addEventListener('scroll',setAppVH,{passive:true});
 
 /* Static UI text is declared in the markup with data-i18n / data-i18n-ph
    rather than enumerated here. The previous hand-written list of
