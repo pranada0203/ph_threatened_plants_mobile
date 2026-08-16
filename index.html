@@ -115,6 +115,32 @@ function t(key){return(T[LANG]&&T[LANG][key])||T.en[key]||key;}
    English on every reload is worse than no toggle at all. */
 try{var _saved=localStorage.getItem('dao-lang');if(_saved==='en'||_saved==='fil')LANG=_saved;}catch(e){}
 
+/* Real viewport height, in a CSS var, as --vh (1% of it).
+   Landing needs a true full-screen box for its centering to have any
+   room to work with, and CSS vh/dvh units can't be trusted for that on
+   iOS Safari — its flexbox engine doesn't reliably honor a min-height
+   written in viewport units on an element that's also being sized by
+   flex:1 (a long-standing WebKit quirk; Chrome handles the combination
+   fine, which is why this only shows up on a real iPhone). Pinning the
+   value from window.innerHeight instead sidesteps the unit entirely.
+   The very first call runs here (head, before body parses) so it's set
+   before first paint, but window.innerHeight isn't guaranteed to be
+   settled that early on every engine — confirmed by testing, where the
+   initial read came back at half the real height. 'load' re-reads it
+   once layout has actually finished; visualViewport (the API meant for
+   exactly this — tracking Safari's address bar collapsing/expanding)
+   keeps it correct afterward wherever it's available, falling back to
+   plain resize/orientationchange otherwise. */
+function setAppVH(){document.documentElement.style.setProperty('--vh',(window.innerHeight*0.01)+'px');}
+setAppVH();
+window.addEventListener('load',setAppVH);
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',setAppVH);
+}else{
+  window.addEventListener('resize',setAppVH);
+  window.addEventListener('orientationchange',setAppVH);
+}
+
 /* Static UI text is declared in the markup with data-i18n / data-i18n-ph
    rather than enumerated here. The previous hand-written list of
    getElementById calls only reached 27 of the 64 defined keys, so 37
@@ -1485,13 +1511,16 @@ body.entering .body-wrap{animation:app-in .3s ease}
 .landing-disclaimer-link:hover{color:var(--g)}
 
 @media (max-width:768px){
-  /* min-height:100dvh makes centering self-sufficient — it no longer
-     depends on flex:1 successfully inheriting a definite height from
-     body (height:auto there). That inheritance is exactly the kind of
-     thing that can drift on real mobile Safari as the address bar
-     shows/hides and the visual viewport resizes under the page, even
-     though it measures out centered in a static desktop emulator. */
-  .landing{padding:48px 20px;min-height:100dvh}
+  /* A real min-height (not a dvh unit) makes centering self-sufficient —
+     it no longer depends on flex:1 successfully inheriting a definite
+     height from body (height:auto there), and it isn't subject to
+     Safari's flexbox engine failing to honor a viewport-unit min-height
+     on an item that's also sized by flex:1 (confirmed on a real iPhone;
+     100dvh alone measured out centered in a desktop emulator but still
+     left the group pinned to the top on-device). --vh is set from
+     window.innerHeight by the script in <head>; 1dvh is the fallback
+     for the rare case JS hasn't run. */
+  .landing{padding:48px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
   .landing-mark{width:52px;height:52px;font-size:22px;margin-bottom:16px}
   .landing-title{font-size:28px;margin-bottom:10px}
   .landing-desc{font-size:var(--t-sm);margin-bottom:28px}
