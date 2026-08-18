@@ -999,15 +999,41 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    out-specifies the generic ".mob-nav-item span{color:var(--fa)}" rule
    above — a bare single-class selector loses to it otherwise. */
 .mob-nav-item .mob-nav-pill-ALL{color:var(--g);border-color:var(--g-light)}
-.mob-nav-item .mob-nav-pill-CR{color:var(--cr);border-color:var(--cr-bd)}
-.mob-nav-item .mob-nav-pill-EN{color:var(--en);border-color:var(--en-bd)}
-.mob-nav-item .mob-nav-pill-VU{color:var(--vu);border-color:var(--vu-bd)}
-.mob-nav-item .mob-nav-pill-OTS{color:var(--ots);border-color:var(--ots-bd)}
 .mob-nav-item.active .mob-nav-pill-ALL{background:var(--gbg)}
-.mob-nav-item.active .mob-nav-pill-CR{background:var(--cr-bg)}
-.mob-nav-item.active .mob-nav-pill-EN{background:var(--en-bg)}
-.mob-nav-item.active .mob-nav-pill-VU{background:var(--vu-bg)}
-.mob-nav-item.active .mob-nav-pill-OTS{background:var(--ots-bg)}
+
+/* CR/EN/VU/OTS — a dot (standing in for an icon, the way BPI's outer
+   four items each carry one) above the colored code, no pill outline.
+   The outline was the actual problem reported, not the empty space
+   around it per se — each slot is ~82px wide and the pill was only
+   34px, but BPI's own "Accounts"/"Move money" labels don't fill their
+   columns either; a visible box drawn around mostly-empty space is
+   what reads as awkward, and plain text/dot doesn't have that box to
+   draw attention to it. Colors stay live at all times regardless of
+   selection (matching the equivalent table/dossier pills elsewhere in
+   the app) — only the underline marks which one is active, same as
+   the red dash under BPI's selected tab. */
+.mob-nav-dot{width:6px;height:6px;border-radius:50%;margin-bottom:4px}
+/* .mob-nav-item .mob-nav-code — font-size/font-weight here would
+   otherwise lose to the generic ".mob-nav-item span" rule the same way. */
+.mob-nav-item .mob-nav-code{display:block;font-family:"IBM Plex Mono",monospace;
+  font-size:11px;font-weight:700;letter-spacing:.02em;line-height:1;
+  position:relative;padding-bottom:6px}
+.mob-nav-code::after{content:"";position:absolute;left:50%;bottom:0;
+  width:14px;height:2px;border-radius:1px;background:currentColor;
+  transform:translateX(-50%) scaleX(0);transition:transform .15s ease}
+.mob-nav-item.active .mob-nav-code::after{transform:translateX(-50%) scaleX(1)}
+/* .mob-nav-item .mob-nav-code-CR (not bare .mob-nav-code-CR) — same
+   reason as the pill comment above: the generic ".mob-nav-item
+   span{color:var(--fa)}" rule is element+class (0,1,1), which beats a
+   bare single-class selector (0,1,0) regardless of source order. */
+.mob-nav-item .mob-nav-dot-CR,.mob-nav-item .mob-nav-code-CR{color:var(--cr)}
+.mob-nav-item .mob-nav-dot-CR{background:var(--cr)}
+.mob-nav-item .mob-nav-dot-EN,.mob-nav-item .mob-nav-code-EN{color:var(--en)}
+.mob-nav-item .mob-nav-dot-EN{background:var(--en)}
+.mob-nav-item .mob-nav-dot-VU,.mob-nav-item .mob-nav-code-VU{color:var(--vu)}
+.mob-nav-item .mob-nav-dot-VU{background:var(--vu)}
+.mob-nav-item .mob-nav-dot-OTS,.mob-nav-item .mob-nav-code-OTS{color:var(--ots)}
+.mob-nav-item .mob-nav-dot-OTS{background:var(--ots)}
 
 /* ALL — raised solid circle in the center of the row (CR/EN to its
    left, VU/OTS to its right), standing apart from the four outline
@@ -2023,19 +2049,23 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <div class="mob-nav-items">
 
     <button class="mob-nav-item" id="mnCR" data-c="CR">
-      <span class="mob-nav-pill mob-nav-pill-CR">CR</span>
+      <span class="mob-nav-dot mob-nav-dot-CR" aria-hidden="true"></span>
+      <span class="mob-nav-code mob-nav-code-CR">CR</span>
     </button>
     <button class="mob-nav-item" id="mnEN" data-c="EN">
-      <span class="mob-nav-pill mob-nav-pill-EN">EN</span>
+      <span class="mob-nav-dot mob-nav-dot-EN" aria-hidden="true"></span>
+      <span class="mob-nav-code mob-nav-code-EN">EN</span>
     </button>
     <button class="mob-nav-item mob-nav-item-all active" id="mnAll" data-c="ALL">
       <span class="mob-nav-pill mob-nav-pill-ALL">ALL</span>
     </button>
     <button class="mob-nav-item" id="mnVU" data-c="VU">
-      <span class="mob-nav-pill mob-nav-pill-VU">VU</span>
+      <span class="mob-nav-dot mob-nav-dot-VU" aria-hidden="true"></span>
+      <span class="mob-nav-code mob-nav-code-VU">VU</span>
     </button>
     <button class="mob-nav-item" id="mnOTS" data-c="OTS">
-      <span class="mob-nav-pill mob-nav-pill-OTS">OTS</span>
+      <span class="mob-nav-dot mob-nav-dot-OTS" aria-hidden="true"></span>
+      <span class="mob-nav-code mob-nav-code-OTS">OTS</span>
     </button>
   </div>
 </nav>
