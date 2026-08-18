@@ -1554,7 +1554,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
      rendered height at a 393x695 viewport, matching that device) to
      comfortably clear that with room to spare, not just to look denser. */
   .landing{padding:28px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
-  .landing-mark{width:44px;height:44px;font-size:19px;margin-bottom:12px}
+  .landing-mark{width:52px;height:52px;font-size:22px;margin-bottom:14px}
   .landing-title{font-size:26px;margin-bottom:8px}
   .landing-desc{font-size:var(--t-sm);margin-bottom:18px}
   .landing-list-card{padding:16px}
@@ -1563,7 +1563,12 @@ body.entering .body-wrap{animation:app-in .3s ease}
   .landing-list-stat{font-size:32px}
   .landing-refs{margin-top:10px;flex-direction:column}
   .landing-ref-card{padding:10px 14px}
-  .landing-disclaimer-link{margin-top:12px}
+  /* Out of the centered group and pinned to .landing's own bottom edge
+     (position:relative, set in the base rule) — reads as a page footer
+     rather than just the last line of centered content, and no longer
+     eats into the height budget that group is centered within. */
+  .landing-disclaimer-link{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));
+    transform:translateX(-50%);margin-top:0}
 }
 </style>
 </head>
@@ -1603,8 +1608,8 @@ body.entering .body-wrap{animation:app-in .3s ease}
       </button>
     </div>
 
-    <button class="landing-disclaimer-link js-open-disclaimer" type="button" data-i18n="disclaimerLabel">Disclaimer</button>
   </div>
+  <button class="landing-disclaimer-link js-open-disclaimer" type="button" data-i18n="disclaimerLabel">Disclaimer</button>
 </div>
 
 <!-- Temporary on-screen diagnostic for the landing-centering bug — only
