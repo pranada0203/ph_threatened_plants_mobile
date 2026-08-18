@@ -952,11 +952,18 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .mob-filter-btn .mob-filter-count.has-filters{display:inline-flex}
 
 /* BOTTOM NAV */
+/* transform:translateZ(0) forces this onto its own compositing layer —
+   the standard fix for iOS Safari occasionally letting a position:fixed
+   element get dragged along during momentum-scroll instead of staying
+   pinned to the viewport. Couldn't reproduce the drift in testing (this
+   tool's browser doesn't do real momentum-scroll physics either), so
+   applied defensively rather than confirmed against the actual cause. */
 .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;
   background:var(--sf);border-top:1px solid var(--bd);z-index:40;
   padding:0 0 env(safe-area-inset-bottom);
   padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);
-  box-shadow:0 -4px 20px rgba(0,0,0,.08);position:fixed}
+  box-shadow:0 -4px 20px rgba(0,0,0,.08);
+  -webkit-transform:translateZ(0);transform:translateZ(0)}
 /* width:100% — .mob-nav is itself display:flex (only to become visible
    via display:flex!important on mobile), which makes this its flex
    item; without an explicit width a flex item defaults to its content
@@ -976,13 +983,14 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    bottom nav bar, inset from the corner enough to clear the iOS home
    indicator and the safe area on notched phones. */
 .mob-feedback-fab{display:none;position:fixed;
-  right:calc(16px + env(safe-area-inset-right));
-  bottom:calc(56px + 16px + env(safe-area-inset-bottom));
-  width:48px;height:48px;border-radius:50%;z-index:41;
+  right:calc(14px + env(safe-area-inset-right));
+  bottom:calc(56px + 14px + env(safe-area-inset-bottom));
+  width:40px;height:40px;border-radius:50%;z-index:41;
   align-items:center;justify-content:center;border:none;cursor:pointer;
   background:var(--g);color:#fff;box-shadow:var(--shadow-lg);
-  transition:var(--transition)}
-.mob-feedback-fab svg{width:20px;height:20px}
+  transition:var(--transition);
+  -webkit-transform:translateZ(0);transform:translateZ(0)}
+.mob-feedback-fab svg{width:16px;height:16px}
 .mob-feedback-fab:active{transform:scale(.92)}
 
 /* Status pills replace the old grey icon+label pairing — each one shows
@@ -1001,18 +1009,19 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .mob-nav-item .mob-nav-pill-ALL{color:var(--g);border-color:var(--g-light)}
 .mob-nav-item.active .mob-nav-pill-ALL{background:var(--gbg)}
 
-/* CR/EN/VU/OTS — a dot (standing in for an icon, the way BPI's outer
-   four items each carry one) above the colored code, no pill outline.
-   The outline was the actual problem reported, not the empty space
-   around it per se — each slot is ~82px wide and the pill was only
-   34px, but BPI's own "Accounts"/"Move money" labels don't fill their
-   columns either; a visible box drawn around mostly-empty space is
-   what reads as awkward, and plain text/dot doesn't have that box to
-   draw attention to it. Colors stay live at all times regardless of
-   selection (matching the equivalent table/dossier pills elsewhere in
-   the app) — only the underline marks which one is active, same as
-   the red dash under BPI's selected tab. */
-.mob-nav-dot{width:6px;height:6px;border-radius:50%;margin-bottom:4px}
+/* CR/EN/VU/OTS — colored code with its species count below, no dot,
+   no pill outline. The outline was the actual problem reported, not
+   the empty space around it per se — each slot is ~82px wide and the
+   pill was only 34px, but BPI's own "Accounts"/"Move money" labels
+   don't fill their columns either; a visible box drawn around
+   mostly-empty space is what reads as awkward, and plain text doesn't
+   have that box to draw attention to it. The count replaces the dot
+   with something that actually informs rather than just decorates —
+   same code-then-count order the old header stat tabs used, so it
+   reads as a compact version of that instead of a new pattern. Colors
+   stay live at all times regardless of selection (matching the
+   equivalent pills in the table/dossier); only the underline marks
+   which one is active, same as the red dash under BPI's selected tab. */
 /* .mob-nav-item .mob-nav-code — font-size/font-weight here would
    otherwise lose to the generic ".mob-nav-item span" rule the same way. */
 .mob-nav-item .mob-nav-code{display:block;font-family:"IBM Plex Mono",monospace;
@@ -1022,18 +1031,19 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   width:14px;height:2px;border-radius:1px;background:currentColor;
   transform:translateX(-50%) scaleX(0);transition:transform .15s ease}
 .mob-nav-item.active .mob-nav-code::after{transform:translateX(-50%) scaleX(1)}
+/* No color override — this one WANTS the generic ".mob-nav-item
+   span{color:var(--fa)}" muted gray, to read as secondary against the
+   bold colored code above it. Only font-size needs the .mob-nav-item
+   scoping (same specificity fight as the code above). */
+.mob-nav-item .mob-nav-count{font-size:9px;font-weight:500;margin-top:2px}
 /* .mob-nav-item .mob-nav-code-CR (not bare .mob-nav-code-CR) — same
    reason as the pill comment above: the generic ".mob-nav-item
    span{color:var(--fa)}" rule is element+class (0,1,1), which beats a
    bare single-class selector (0,1,0) regardless of source order. */
-.mob-nav-item .mob-nav-dot-CR,.mob-nav-item .mob-nav-code-CR{color:var(--cr)}
-.mob-nav-item .mob-nav-dot-CR{background:var(--cr)}
-.mob-nav-item .mob-nav-dot-EN,.mob-nav-item .mob-nav-code-EN{color:var(--en)}
-.mob-nav-item .mob-nav-dot-EN{background:var(--en)}
-.mob-nav-item .mob-nav-dot-VU,.mob-nav-item .mob-nav-code-VU{color:var(--vu)}
-.mob-nav-item .mob-nav-dot-VU{background:var(--vu)}
-.mob-nav-item .mob-nav-dot-OTS,.mob-nav-item .mob-nav-code-OTS{color:var(--ots)}
-.mob-nav-item .mob-nav-dot-OTS{background:var(--ots)}
+.mob-nav-item .mob-nav-code-CR{color:var(--cr)}
+.mob-nav-item .mob-nav-code-EN{color:var(--en)}
+.mob-nav-item .mob-nav-code-VU{color:var(--vu)}
+.mob-nav-item .mob-nav-code-OTS{color:var(--ots)}
 
 /* ALL — raised solid circle in the center of the row (CR/EN to its
    left, VU/OTS to its right), standing apart from the four outline
@@ -1044,11 +1054,19 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    like the other four (which would widen the gap around it). */
 .mob-nav-item-all{flex:0 0 64px}
 .mob-nav-item-all .mob-nav-pill{position:relative;top:-22px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
   width:58px;height:58px;min-width:0;padding:0;border-radius:50%;
   background:var(--g);color:#fff;border:4px solid var(--sf);
-  font-size:13px;letter-spacing:.03em;box-shadow:0 6px 16px rgba(0,0,0,.22)}
+  box-shadow:0 6px 16px rgba(0,0,0,.22)}
 .mob-nav-item-all.active .mob-nav-pill{background:var(--g)}
 .mob-nav-item-all:active .mob-nav-pill{transform:scale(.94)}
+/* .mob-nav-item scoped, same reason as everywhere else on this bar —
+   without it the generic ".mob-nav-item span{color:var(--fa)}" rule
+   would turn these gray instead of white against the green circle. */
+.mob-nav-item .mob-nav-all-label{font-size:13px;font-weight:700;
+  letter-spacing:.03em;line-height:1;color:#fff}
+.mob-nav-item .mob-nav-all-count{font-size:9px;font-weight:600;
+  line-height:1;color:#fff;opacity:.8}
 
 .mob-nav-spacer{height:64px;flex-shrink:0} /* pushes content above nav */
 @media (max-width:768px){
@@ -2049,23 +2067,26 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <div class="mob-nav-items">
 
     <button class="mob-nav-item" id="mnCR" data-c="CR">
-      <span class="mob-nav-dot mob-nav-dot-CR" aria-hidden="true"></span>
       <span class="mob-nav-code mob-nav-code-CR">CR</span>
+      <span class="mob-nav-count">270</span>
     </button>
     <button class="mob-nav-item" id="mnEN" data-c="EN">
-      <span class="mob-nav-dot mob-nav-dot-EN" aria-hidden="true"></span>
       <span class="mob-nav-code mob-nav-code-EN">EN</span>
+      <span class="mob-nav-count">304</span>
     </button>
     <button class="mob-nav-item mob-nav-item-all active" id="mnAll" data-c="ALL">
-      <span class="mob-nav-pill mob-nav-pill-ALL">ALL</span>
+      <span class="mob-nav-pill mob-nav-pill-ALL">
+        <span class="mob-nav-all-label">ALL</span>
+        <span class="mob-nav-all-count">1,237</span>
+      </span>
     </button>
     <button class="mob-nav-item" id="mnVU" data-c="VU">
-      <span class="mob-nav-dot mob-nav-dot-VU" aria-hidden="true"></span>
       <span class="mob-nav-code mob-nav-code-VU">VU</span>
+      <span class="mob-nav-count">433</span>
     </button>
     <button class="mob-nav-item" id="mnOTS" data-c="OTS">
-      <span class="mob-nav-dot mob-nav-dot-OTS" aria-hidden="true"></span>
       <span class="mob-nav-code mob-nav-code-OTS">OTS</span>
+      <span class="mob-nav-count">230</span>
     </button>
   </div>
 </nav>
