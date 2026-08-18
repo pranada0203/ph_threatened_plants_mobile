@@ -792,14 +792,22 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      render inconsistently across devices and read as sloppy against
      the home button's clean line-icon) is the same pattern most
      multilingual sites use for a two-way switcher. */
-  .lang-btn{width:28px;height:28px;padding:0;border-radius:50%;
-    display:flex;align-items:center;justify-content:center}
-  /* .hdr-top .lang-btn (not bare .lang-btn) — the desktop base rule's
-     margin-top:4px sits later in the file than this block, so a
-     same-specificity override here loses the cascade despite the
-     media query; the compound selector wins on specificity instead. */
-  .hdr-top .lang-btn{margin-top:0}
-  .lang-btn-text{font-size:9px;letter-spacing:.01em}
+  /* .hdr-top .lang-btn (not bare .lang-btn) throughout — the desktop
+     base rule sets display:inline-block (this needs display:flex to
+     actually center its text) and margin-top:4px, both later in the
+     file than this block, so a same-specificity override here loses
+     the cascade despite the media query. That's exactly why the text
+     wasn't really centered before: this was silently still
+     inline-block, not flex, so align-items/justify-content were
+     inert — text position came from an inherited text-align:center
+     instead, which is why longer text ("FIL") drifted further off
+     than short text ("EN") once letter-spacing's trailing space (added
+     after the last character too) skewed it. The compound selector
+     forces flex to genuinely apply; letter-spacing is dropped rather
+     than fought, since it serves no purpose at this size anyway. */
+  .hdr-top .lang-btn{width:28px;height:28px;padding:0;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;margin-top:0}
+  .lang-btn-text{font-size:9px;letter-spacing:0}
   /* Show credit on mobile — pinned top right */
   .hdr-meta{display:block;margin-left:auto;flex-shrink:0;align-self:flex-start}
   .hdr-meta-item{display:none}
