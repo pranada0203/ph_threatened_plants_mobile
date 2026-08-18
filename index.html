@@ -174,7 +174,18 @@ function applyLang(){
   });
   /* Cases an attribute can't express */
   var langBtn=document.getElementById('langToggle');
-  if(langBtn)langBtn.textContent=LANG==='en'?'FIL':'EN';
+  if(langBtn){
+    var langTextEl=langBtn.querySelector('.lang-btn-text');
+    var langFlagEl=langBtn.querySelector('.lang-btn-flag');
+    /* Both always show the language you'd switch TO, matching the old
+       text-only button's behavior — PH flag while reading English
+       (tap for Filipino), US flag while reading Filipino (tap for
+       English). Text stays for desktop; the flag is what mobile shows
+       once the button becomes icon-only there. */
+    if(langTextEl)langTextEl.textContent=LANG==='en'?'FIL':'EN';
+    if(langFlagEl)langFlagEl.textContent=LANG==='en'?'🇵🇭':'🇺🇸';
+    langBtn.setAttribute('aria-label',LANG==='en'?'Switch to Filipino':'Switch to English');
+  }
   /* The full desktop placeholder ("Search name, authority, common name,
      family…") doesn't fit the mobile search card — it overflows behind
      the filter/analytics/export icons. Swap in the short form below
@@ -758,26 +769,32 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      wraps to 2+ lines on its own. */
   .hdr-t{font-size:18px;line-height:1.28;font-weight:700}
   #hdrTitle{display:block}
-  .hdr-t-source{display:block;font-size:.6em;font-weight:400;margin-top:2px}
+  /* A small badge, not just a dim caption — the DAO citation is real
+     branding for this app (its whole reason for existing is that
+     issuance), so it gets a pill of its own under the title instead of
+     reading like an afterthought. */
+  .hdr-t-source{display:inline-block;font-size:10px;font-weight:600;
+    letter-spacing:.04em;margin-top:5px;padding:2px 8px;border-radius:999px;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);
+    opacity:1}
   .hdr-s{font-size:10px;margin-top:2px;opacity:.75}
   /* Icon-only on mobile — no room for the label next to a wrapping title */
   .hdr-home-btn{padding:6px;border-radius:50%}
   .hdr-home-label{display:none}
+  /* Language toggle becomes a flag-in-a-circle next to the home button,
+     matching its size/treatment, instead of the text pill the stat row
+     used to anchor it against (which is gone on mobile — see below). */
+  .lang-btn{width:28px;height:28px;padding:0;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;margin-top:0}
+  .lang-btn .lang-btn-text{display:none}
+  .lang-btn .lang-btn-flag{display:block;font-size:14px;line-height:1}
   /* Show credit on mobile — pinned top right */
   .hdr-meta{display:block;margin-left:auto;flex-shrink:0;align-self:flex-start}
   .hdr-meta-item{display:none}
 
-  /* Stat tabs — compact horizontal scroll */
-  .stat-row{padding:6px 10px 0;gap:1px;overflow-x:auto;
-    scrollbar-width:none;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;margin-top:6px}
-  .stat-row::-webkit-scrollbar{display:none}
-  .sc{padding:6px 12px 7px;min-width:62px;flex:0 0 auto;border-radius:10px 10px 0 0;
-    background:rgba(255,255,255,.06)}
-  .sc.on{background:var(--bg)}
-  .sc-code{font-size:10px;letter-spacing:.05em}
-  .sc-lbl{display:none}
-  .sc-n{font-size:15px;font-weight:700}
-  .sc-sub{display:none}
+  /* The 5 category tabs move to the bottom nav (ALL/CR/EN/VU/OTS there
+     already drive the same filter) — no longer duplicated up here. */
+  .stat-row{display:none}
 
   /* ── TOOLBAR ── */
   .toolbar{height:48px;flex-wrap:nowrap;
@@ -920,7 +937,13 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   padding:0 0 env(safe-area-inset-bottom);
   padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);
   box-shadow:0 -4px 20px rgba(0,0,0,.08);position:fixed}
-.mob-nav-items{display:flex;justify-content:space-around;align-items:center;height:56px}
+/* width:100% — .mob-nav is itself display:flex (only to become visible
+   via display:flex!important on mobile), which makes this its flex
+   item; without an explicit width a flex item defaults to its content
+   size, so this row was shrink-wrapping to the left instead of
+   spanning the bar. Only became visible now because it's the first
+   time the row hasn't been 5 uniform items where that went unnoticed. */
+.mob-nav-items{display:flex;justify-content:space-around;align-items:center;height:56px;width:100%}
 .mob-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
   cursor:pointer;padding:6px 4px;border:none;background:none;
   font-family:Inter,sans-serif;transition:var(--transition)}
@@ -965,6 +988,21 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .mob-nav-item.active .mob-nav-pill-EN{background:var(--en-bg)}
 .mob-nav-item.active .mob-nav-pill-VU{background:var(--vu-bg)}
 .mob-nav-item.active .mob-nav-pill-OTS{background:var(--ots-bg)}
+
+/* ALL — raised solid circle in the center of the row (CR/EN to its
+   left, VU/OTS to its right), standing apart from the four outline
+   pills the way a primary action does in a bank-app-style tab bar.
+   The ring is a border matching the bar's own background, not a
+   shadow, so it reads as a clean cutout regardless of what's
+   scrolling underneath. flex:0 0 auto keeps its item from stretching
+   like the other four (which would widen the gap around it). */
+.mob-nav-item-all{flex:0 0 64px}
+.mob-nav-item-all .mob-nav-pill{position:relative;top:-22px;
+  width:58px;height:58px;min-width:0;padding:0;border-radius:50%;
+  background:var(--g);color:#fff;border:4px solid var(--sf);
+  font-size:13px;letter-spacing:.03em;box-shadow:0 6px 16px rgba(0,0,0,.22)}
+.mob-nav-item-all.active .mob-nav-pill{background:var(--g)}
+.mob-nav-item-all:active .mob-nav-pill{transform:scale(.94)}
 
 .mob-nav-spacer{height:64px;flex-shrink:0} /* pushes content above nav */
 @media (max-width:768px){
@@ -1099,7 +1137,11 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .lang-btn{padding:3px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.25);
   background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);font-size:10px;
   font-weight:700;cursor:pointer;font-family:"IBM Plex Mono",monospace;
-  letter-spacing:.08em;transition:all .15s;margin-top:4px;display:inline-block}
+  letter-spacing:.08em;transition:all .15s;margin-top:4px;display:inline-block;
+  flex-shrink:0}
+/* Text label everywhere by default (desktop); mobile swaps to a flag
+   icon instead — see the ≤768px override. */
+.lang-btn-flag{display:none}
 .lang-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45);color:#fff}
 .lang-btn:active{transform:scale(.95)}
 
@@ -1668,8 +1710,12 @@ body.entering .body-wrap{animation:app-in .3s ease}
     <div class="hdr-ico"><img src="logo_192.png" alt=""></div>
     <div class="hdr-t">
       <span id="hdrTitle" data-i18n="hdrTitle">Threatened Philippine Plants</span>
-      <span class="hdr-t-source">(DAO 2026-20)</span>
+      <span class="hdr-t-source">DAO 2026-20</span>
     </div>
+    <button class="lang-btn" id="langToggle" title="Switch language / Palitan ang wika">
+      <span class="lang-btn-text">FIL</span>
+      <span class="lang-btn-flag" aria-hidden="true">&#127477;&#127469;</span>
+    </button>
     <button class="hdr-home-btn" id="hdrHomeBtn" title="Return to home">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7.5l6-5 6 5"/><path d="M3.5 6.5V13a1 1 0 001 1h2.5v-4h2v4H11a1 1 0 001-1V6.5"/></svg>
       <span class="hdr-home-label" data-i18n="returnHome">Return Home</span>
@@ -1705,10 +1751,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <div class="sc-lbl">Other Threatened</div>
       <div class="sc-n">230</div>
       <div class="sc-sub">136 endemic</div>
-    </div>
-    <div style="flex:1"></div>
-    <div style="display:flex;align-items:flex-end;padding:0 6px 6px">
-      <button class="lang-btn" id="langToggle" title="Switch language / Palitan ang wika">FIL</button>
     </div>
   </div>
 </header>
@@ -1964,14 +2006,14 @@ body.entering .body-wrap{animation:app-in .3s ease}
 <nav class="mob-nav" id="mobNav">
   <div class="mob-nav-items">
 
-    <button class="mob-nav-item active" id="mnAll" data-c="ALL">
-      <span class="mob-nav-pill mob-nav-pill-ALL">ALL</span>
-    </button>
     <button class="mob-nav-item" id="mnCR" data-c="CR">
       <span class="mob-nav-pill mob-nav-pill-CR">CR</span>
     </button>
     <button class="mob-nav-item" id="mnEN" data-c="EN">
       <span class="mob-nav-pill mob-nav-pill-EN">EN</span>
+    </button>
+    <button class="mob-nav-item mob-nav-item-all active" id="mnAll" data-c="ALL">
+      <span class="mob-nav-pill mob-nav-pill-ALL">ALL</span>
     </button>
     <button class="mob-nav-item" id="mnVU" data-c="VU">
       <span class="mob-nav-pill mob-nav-pill-VU">VU</span>
