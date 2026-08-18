@@ -1583,6 +1583,55 @@ body.entering .body-wrap{animation:app-in .3s ease}
   </div>
 </div>
 
+<!-- Temporary on-screen diagnostic for the landing-centering bug — only
+     runs behind ?debug=vh, never shown to a normal visitor. Two rounds
+     of fixes for this checked out fine in a desktop emulator and still
+     failed on a real iPhone, so guessing at a third fix blind isn't
+     worth it — this reads the real numbers directly off the device
+     that's actually failing, refreshed live so a screenshot taken
+     before vs. after scrolling/dragging can be compared directly.
+     Remove this block once the bug is confirmed fixed. */ -->
+<script>
+(function(){
+  if(!/[?&]debug=vh(&|$)/.test(location.search))return;
+  var el=document.createElement('pre');
+  el.id='vhDebug';
+  el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;'+
+    'background:rgba(0,0,0,.85);color:#0f0;font:10px/1.45 monospace;'+
+    'padding:8px;margin:0;white-space:pre-wrap;pointer-events:none;'+
+    'max-height:55vh;overflow:auto';
+  document.body.appendChild(el);
+  function upd(){
+    var landing=document.getElementById('landing');
+    var inner=document.querySelector('.landing-inner');
+    if(!landing||!inner){el.textContent='landing/.landing-inner not found';return;}
+    var lr=landing.getBoundingClientRect();
+    var ir=inner.getBoundingClientRect();
+    var cs=getComputedStyle(landing);
+    var vv=window.visualViewport;
+    el.textContent=[
+      'UA: '+navigator.userAgent.slice(0,70),
+      'innerW/H: '+window.innerWidth+' x '+window.innerHeight,
+      'visualViewport W/H: '+(vv?vv.width.toFixed(0)+' x '+vv.height.toFixed(0):'n/a'),
+      'devicePixelRatio: '+window.devicePixelRatio,
+      '--vh custom prop: '+getComputedStyle(document.documentElement).getPropertyValue('--vh'),
+      '.landing rect: top='+lr.top.toFixed(0)+' height='+lr.height.toFixed(0)+' bottom='+lr.bottom.toFixed(0),
+      '.landing computed min-height: '+cs.minHeight,
+      '.landing computed height: '+cs.height,
+      '.landing display/justify-content/align-items: '+cs.display+' / '+cs.justifyContent+' / '+cs.alignItems,
+      '.landing-inner rect: top='+ir.top.toFixed(0)+' height='+ir.height.toFixed(0)+' bottom='+ir.bottom.toFixed(0),
+      'body scrollHeight/clientHeight: '+document.body.scrollHeight+' / '+document.body.clientHeight,
+      'html scrollHeight/clientHeight: '+document.documentElement.scrollHeight+' / '+document.documentElement.clientHeight,
+      'window.scrollY: '+window.scrollY,
+      'body class: '+document.body.className,
+      'updated: '+new Date().toLocaleTimeString()
+    ].join('\n');
+  }
+  upd();
+  setInterval(upd,300);
+})();
+</script>
+
 <!-- ══ HEADER ══ -->
 <div class="hdr-toolbar-wrap">
 <header class="hdr">
