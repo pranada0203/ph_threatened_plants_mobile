@@ -176,14 +176,11 @@ function applyLang(){
   var langBtn=document.getElementById('langToggle');
   if(langBtn){
     var langTextEl=langBtn.querySelector('.lang-btn-text');
-    var langFlagEl=langBtn.querySelector('.lang-btn-flag');
-    /* Both always show the language you'd switch TO, matching the old
-       text-only button's behavior — PH flag while reading English
-       (tap for Filipino), US flag while reading Filipino (tap for
-       English). Text stays for desktop; the flag is what mobile shows
-       once the button becomes icon-only there. */
+    /* Shows the language you'd switch TO, same on mobile and desktop —
+       just a plain code (matching how most multilingual sites label a
+       language switcher), not a flag emoji, which rendered inconsistently
+       across devices and didn't match the home button's icon styling. */
     if(langTextEl)langTextEl.textContent=LANG==='en'?'FIL':'EN';
-    if(langFlagEl)langFlagEl.textContent=LANG==='en'?'🇵🇭':'🇺🇸';
     langBtn.setAttribute('aria-label',LANG==='en'?'Switch to Filipino':'Switch to English');
   }
   /* The full desktop placeholder ("Search name, authority, common name,
@@ -758,7 +755,12 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .hdr-toolbar-wrap{position:sticky;top:0;z-index:21}
 
   /* ── HEADER ── */
-  .hdr-top{padding:12px 16px 0;gap:10px;flex-wrap:nowrap;align-items:flex-start}
+  /* padding-bottom used to be 0 because .stat-row followed with its own
+     top spacing, giving the header natural clearance below the title.
+     Now that .stat-row is hidden on mobile, .hdr-top's own bottom edge
+     IS the header's bottom edge — without this, the DAO badge sat
+     flush against the divider line below it. */
+  .hdr-top{padding:12px 16px 16px;gap:10px;flex-wrap:nowrap;align-items:flex-start}
   .hdr-ico{width:28px;height:28px;font-size:12px;border-radius:10px;flex-shrink:0;margin-top:-2px}
   .hdr-ey{font-size:10px;letter-spacing:.1em}
   /* Bigger, bolder — this is the app's actual name and should read as
@@ -778,16 +780,26 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
     background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);
     opacity:1}
   .hdr-s{font-size:10px;margin-top:2px;opacity:.75}
-  /* Icon-only on mobile — no room for the label next to a wrapping title */
-  .hdr-home-btn{padding:6px;border-radius:50%}
+  /* Icon-only on mobile — no room for the label next to a wrapping title.
+     Explicit width/height (not padding-around-content) so this and
+     .lang-btn resolve to the exact same circle — padding-based sizing
+     made them close but not equal. */
+  .hdr-home-btn{width:28px;height:28px;padding:0;border-radius:50%;
+    display:flex;align-items:center;justify-content:center}
   .hdr-home-label{display:none}
-  /* Language toggle becomes a flag-in-a-circle next to the home button,
-     matching its size/treatment, instead of the text pill the stat row
-     used to anchor it against (which is gone on mobile — see below). */
+  /* Language toggle becomes a plain circle next to the home button,
+     matching its exact size — a language code (not a flag; flag emoji
+     render inconsistently across devices and read as sloppy against
+     the home button's clean line-icon) is the same pattern most
+     multilingual sites use for a two-way switcher. */
   .lang-btn{width:28px;height:28px;padding:0;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;margin-top:0}
-  .lang-btn .lang-btn-text{display:none}
-  .lang-btn .lang-btn-flag{display:block;font-size:14px;line-height:1}
+    display:flex;align-items:center;justify-content:center}
+  /* .hdr-top .lang-btn (not bare .lang-btn) — the desktop base rule's
+     margin-top:4px sits later in the file than this block, so a
+     same-specificity override here loses the cascade despite the
+     media query; the compound selector wins on specificity instead. */
+  .hdr-top .lang-btn{margin-top:0}
+  .lang-btn-text{font-size:9px;letter-spacing:.01em}
   /* Show credit on mobile — pinned top right */
   .hdr-meta{display:block;margin-left:auto;flex-shrink:0;align-self:flex-start}
   .hdr-meta-item{display:none}
@@ -1139,9 +1151,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   font-weight:700;cursor:pointer;font-family:"IBM Plex Mono",monospace;
   letter-spacing:.08em;transition:all .15s;margin-top:4px;display:inline-block;
   flex-shrink:0}
-/* Text label everywhere by default (desktop); mobile swaps to a flag
-   icon instead — see the ≤768px override. */
-.lang-btn-flag{display:none}
 .lang-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45);color:#fff}
 .lang-btn:active{transform:scale(.95)}
 
@@ -1714,7 +1723,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
     </div>
     <button class="lang-btn" id="langToggle" title="Switch language / Palitan ang wika">
       <span class="lang-btn-text">FIL</span>
-      <span class="lang-btn-flag" aria-hidden="true">&#127477;&#127469;</span>
     </button>
     <button class="hdr-home-btn" id="hdrHomeBtn" title="Return to home">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7.5l6-5 6 5"/><path d="M3.5 6.5V13a1 1 0 001 1h2.5v-4h2v4H11a1 1 0 001-1V6.5"/></svg>
