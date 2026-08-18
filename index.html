@@ -732,7 +732,16 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 ══════════════════════════════════════════ */
 @media (max-width:768px){
   /* Body */
-  body{overflow:auto;height:auto;min-height:100dvh;font-size:12px}
+  /* Real device diagnostics (see the ?debug=vh overlay) showed this
+     100dvh resolving to a taller value than the actually-visible
+     screen (window.innerHeight/visualViewport.height) on a real
+     iPhone — body ended up 40px taller than what's visible, and since
+     .landing has flex:1 inside body, it grew to match that oversized
+     parent, overriding the correct height already being set on
+     .landing directly via --vh. Using the same --vh here keeps body
+     and .landing agreeing on one real, JS-measured number instead of
+     two different height sources that can drift apart. */
+  body{overflow:auto;height:auto;min-height:calc(var(--vh, 1dvh) * 100);font-size:12px}
 
   /* ── STICKY HEADER + TOOLBAR GROUP ── */
   .hdr-toolbar-wrap{position:sticky;top:0;z-index:21}
