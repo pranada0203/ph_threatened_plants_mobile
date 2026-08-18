@@ -1534,21 +1534,39 @@ body.entering .body-wrap{animation:app-in .3s ease}
 .landing-disclaimer-link:hover{color:var(--g)}
 
 @media (max-width:768px){
-  /* A real min-height (not a dvh unit) makes centering self-sufficient —
-     it no longer depends on flex:1 successfully inheriting a definite
-     height from body (height:auto there), and it isn't subject to
-     Safari's flexbox engine failing to honor a viewport-unit min-height
-     on an item that's also sized by flex:1 (confirmed on a real iPhone;
-     100dvh alone measured out centered in a desktop emulator but still
-     left the group pinned to the top on-device). --vh is set from
-     window.innerHeight by the script in <head>; 1dvh is the fallback
-     for the rare case JS hasn't run. */
-  .landing{padding:48px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
-  .landing-mark{width:52px;height:52px;font-size:22px;margin-bottom:16px}
-  .landing-title{font-size:28px;margin-bottom:10px}
-  .landing-desc{font-size:var(--t-sm);margin-bottom:28px}
+  /* --vh (real window.innerHeight, from the script in <head>) instead
+     of raw dvh is still needed here and on body — dvh measured a
+     taller value than the actually-visible screen on a real iPhone in
+     testing, and since .landing has flex:1 inside body, either one
+     using the wrong unit was enough to throw the other off too.
+
+     But the min-height was never the whole story. The on-screen
+     ?debug=vh diagnostic (still in the markup below) caught the real
+     bug directly on a real iPhone: with Safari's chrome visible, the
+     actually-visible screen was 695px, but this content — logo,
+     title, description, the DAO card, the two reference cards,
+     disclaimer, plus their padding/margins — needed 735px to render
+     without clipping. The centering itself was already correct
+     (confirmed: symmetric 48px gaps top and bottom); the content
+     simply didn't fit on one real screen, so the bottom 40px sat below
+     the fold until a scroll/resize grew the visible area to match.
+     Every value below is trimmed and verified (by measuring real
+     rendered height at a 393x695 viewport, matching that device) to
+     comfortably clear that with room to spare, not just to look denser. */
+  .landing{padding:28px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
+  .landing-mark{width:44px;height:44px;font-size:19px;margin-bottom:12px}
+  .landing-title{font-size:26px;margin-bottom:8px}
+  .landing-desc{font-size:var(--t-sm);margin-bottom:18px}
+  .landing-list-card{padding:16px}
+  .landing-list-breakdown{margin-top:10px;padding-top:10px}
+  .landing-list-go{padding-top:10px}
   .landing-list-stat{font-size:32px}
-  .landing-refs{flex-direction:column}
+  /* Side-by-side (the desktop default), not stacked — stacking was the
+     single biggest space cost on the page and neither card is wide
+     enough on a real phone to need the row to itself. */
+  .landing-refs{margin-top:10px}
+  .landing-ref-card{padding:10px 14px}
+  .landing-disclaimer-link{margin-top:12px}
 }
 </style>
 </head>
