@@ -1013,11 +1013,15 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .mob-feedback-fab svg{width:16px;height:16px}
 .mob-feedback-fab:active{transform:scale(.92)}
 
-/* Status pills replace the old grey icon+label pairing — each one shows
-   its real conservation-status color at all times, matching the pills
-   used in the table and dossier, instead of a generic icon that only
-   turned green on selection. The active item fills solid; the rest
-   stay quiet outlines. */
+/* Status pills — the same pill component used elsewhere in the app
+   (table, dossier), reused as-is rather than a custom element, since
+   this one's centering is already proven correct everywhere else it's
+   used. Only the color mechanism changed: CR/EN/VU/OTS render neutral
+   grey at rest and only pick up their status color once that tab is
+   actually selected, so the resting bar reads as one calm set of
+   controls instead of four colors competing before the user has
+   chosen anything (ALL keeps its own always-green treatment below,
+   unchanged — it's the primary action, not a filter option). */
 .mob-nav-item .mob-nav-pill{display:inline-flex;align-items:center;justify-content:center;
   min-width:34px;height:22px;padding:0 8px;border-radius:var(--r-sm);
   font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;
@@ -1028,45 +1032,13 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    above — a bare single-class selector loses to it otherwise. */
 .mob-nav-item .mob-nav-pill-ALL{color:var(--g);border-color:var(--g-light)}
 .mob-nav-item.active .mob-nav-pill-ALL{background:var(--gbg)}
-
-/* CR/EN/VU/OTS — neutral dark grey by default; color and a ring
-   encircling the code only appear once that tab is actually selected,
-   so the resting bar reads as one calm set of controls instead of
-   four different colors competing for attention before the user has
-   chosen anything. Ring is box-shadow, not border (border on a
-   border-radius:999px pill has a known sub-pixel rendering quirk) —
-   but swapping to box-shadow alone didn't fix the unevenness reported,
-   which means the ring line itself was never the real problem: the
-   TEXT wasn't actually centered inside the padding, just assumed to be
-   via line-height:1 lining up with the padding by coincidence. Font
-   line-height boxes aren't guaranteed symmetric around a glyph's own
-   ink (ascent/descent reserved space can be uneven per font/platform)
-   — exactly the category of thing that already broke the FIL/EN
-   button earlier, and was fixed there the same way this is fixed now:
-   real display:flex + align-items:center on a fixed, content-independent
-   height, instead of trusting padding to land symmetrically around
-   whatever line-height produces. Count stays as-is — already
-   muted/secondary, untouched here. */
-/* .mob-nav-item .mob-nav-code — font-size/font-weight here would
-   otherwise lose to the generic ".mob-nav-item span" rule the same way. */
-.mob-nav-item .mob-nav-code{display:inline-flex;align-items:center;justify-content:center;
-  font-family:"IBM Plex Mono",monospace;
-  font-size:13px;font-weight:700;letter-spacing:.02em;line-height:1;
-  color:var(--mu);height:20px;padding:0 8px;margin-bottom:6px;border-radius:999px;
-  box-shadow:0 0 0 1.5px transparent;transition:var(--transition)}
-/* No color override — this one WANTS the generic ".mob-nav-item
-   span{color:var(--fa)}" muted gray, to read as secondary against the
-   code above it. Only font-size needs the .mob-nav-item
-   scoping (same specificity fight as the code above). */
+.mob-nav-item .mob-nav-pill-CR,.mob-nav-item .mob-nav-pill-EN,
+.mob-nav-item .mob-nav-pill-VU,.mob-nav-item .mob-nav-pill-OTS{color:var(--mu)}
+.mob-nav-item.active .mob-nav-pill-CR{color:var(--cr);border-color:var(--cr)}
+.mob-nav-item.active .mob-nav-pill-EN{color:var(--en);border-color:var(--en)}
+.mob-nav-item.active .mob-nav-pill-VU{color:var(--vu);border-color:var(--vu)}
+.mob-nav-item.active .mob-nav-pill-OTS{color:var(--ots);border-color:var(--ots)}
 .mob-nav-item .mob-nav-count{font-size:9px;font-weight:500}
-/* .mob-nav-item.active .mob-nav-code-CR (not bare .mob-nav-code-CR) —
-   same reason as elsewhere on this bar: the generic ".mob-nav-item
-   span{color:var(--fa)}" rule is element+class (0,1,1), which beats a
-   bare single-class selector (0,1,0) regardless of source order. */
-.mob-nav-item.active .mob-nav-code-CR{color:var(--cr);box-shadow:0 0 0 1.5px var(--cr)}
-.mob-nav-item.active .mob-nav-code-EN{color:var(--en);box-shadow:0 0 0 1.5px var(--en)}
-.mob-nav-item.active .mob-nav-code-VU{color:var(--vu);box-shadow:0 0 0 1.5px var(--vu)}
-.mob-nav-item.active .mob-nav-code-OTS{color:var(--ots);box-shadow:0 0 0 1.5px var(--ots)}
 
 /* ALL — raised solid circle in the center of the row (CR/EN to its
    left, VU/OTS to its right), standing apart from the four outline
@@ -2090,11 +2062,11 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <div class="mob-nav-items">
 
     <button class="mob-nav-item" id="mnCR" data-c="CR">
-      <span class="mob-nav-code mob-nav-code-CR">CR</span>
+      <span class="mob-nav-pill mob-nav-pill-CR">CR</span>
       <span class="mob-nav-count">270</span>
     </button>
     <button class="mob-nav-item" id="mnEN" data-c="EN">
-      <span class="mob-nav-code mob-nav-code-EN">EN</span>
+      <span class="mob-nav-pill mob-nav-pill-EN">EN</span>
       <span class="mob-nav-count">304</span>
     </button>
     <button class="mob-nav-item mob-nav-item-all active" id="mnAll" data-c="ALL">
@@ -2104,11 +2076,11 @@ body.entering .body-wrap{animation:app-in .3s ease}
       </span>
     </button>
     <button class="mob-nav-item" id="mnVU" data-c="VU">
-      <span class="mob-nav-code mob-nav-code-VU">VU</span>
+      <span class="mob-nav-pill mob-nav-pill-VU">VU</span>
       <span class="mob-nav-count">433</span>
     </button>
     <button class="mob-nav-item" id="mnOTS" data-c="OTS">
-      <span class="mob-nav-code mob-nav-code-OTS">OTS</span>
+      <span class="mob-nav-pill mob-nav-pill-OTS">OTS</span>
       <span class="mob-nav-count">230</span>
     </button>
   </div>
