@@ -900,17 +900,19 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      thing in the cell instead of a secondary marker. The star alone
      still reads clearly once you know the color code, and stays inline
      with the name instead of forcing a line of its own. */
-  .endemic-badge-row{padding:1px 4px;line-height:1.3}
+  .endemic-badge-row{padding:1px 4px}
   .endemic-badge-row .badge-text{display:none}
-  /* line-height:1.3 (inherited above) measured centered in this test
-     browser, but a ★ glyph commonly falls back to a different font
-     than the surrounding monospace text, and that fallback's own
-     vertical metrics inside a 1.3 line-box aren't something CSS here
-     controls — same class of thing as the FIL/EN button text earlier
-     in this project. Tightening to line-height:1 removes the extra
-     leading a fallback glyph could sit unevenly within, so centering
-     comes from align-items:center on the flex badge itself instead. */
-  .endemic-badge-row .badge-star{line-height:1;display:inline-block}
+  /* Two rounds of line-height tuning on the ★ text glyph didn't fix
+     this — one attempt even made it worse, which means the offset was
+     never really a line-height problem: it's the glyph's own vertical
+     metrics inside whatever font actually rendered it (likely an emoji/
+     symbol fallback, not the surrounding monospace), which line-height
+     doesn't reach. Switched the glyph itself for an inline SVG (see
+     the badge markup in JS) — a fixed 8x8 box has no font metrics to
+     drift, so align-items:center on the flex badge centers it exactly,
+     the same way every other icon in this app already centers. */
+  .endemic-badge-row .badge-star{display:flex;align-items:center;justify-content:center}
+  .endemic-badge-row .badge-star svg{width:8px;height:8px;display:block}
   .infra-badge{font-size:10px}
   .mob-common{font-size:11px;color:var(--gl);margin-top:2px;
     font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -2515,7 +2517,7 @@ function render(){
   }
   document.getElementById('tbl').style.display='';
   document.getElementById('empty').style.display='none';
-  var badge='<span class="endemic-badge endemic-badge-row"><span class="badge-star">&#9733;</span><span class="badge-text"> ENDEMIC</span></span>';
+  var badge='<span class="endemic-badge endemic-badge-row"><span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.9L18 22l-6-3.7L6 22l1.5-7.5L2 9.6l7.1-.7z"/></svg></span><span class="badge-text"> ENDEMIC</span></span>';
   var buf=[];
   for(var i=0;i<rows.length;i++){
     var s=rows[i];
