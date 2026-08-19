@@ -1029,41 +1029,33 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .mob-nav-item .mob-nav-pill-ALL{color:var(--g);border-color:var(--g-light)}
 .mob-nav-item.active .mob-nav-pill-ALL{background:var(--gbg)}
 
-/* CR/EN/VU/OTS — colored code with its species count below, no dot,
-   no pill outline. The outline was the actual problem reported, not
-   the empty space around it per se — each slot is ~82px wide and the
-   pill was only 34px, but BPI's own "Accounts"/"Move money" labels
-   don't fill their columns either; a visible box drawn around
-   mostly-empty space is what reads as awkward, and plain text doesn't
-   have that box to draw attention to it. The count replaces the dot
-   with something that actually informs rather than just decorates —
-   same code-then-count order the old header stat tabs used, so it
-   reads as a compact version of that instead of a new pattern. Colors
-   stay live at all times regardless of selection (matching the
-   equivalent pills in the table/dossier); only the underline marks
-   which one is active, same as the red dash under BPI's selected tab. */
+/* CR/EN/VU/OTS — neutral dark grey by default; color and a ring
+   encircling the code only appear once that tab is actually selected,
+   so the resting bar reads as one calm set of controls instead of
+   four different colors competing for attention before the user has
+   chosen anything. The ring's padding/border is reserved at all times
+   (border-color:transparent when inactive) so it fading in on
+   selection doesn't shift the text or the count below it. Count stays
+   as-is — already muted/secondary, untouched here. */
 /* .mob-nav-item .mob-nav-code — font-size/font-weight here would
    otherwise lose to the generic ".mob-nav-item span" rule the same way. */
-.mob-nav-item .mob-nav-code{display:block;font-family:"IBM Plex Mono",monospace;
+.mob-nav-item .mob-nav-code{display:inline-block;font-family:"IBM Plex Mono",monospace;
   font-size:13px;font-weight:700;letter-spacing:.02em;line-height:1;
-  position:relative;padding-bottom:6px}
-.mob-nav-code::after{content:"";position:absolute;left:50%;bottom:0;
-  width:14px;height:2px;border-radius:1px;background:currentColor;
-  transform:translateX(-50%) scaleX(0);transition:transform .15s ease}
-.mob-nav-item.active .mob-nav-code::after{transform:translateX(-50%) scaleX(1)}
+  color:var(--mu);padding:3px 8px;margin-bottom:6px;border-radius:999px;
+  border:1.5px solid transparent;transition:var(--transition)}
 /* No color override — this one WANTS the generic ".mob-nav-item
    span{color:var(--fa)}" muted gray, to read as secondary against the
-   bold colored code above it. Only font-size needs the .mob-nav-item
+   code above it. Only font-size needs the .mob-nav-item
    scoping (same specificity fight as the code above). */
-.mob-nav-item .mob-nav-count{font-size:9px;font-weight:500;margin-top:2px}
-/* .mob-nav-item .mob-nav-code-CR (not bare .mob-nav-code-CR) — same
-   reason as the pill comment above: the generic ".mob-nav-item
+.mob-nav-item .mob-nav-count{font-size:9px;font-weight:500}
+/* .mob-nav-item.active .mob-nav-code-CR (not bare .mob-nav-code-CR) —
+   same reason as elsewhere on this bar: the generic ".mob-nav-item
    span{color:var(--fa)}" rule is element+class (0,1,1), which beats a
    bare single-class selector (0,1,0) regardless of source order. */
-.mob-nav-item .mob-nav-code-CR{color:var(--cr)}
-.mob-nav-item .mob-nav-code-EN{color:var(--en)}
-.mob-nav-item .mob-nav-code-VU{color:var(--vu)}
-.mob-nav-item .mob-nav-code-OTS{color:var(--ots)}
+.mob-nav-item.active .mob-nav-code-CR{color:var(--cr);border-color:var(--cr)}
+.mob-nav-item.active .mob-nav-code-EN{color:var(--en);border-color:var(--en)}
+.mob-nav-item.active .mob-nav-code-VU{color:var(--vu);border-color:var(--vu)}
+.mob-nav-item.active .mob-nav-code-OTS{color:var(--ots);border-color:var(--ots)}
 
 /* ALL — raised solid circle in the center of the row (CR/EN to its
    left, VU/OTS to its right), standing apart from the four outline
