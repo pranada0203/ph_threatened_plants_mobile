@@ -1033,16 +1033,21 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    encircling the code only appear once that tab is actually selected,
    so the resting bar reads as one calm set of controls instead of
    four different colors competing for attention before the user has
-   chosen anything. The ring's padding/border is reserved at all times
-   (border-color:transparent when inactive) so it fading in on
-   selection doesn't shift the text or the count below it. Count stays
-   as-is — already muted/secondary, untouched here. */
+   chosen anything. The ring is a box-shadow (transparent at rest, so
+   fading in on selection doesn't shift the text or count below it),
+   not a border — a real `border` on a border-radius:999px pill
+   rendered visibly thinner on one edge at certain zoom levels (a
+   known sub-pixel anti-aliasing quirk with borders on very round
+   corners); box-shadow traces the same rounded outline without going
+   through that per-edge border-width rendering path, so there's no
+   edge left for it to render unevenly. Count stays as-is — already
+   muted/secondary, untouched here. */
 /* .mob-nav-item .mob-nav-code — font-size/font-weight here would
    otherwise lose to the generic ".mob-nav-item span" rule the same way. */
 .mob-nav-item .mob-nav-code{display:inline-block;font-family:"IBM Plex Mono",monospace;
   font-size:13px;font-weight:700;letter-spacing:.02em;line-height:1;
   color:var(--mu);padding:3px 8px;margin-bottom:6px;border-radius:999px;
-  border:1.5px solid transparent;transition:var(--transition)}
+  box-shadow:0 0 0 1.5px transparent;transition:var(--transition)}
 /* No color override — this one WANTS the generic ".mob-nav-item
    span{color:var(--fa)}" muted gray, to read as secondary against the
    code above it. Only font-size needs the .mob-nav-item
@@ -1052,10 +1057,10 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    same reason as elsewhere on this bar: the generic ".mob-nav-item
    span{color:var(--fa)}" rule is element+class (0,1,1), which beats a
    bare single-class selector (0,1,0) regardless of source order. */
-.mob-nav-item.active .mob-nav-code-CR{color:var(--cr);border-color:var(--cr)}
-.mob-nav-item.active .mob-nav-code-EN{color:var(--en);border-color:var(--en)}
-.mob-nav-item.active .mob-nav-code-VU{color:var(--vu);border-color:var(--vu)}
-.mob-nav-item.active .mob-nav-code-OTS{color:var(--ots);border-color:var(--ots)}
+.mob-nav-item.active .mob-nav-code-CR{color:var(--cr);box-shadow:0 0 0 1.5px var(--cr)}
+.mob-nav-item.active .mob-nav-code-EN{color:var(--en);box-shadow:0 0 0 1.5px var(--en)}
+.mob-nav-item.active .mob-nav-code-VU{color:var(--vu);box-shadow:0 0 0 1.5px var(--vu)}
+.mob-nav-item.active .mob-nav-code-OTS{color:var(--ots);box-shadow:0 0 0 1.5px var(--ots)}
 
 /* ALL — raised solid circle in the center of the row (CR/EN to its
    left, VU/OTS to its right), standing apart from the four outline
