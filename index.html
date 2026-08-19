@@ -1033,20 +1033,26 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    encircling the code only appear once that tab is actually selected,
    so the resting bar reads as one calm set of controls instead of
    four different colors competing for attention before the user has
-   chosen anything. The ring is a box-shadow (transparent at rest, so
-   fading in on selection doesn't shift the text or count below it),
-   not a border — a real `border` on a border-radius:999px pill
-   rendered visibly thinner on one edge at certain zoom levels (a
-   known sub-pixel anti-aliasing quirk with borders on very round
-   corners); box-shadow traces the same rounded outline without going
-   through that per-edge border-width rendering path, so there's no
-   edge left for it to render unevenly. Count stays as-is — already
+   chosen anything. Ring is box-shadow, not border (border on a
+   border-radius:999px pill has a known sub-pixel rendering quirk) —
+   but swapping to box-shadow alone didn't fix the unevenness reported,
+   which means the ring line itself was never the real problem: the
+   TEXT wasn't actually centered inside the padding, just assumed to be
+   via line-height:1 lining up with the padding by coincidence. Font
+   line-height boxes aren't guaranteed symmetric around a glyph's own
+   ink (ascent/descent reserved space can be uneven per font/platform)
+   — exactly the category of thing that already broke the FIL/EN
+   button earlier, and was fixed there the same way this is fixed now:
+   real display:flex + align-items:center on a fixed, content-independent
+   height, instead of trusting padding to land symmetrically around
+   whatever line-height produces. Count stays as-is — already
    muted/secondary, untouched here. */
 /* .mob-nav-item .mob-nav-code — font-size/font-weight here would
    otherwise lose to the generic ".mob-nav-item span" rule the same way. */
-.mob-nav-item .mob-nav-code{display:inline-block;font-family:"IBM Plex Mono",monospace;
+.mob-nav-item .mob-nav-code{display:inline-flex;align-items:center;justify-content:center;
+  font-family:"IBM Plex Mono",monospace;
   font-size:13px;font-weight:700;letter-spacing:.02em;line-height:1;
-  color:var(--mu);padding:3px 8px;margin-bottom:6px;border-radius:999px;
+  color:var(--mu);height:20px;padding:0 8px;margin-bottom:6px;border-radius:999px;
   box-shadow:0 0 0 1.5px transparent;transition:var(--transition)}
 /* No color override — this one WANTS the generic ".mob-nav-item
    span{color:var(--fa)}" muted gray, to read as secondary against the
