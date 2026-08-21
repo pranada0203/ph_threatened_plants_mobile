@@ -2040,7 +2040,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
     <button class="ftr-feedback-btn" id="ftrFeedbackBtn"><svg class="ic"><use href="#i-chat"/></svg> <span data-i18n="sendFeedback">Send Feedback</span></button>
   </div>
   <div class="leg">
-    <div class="li"><span class="endemic-badge"><svg class="ic"><use href="#i-star"/></svg> ENDEMIC</span></div>
+    <div class="li"><span class="endemic-badge"><svg class="ic"><use href="#i-star"/></svg> Endemic</span></div>
     <div class="li"><span class="div-pill div-pill-A">Angiosperm</span></div>
     <div class="li"><span class="div-pill div-pill-G">Gymnosperm</span></div>
     <div class="li"><span class="div-pill div-pill-P">Pteridophyte</span></div>
@@ -2522,7 +2522,7 @@ function render(){
   }
   document.getElementById('tbl').style.display='';
   document.getElementById('empty').style.display='none';
-  var badge='<span class="endemic-badge endemic-badge-row"><span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.9L18 22l-6-3.7L6 22l1.5-7.5L2 9.6l7.1-.7z"/></svg></span><span class="badge-text"> ENDEMIC</span></span>';
+  var badge='<span class="endemic-badge endemic-badge-row"><span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.9L18 22l-6-3.7L6 22l1.5-7.5L2 9.6l7.1-.7z"/></svg></span><span class="badge-text"> Endemic</span></span>';
   var buf=[];
   for(var i=0;i<rows.length;i++){
     var s=rows[i];
@@ -2601,7 +2601,7 @@ function openPanel(s,fromNav){
   var dc=DIV_CODE[s.division]||'A';
   var statusHtml='<span class="pl '+s.cat+'">'+s.cat+'</span>';
   statusHtml+='<span class="panel-status-label">'+(CAT_LABEL[s.cat]||s.cat)+'</span>';
-  if(s.endemic)statusHtml+='<span class="endemic-badge"><svg class="ic"><use href="#i-star"/></svg> ENDEMIC</span>';
+  if(s.endemic)statusHtml+='<span class="endemic-badge"><svg class="ic"><use href="#i-star"/></svg> Endemic</span>';
   document.getElementById('pStatus').innerHTML=statusHtml;
 
   /* Classification metadata — division, CITES, infraspecific rank, habit */
