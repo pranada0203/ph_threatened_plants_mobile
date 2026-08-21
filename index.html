@@ -596,7 +596,13 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .panel-status .pl.EN + .panel-status-label{color:var(--en)}
 .panel-status .pl.VU + .panel-status-label{color:var(--vu)}
 .panel-status .pl.OTS + .panel-status-label{color:var(--ots)}
-.panel-status .endemic-badge{font-size:11px;padding:2px 7px}
+/* Padding/font-size alone weren't enough to match the pill beside it —
+   the base .endemic-badge also carries line-height:1.6 (tuned for the
+   table row, where it gives the star icon room), which was rendering
+   this badge ~4px taller than the CR/EN/VU/OTS pill even at equal
+   font-size. Reset to the same tight line-height every other pill in
+   this row uses. */
+.panel-status .endemic-badge{font-size:11px;padding:2px 7px;line-height:normal}
 
 /* Classification metadata — division, CITES, habit, infraspecific rank.
    Same pill components used everywhere else, nudged up half a step from
