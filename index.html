@@ -495,17 +495,28 @@ tbody tr.active-row{background:var(--g-light)}
 tbody td{padding:9px 12px;vertical-align:top}
 tbody td:first-child{padding-left:20px}
 .cn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--fa)}
-.cn{width:40px}
-.cc{width:52px}
+/* 40px only ever fit 3-digit row numbers — the last ~240 rows of 1,237
+   total (#1000+) were clipping their own index at this width. */
+.cn{width:48px}
+/* 52px used to clip the "Status" header itself ("Status" + sort icon
+   needs ~79px at this padding/font) — not just a tight fit, the label
+   was genuinely truncated on every desktop/tablet load. 84px clears it
+   with a few px to spare; the data cells (a small CR/EN/VU/OTS pill)
+   never needed the width, the header always did. */
+.cc{width:84px}
 /* Family: allowed to wrap. The longest names (Pentaphragmataceae) are single
    unbreakable words that overflowed into the Division column at the old
    11.5px and would bleed further at 13px. Width is deliberately left at
    124px — the fixed columns already sum past the available width at iPad
    portrait, so widening this one collapses the Scientific Name column. */
 .cf{width:124px;font-size:12px;color:var(--fa);overflow-wrap:break-word}
-.cdv{width:86px}.cct{width:62px}.chb{width:62px}
+/* Both bumped ~10-14px from their old values, which clipped real
+   content: .cdv's "Gymnosperm" pill needed 90px in an 86px column,
+   .cct's "App. II" pill needed 68px in a 62px column — every Gymnosperm
+   and Appendix-II row was rendering a truncated pill. */
+.cdv{width:96px}.cct{width:74px}.chb{width:76px}
 .sci-wrap{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
-.csn{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:600;font-size:var(--t-lg);line-height:1.25;color:var(--g)}
+.csn{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:600;font-size:var(--t-md);line-height:1.25;color:var(--g)}
 .cau{font-size:11px;color:var(--fa);margin-top:2px}
 .cco{width:180px;max-width:180px;font-size:12px;color:var(--mu)}
 /* Pills */
@@ -530,6 +541,17 @@ tbody td:first-child{padding-left:20px}
 .endemic-badge{display:inline-flex;align-items:center;gap:2px;background:var(--endemic-bg);
   color:var(--endemic);border:1px solid var(--endemic-bd);border-radius:6px;padding:1px 5px;
   font-size:10px;font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:nowrap;flex-shrink:0;line-height:1.6}
+/* Table-row badge is star-only at every width, not just mobile — the
+   full "★ Endemic" text competed with the scientific name for
+   attention in a dense list row. The star alone still reads clearly
+   once you know the color code, and the full word+star badge is still
+   shown in the species detail panel (.panel-status .endemic-badge),
+   which has room for it. A fixed 8x8 SVG (not a text/emoji glyph) so
+   align-items:center centers it exactly regardless of font metrics. */
+.endemic-badge-row{padding:1px 4px}
+.endemic-badge-row .badge-text{display:none}
+.endemic-badge-row .badge-star{display:flex;align-items:center;justify-content:center}
+.endemic-badge-row .badge-star svg{width:8px;height:8px;display:block}
 .habit-pill{display:inline-flex;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600;white-space:nowrap}
 .habit-pill.tree{background:#ecfdf5;color:#047857;border:1px solid #6ee7b7}
 .habit-pill.shrub{background:#fefce8;color:#854d0e;border:1px solid #fde047}
@@ -906,25 +928,9 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .cf{font-size:11px;width:136px}
   .csn{font-size:15px;line-height:1.3}
   .cau{font-size:11px;margin-top:3px}
-  /* Table-row badge shrinks to just the star on mobile — the full "★
-     ENDEMIC" text, sitting alone on its own line at column width, was
-     reliably wider than short scientific names and read as the loudest
-     thing in the cell instead of a secondary marker. The star alone
-     still reads clearly once you know the color code, and stays inline
-     with the name instead of forcing a line of its own. */
-  .endemic-badge-row{padding:1px 4px}
-  .endemic-badge-row .badge-text{display:none}
-  /* Two rounds of line-height tuning on the ★ text glyph didn't fix
-     this — one attempt even made it worse, which means the offset was
-     never really a line-height problem: it's the glyph's own vertical
-     metrics inside whatever font actually rendered it (likely an emoji/
-     symbol fallback, not the surrounding monospace), which line-height
-     doesn't reach. Switched the glyph itself for an inline SVG (see
-     the badge markup in JS) — a fixed 8x8 box has no font metrics to
-     drift, so align-items:center on the flex badge centers it exactly,
-     the same way every other icon in this app already centers. */
-  .endemic-badge-row .badge-star{display:flex;align-items:center;justify-content:center}
-  .endemic-badge-row .badge-star svg{width:8px;height:8px;display:block}
+  /* Star-only badge sizing now lives in the base rules (applies at
+     every width, not just mobile) — see .endemic-badge-row near the
+     top of the stylesheet. */
   .infra-badge{font-size:10px}
   .mob-common{font-size:11px;color:var(--gl);margin-top:2px;
     font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -1229,10 +1235,18 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   body{overflow:hidden;height:100vh}
 
   /* ── HEADER ── */
-  .hdr-top{padding:14px 28px 0;gap:14px;flex-wrap:nowrap;align-items:flex-start}
+  /* center (not flex-start) — the title is a single line on desktop
+     (unlike mobile's stacked title+DAO-badge, which needs flex-start so
+     the icon lines up with the top of that taller two-line block), so
+     it should sit centered on the icon's own horizontal band instead of
+     hugging its top edge. */
+  .hdr-top{padding:14px 28px 0;gap:14px;flex-wrap:nowrap;align-items:center}
   .hdr-ico{width:40px;height:40px;font-size:15px;border-radius:16px}
   .hdr-ey{font-size:10px;letter-spacing:.2em}
-  .hdr-t{font-size:15px;font-weight:700}
+  /* 15px next to a 40px icon read as a caption, not a brand mark — even
+     mobile's 28px icon pairs with an 18px title. Sized up to --t-xl so
+     the title actually carries visual weight alongside the logo. */
+  .hdr-t{font-size:var(--t-xl);font-weight:700}
   .hdr-s{font-size:11px;margin-top:2px;opacity:1}
   .stat-row{padding:10px 28px 0;gap:2px;overflow-x:visible;flex-wrap:nowrap}
   .sc{padding:9px 16px 10px;min-width:auto;flex:1;border-radius:10px 10px 0 0}
@@ -1243,15 +1257,26 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
   /* ── TOOLBAR ── */
   .toolbar{height:var(--toolbar-h);position:relative;box-shadow:none}
-  .toolbar-search{min-width:280px;flex:1;padding:0 14px;margin:7px 0 7px 12px;
+  /* Search can just take the room it wants now that the filter chip row
+     (below) no longer lives in this toolbar — no more flex-grow contest
+     to referee, and no leftover dead space either: it fills whatever's
+     left between the Filters button and the toolbar's left edge. */
+  .toolbar-search{min-width:220px;flex:1;padding:0 14px;margin:7px 0 7px 12px;
     height:auto;background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm)}
   .srch{font-size:12px}
   .rc{display:flex;font-size:10px}
-  .toolbar-filters{display:flex}
+  /* The inline chip row is retired on desktop/tablet in favor of the
+     same Filters button + slide-in sheet mobile already uses (below) —
+     it never had a workable amount of room here even after the search
+     fix above (still needed 1,686px of content in ~750px of space). */
+  .toolbar-filters{display:none!important}
   .toolbar-actions{height:100%;border-left:1px solid var(--bd);padding:0 12px;gap:2px}
   .action-btn{padding:5px 9px;min-width:auto;justify-content:flex-start}
   .btn-label{display:inline}
-  .mob-filter-btn{display:none!important}
+  /* Filters button — same component mobile uses, just relocated to sit
+     where the toolbar's own actions start. flex:1 on .toolbar-filters
+     used to occupy this visual slot; now the Filters button does. */
+  .mob-filter-btn{display:flex!important;height:100%;border-left:1px solid var(--bd)}
   .mob-hide{display:flex!important}
 
   /* ── BODY ── */
@@ -1276,7 +1301,11 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   thead th:first-child{padding-left:20px}
   tbody td{padding:12px 12px;vertical-align:top}
   tbody td:first-child{padding-left:20px}
-  .csn{font-size:var(--t-lg)}
+  /* Was --t-lg (18px) — the same size as the panel title one click away,
+     which made every row's headline compete with that. --t-md (15px)
+     matches what mobile already settled on, and buys back row height
+     across a 1,237-row table. */
+  .csn{font-size:var(--t-md)}
   .cau{font-size:11px;margin-top:2px}
   .cco{font-size:12px;width:180px;max-width:180px}
   .cf{font-size:12px;width:124px}
@@ -1302,8 +1331,16 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   /* ── FOOTER — show on desktop ── */
   .ftr{display:flex}
 
-  /* ── FILTER SHEET — not needed on desktop ── */
-  .filter-sheet{display:none!important}
+  /* ── FILTER SHEET — same slide-in panel as mobile, opened from the
+     toolbar's Filters button, just centered as a modal instead of
+     anchored to the bottom edge — same treatment as .feedback-panel
+     below gets on desktop. */
+  .filter-sheet{justify-content:center;align-items:center}
+  .filter-sheet-backdrop{position:fixed}
+  .filter-sheet-inner{width:min(600px,92vw);max-height:82vh;
+    border-radius:16px;box-shadow:var(--shadow-lg);
+    animation:modal-in .2s cubic-bezier(.4,0,.2,1)}
+  .filter-sheet-handle{display:none}
 
   /* ── ANALYTICS MODAL ── */
   .modal{width:min(920px,95vw);max-height:90vh;border-radius:16px;
@@ -1325,7 +1362,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   /* ── HEADER typography ── */
   .hdr-ey{font-size:10px;letter-spacing:.2em}
   .hdr-ico{width:40px;height:40px;font-size:15px}
-  .hdr-t{font-size:15px;line-height:1.2;font-weight:700}
+  .hdr-t{font-size:var(--t-xl);line-height:1.2;font-weight:700}
   .hdr-s{font-size:11px;opacity:1}
 
   /* ── Stat tabs ── */
@@ -1342,7 +1379,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .srch{font-size:12px}
 
   /* ── Table ── */
-  .csn{font-size:var(--t-lg);line-height:1.25;font-weight:600}
+  .csn{font-size:var(--t-md);line-height:1.25;font-weight:600}
   .cau{font-size:11px;margin-top:2px}
   .cco{font-size:12px}
   .cf{font-size:12px}
@@ -1422,15 +1459,10 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
     border:1.5px solid rgba(255,255,255,.3);
     background:rgba(255,255,255,.12);letter-spacing:.08em}
 
-  /* Filter sheet never shows on desktop */
-  .filter-sheet{display:none!important}
-
-
-  /* Ensure ig-sub filter chips work in toolbar context */
-  .ig-sub{position:absolute;top:100%;left:0;z-index:30;background:var(--sf);
-    border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow-md);
-    padding:8px;display:none;flex-wrap:wrap;gap:5px;min-width:280px}
-  .ig-sub.open{display:flex}
+  /* .ig-sub (sub-island chips) only ever lives inside the filter sheet
+     (both mobile and desktop) — it never had a separate toolbar copy,
+     so it stays the plain in-flow block .ig-sub is defined as near the
+     top of the stylesheet; no popover positioning needed here. */
 
   /* Compact mode still works on desktop */
   .compact-mode tbody td{padding-top:5px;padding-bottom:5px}
@@ -1521,9 +1553,13 @@ thead th{border-bottom-color:var(--bd)}
   thead th:nth-child(1),tbody td:nth-child(1){display:none}  /* # — a filter-relative index */
   thead th:nth-child(4),tbody td:nth-child(4){display:none}  /* Division — filterable + in panel */
   .cf{width:104px}
-  .cc{width:46px}
-  .cct{width:56px}
-  .chb{width:56px}
+  /* Same header-clipping problem as the desktop base rule above, just
+     with tablet's tighter 9px cell padding — "Status" and "Habit" were
+     losing more than half their own label. Widened by the same margin,
+     scaled down for the smaller padding here. */
+  .cc{width:78px}
+  .cct{width:68px}
+  .chb{width:70px}
   .cco{width:144px;max-width:144px}   /* fits the "Karaniwang Pangalan" header */
   tbody td,thead th{padding-left:9px;padding-right:9px}
   tbody td:first-child,thead th:first-child{padding-left:14px}
