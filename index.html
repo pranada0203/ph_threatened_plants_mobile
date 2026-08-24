@@ -327,28 +327,38 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .hdr-meta-item{font-size:10px;color:rgba(255,255,255,.45);line-height:1.5;max-width:180px}
 .hdr-meta-item b{color:rgba(255,255,255,.75);font-weight:500}
 
-/* Stat tabs — integrated into header bottom */
-.stat-row{display:flex;padding:10px 28px 0;gap:2px;margin-top:10px}
-.sc{padding:9px 16px 10px;border-radius:10px 10px 0 0;cursor:pointer;position:relative;
-  transition:var(--transition);user-select:none;flex:1;min-width:0;border:1px solid transparent;border-bottom:none}
-.sc:hover{background:rgba(255,255,255,.08)}
-.sc.on{background:var(--bg);border-color:rgba(255,255,255,.12);border-bottom-color:var(--bg)}
-.sc-code{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.1em;
-  margin-bottom:1px;opacity:.7}
-.sc.on .sc-code{opacity:1}
-.sc[data-c=ALL] .sc-code{color:rgba(255,255,255,.9)}.sc.on[data-c=ALL] .sc-code{color:var(--gl)}
-.sc[data-c=CR] .sc-code{color:rgba(255,255,255,.9)}.sc.on[data-c=CR] .sc-code{color:var(--cr)}
-.sc[data-c=EN] .sc-code{color:rgba(255,255,255,.9)}.sc.on[data-c=EN] .sc-code{color:var(--en)}
-.sc[data-c=VU] .sc-code{color:rgba(255,255,255,.9)}.sc.on[data-c=VU] .sc-code{color:var(--vu)}
-.sc[data-c=OTS] .sc-code{color:rgba(255,255,255,.9)}.sc.on[data-c=OTS] .sc-code{color:var(--ots)}
-.sc-lbl{font-size:10px;color:rgba(255,255,255,.45);margin-bottom:2px;line-height:1.2;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis}
-.sc.on .sc-lbl{color:var(--mu)}
-.sc-n{font-size:18px;font-weight:700;line-height:1;color:rgba(255,255,255,.95)}
+/* Stat tabs — a standalone floating card on the page canvas (not inside
+   .hdr any more), same soft-card language as the sidebar/table below:
+   white surface, soft border, shadow-sm. Text colors are all rewritten
+   for that white surface — the old version leaned on rgba(255,255,255,x)
+   for contrast against a green background, which is gone now. Category
+   codes stay visible (not neutralized) even at rest, since white
+   backs any hue without a contrast fight the way dark green did. */
+.stat-row{display:flex;gap:3px;background:var(--sf);border:1px solid var(--bd-soft);
+  border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:4px;
+  margin:14px 28px 18px}
+/* Code + number only — this is a filter control people click to change
+   view, not a KPI readout, so the spelled-out label ("Critically
+   Endangered") and the endemic sub-count that used to sit under it are
+   dropped from the face entirely and moved to a native title tooltip
+   on the tab (hover/long-press) instead. Centered, so it reads as a
+   button — closer to a segmented control than a stat card. */
+.sc{padding:9px 14px;border-radius:8px;cursor:pointer;position:relative;text-align:center;
+  transition:var(--transition);user-select:none;flex:1;min-width:0;border:1px solid transparent}
+.sc:hover{background:var(--bg)}
+.sc.on{background:var(--bg);border-color:var(--bd-soft)}
+.sc-code{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.1em}
+.sc[data-c=ALL] .sc-code{color:var(--gl)}
+.sc[data-c=CR] .sc-code{color:var(--cr)}
+.sc[data-c=EN] .sc-code{color:var(--en)}
+.sc[data-c=VU] .sc-code{color:var(--vu)}
+.sc[data-c=OTS] .sc-code{color:var(--ots)}
+/* Serif, like every other "big stat number" moment in this app (the
+   landing page's species counts use the same Cormorant Garamond) —
+   the old sans-serif number here was the odd one out. */
+.sc-n{font-family:"Cormorant Garamond",serif;font-size:19px;font-weight:700;line-height:1;
+  color:var(--mu);margin-top:2px}
 .sc.on .sc-n{color:var(--ink)}
-.sc-sub{font-size:10px;margin-top:3px;color:rgba(255,255,255,.4);font-family:"IBM Plex Mono",monospace;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sc.on .sc-sub{color:var(--fa)}
 
 /* ══════════════════════════════════════════
    UNIFIED TOOLBAR
@@ -1240,7 +1250,14 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      the icon lines up with the top of that taller two-line block), so
      it should sit centered on the icon's own horizontal band instead of
      hugging its top edge. */
-  .hdr-top{padding:14px 28px 0;gap:14px;flex-wrap:nowrap;align-items:center}
+  /* Bottom padding restored here — .stat-row used to sit inside .hdr
+     right after this and supply its own top padding, so .hdr-top never
+     needed a bottom edge of its own. Now that .stat-row is a detached
+     card below .hdr entirely (see markup + its own rules near the top
+     of the stylesheet), .hdr-top's own bottom edge IS the green area's
+     bottom edge, same reasoning mobile already applies for the same
+     reason (its .stat-row is display:none there). */
+  .hdr-top{padding:14px 28px 16px;gap:14px;flex-wrap:nowrap;align-items:center}
   .hdr-ico{width:40px;height:40px;font-size:15px;border-radius:16px}
   .hdr-ey{font-size:10px;letter-spacing:.2em}
   /* 15px next to a 40px icon read as a caption, not a brand mark — even
@@ -1248,12 +1265,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      the title actually carries visual weight alongside the logo. */
   .hdr-t{font-size:var(--t-xl);font-weight:700}
   .hdr-s{font-size:11px;margin-top:2px;opacity:1}
-  .stat-row{padding:10px 28px 0;gap:2px;overflow-x:visible;flex-wrap:nowrap}
-  .sc{padding:9px 16px 10px;min-width:auto;flex:1;border-radius:10px 10px 0 0}
   .sc-code{font-size:10px;letter-spacing:.1em}
-  .sc-lbl{display:block;font-size:10px}
-  .sc-n{font-size:18px}
-  .sc-sub{display:block}
 
   /* ── TOOLBAR ── */
   .toolbar{height:var(--toolbar-h);position:relative;box-shadow:none}
@@ -1261,8 +1273,13 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      (below) no longer lives in this toolbar — no more flex-grow contest
      to referee, and no leftover dead space either: it fills whatever's
      left between the Filters button and the toolbar's left edge. */
-  .toolbar-search{min-width:220px;flex:1;padding:0 14px;margin:7px 0 7px 12px;
-    height:auto;background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm)}
+  /* height:auto (no vertical padding) let the box shrink to just its
+     text line-height — noticeably thinner than the Filters button next
+     to it, which fills the full toolbar height. A fixed height gives it
+     the same real vertical presence; margin-right (previously unset)
+     clears the hairline gap before that button's own left border. */
+  .toolbar-search{min-width:220px;flex:1;padding:0 14px;margin:7px 12px 7px 12px;
+    height:34px;background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm)}
   .srch{font-size:12px}
   .rc{display:flex;font-size:10px}
   /* The inline chip row is retired on desktop/tablet in favor of the
@@ -1365,11 +1382,9 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .hdr-t{font-size:var(--t-xl);line-height:1.2;font-weight:700}
   .hdr-s{font-size:11px;opacity:1}
 
-  /* ── Stat tabs ── */
-  .sc-code{font-size:10px;letter-spacing:.1em}
-  .sc-lbl{font-size:10px}
-  .sc-n{font-size:18px;font-weight:700}
-  .sc-sub{font-size:10px;display:block}
+  /* ── Stat tabs — sizing already matches in the base rules; this
+     component only ever renders on desktop/tablet now, so there's
+     nothing left to override at this breakpoint. ── */
 
   /* ── Toolbar ── */
   .tf-label{font-size:10px;letter-spacing:.12em}
@@ -1842,39 +1857,34 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <span class="hdr-home-label" data-i18n="returnHome">Return Home</span>
     </button>
   </div>
-  <div class="stat-row">
-    <div class="sc on" data-c="ALL">
-      <div class="sc-code">ALL</div>
-      <div class="sc-lbl">Total Species</div>
-      <div class="sc-n">1,237</div>
-      <div class="sc-sub">920 endemic &bull; 219 CITES</div>
-    </div>
-    <div class="sc" data-c="CR">
-      <div class="sc-code">CR</div>
-      <div class="sc-lbl">Critically Endangered</div>
-      <div class="sc-n">270</div>
-      <div class="sc-sub">254 endemic</div>
-    </div>
-    <div class="sc" data-c="EN">
-      <div class="sc-code">EN</div>
-      <div class="sc-lbl">Endangered</div>
-      <div class="sc-n">304</div>
-      <div class="sc-sub">239 endemic</div>
-    </div>
-    <div class="sc" data-c="VU">
-      <div class="sc-code">VU</div>
-      <div class="sc-lbl">Vulnerable</div>
-      <div class="sc-n">433</div>
-      <div class="sc-sub">291 endemic</div>
-    </div>
-    <div class="sc" data-c="OTS">
-      <div class="sc-code">OTS</div>
-      <div class="sc-lbl">Other Threatened</div>
-      <div class="sc-n">230</div>
-      <div class="sc-sub">136 endemic</div>
-    </div>
-  </div>
 </header>
+
+<!-- Status tabs — a standalone floating card on the page canvas, not
+     inside .hdr, so the green brand bar above stays a single tight row
+     instead of stretching down to fit this too. Hidden on mobile
+     (bottom nav covers the same filter); see .stat-row display rules. -->
+<div class="stat-row">
+  <div class="sc on" data-c="ALL" title="Total Species — 920 endemic, 219 CITES">
+    <div class="sc-code">ALL</div>
+    <div class="sc-n">1,237</div>
+  </div>
+  <div class="sc" data-c="CR" title="Critically Endangered — 254 endemic">
+    <div class="sc-code">CR</div>
+    <div class="sc-n">270</div>
+  </div>
+  <div class="sc" data-c="EN" title="Endangered — 239 endemic">
+    <div class="sc-code">EN</div>
+    <div class="sc-n">304</div>
+  </div>
+  <div class="sc" data-c="VU" title="Vulnerable — 291 endemic">
+    <div class="sc-code">VU</div>
+    <div class="sc-n">433</div>
+  </div>
+  <div class="sc" data-c="OTS" title="Other Threatened — 136 endemic">
+    <div class="sc-code">OTS</div>
+    <div class="sc-n">230</div>
+  </div>
+</div>
 
 <!-- ══ UNIFIED TOOLBAR ══ -->
 <div class="toolbar">
