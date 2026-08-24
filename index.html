@@ -336,7 +336,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
    backs any hue without a contrast fight the way dark green did. */
 .stat-row{display:flex;gap:3px;background:var(--sf);border:1px solid var(--bd-soft);
   border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:4px;
-  margin:14px 28px 18px}
+  margin:14px 28px}
 /* Code + number only — this is a filter control people click to change
    view, not a KPI readout, so the spelled-out label ("Critically
    Endangered") and the endemic sub-count that used to sit under it are
@@ -704,7 +704,10 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* ══════════════════════════════════════════
    FOOTER
 ══════════════════════════════════════════ */
-.ftr{background:var(--sf);border-top:1px solid var(--bd);padding:9px 24px;font-size:10px;
+/* 28px sides — matches the header/stat-row/body-wrap column so the
+   footer's left/right edge lines up with everything above it instead
+   of sitting 4px narrower. */
+.ftr{background:var(--sf);border-top:1px solid var(--bd);padding:9px 28px;font-size:10px;
   color:var(--fa);display:flex;justify-content:space-between;align-items:center;
   flex-wrap:wrap;gap:5px;flex-shrink:0}
 .leg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -1297,7 +1300,15 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .mob-hide{display:flex!important}
 
   /* ── BODY ── */
-  .body-wrap{flex-direction:row;overflow:hidden}
+  /* Horizontal inset bumped from the base 10px to 28px — the header
+     logo, the stat-row card, and the footer all already sit on a 28px
+     column; the sidebar/table/panel content underneath was the one
+     piece still hugging a tighter 10px, so the whole page's left edge
+     visibly stepped inward at the header and back out at the body.
+     Vertical padding stays 10px — that's a different, tighter rhythm
+     for the gap around the floating sidebar/table cards, not part of
+     this left/right alignment fix. */
+  .body-wrap{flex-direction:row;overflow:hidden;padding:10px 28px}
 
   /* ── SIDEBAR — restore ── */
   .sb{display:flex;width:var(--sidebar)}
@@ -1436,9 +1447,6 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .cdfp-btn-credit{font-size:10px}
   .cdfp-btn-hint{font-size:10px}
 
-  /* ── Footer ── */
-  .ftr{font-size:10px;padding:9px 24px}
-
   /* ── Analytics ── */
   .modal-title{font-size:18px}
   .chart-title{font-size:10px;letter-spacing:.14em}
@@ -1563,6 +1571,17 @@ thead th{border-bottom-color:var(--bd)}
 ══════════════════════════════════════════ */
 @media (min-width:769px) and (max-width:1024px){
   :root{--sidebar:170px}
+  /* Desktop's 28px column margin (header/stat-row/body/footer all
+     share it) is too wide at iPad width — applying it here dropped the
+     Scientific Name column to ~78px and started clipping genus names
+     mid-word. 16px keeps everything on one shared column (still
+     visibly tighter/more consistent than the old default 10px on the
+     body only) without re-collapsing the one column that can't spare
+     the space. */
+  .hdr-top{padding-left:16px;padding-right:16px}
+  .stat-row{margin-left:16px;margin-right:16px}
+  .body-wrap{padding-left:16px;padding-right:16px}
+  .ftr{padding-left:16px;padding-right:16px}
   /* Same selector shape as the desktop `display:table-cell` rules above,
      which out-specify a bare .cn / .cdv class selector. */
   thead th:nth-child(1),tbody td:nth-child(1){display:none}  /* # — a filter-relative index */
