@@ -327,43 +327,30 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .hdr-meta-item{font-size:10px;color:rgba(255,255,255,.45);line-height:1.5;max-width:180px}
 .hdr-meta-item b{color:rgba(255,255,255,.75);font-weight:500}
 
-/* Stat tabs — a standalone floating card on the page canvas (not inside
-   .hdr any more), same soft-card language as the sidebar/table below:
-   white surface, soft border, shadow-sm. Text colors are all rewritten
-   for that white surface — the old version leaned on rgba(255,255,255,x)
-   for contrast against a green background, which is gone now. Category
-   codes stay visible (not neutralized) even at rest, since white
-   backs any hue without a contrast fight the way dark green did. */
-/* 10px on every side — matches the body-wrap gap/padding, the smallest
-   whitespace unit already used on the dashboard (sidebar-to-edge,
-   sidebar-to-table). 14/18, then 14/14, were both bigger than that
-   reference and made this card read as more separated from its
-   neighbors than anything else on the page. */
-.stat-row{display:flex;gap:3px;background:var(--sf);border:1px solid var(--bd-soft);
-  border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:4px;
-  margin:10px}
-/* Code + number only — this is a filter control people click to change
-   view, not a KPI readout, so the spelled-out label ("Critically
-   Endangered") and the endemic sub-count that used to sit under it are
-   dropped from the face entirely and moved to a native title tooltip
-   on the tab (hover/long-press) instead. Centered, so it reads as a
-   button — closer to a segmented control than a stat card. */
-.sc{padding:9px 14px;border-radius:8px;cursor:pointer;position:relative;text-align:center;
-  transition:var(--transition);user-select:none;flex:1;min-width:0;border:1px solid transparent}
-.sc:hover{background:var(--bg)}
-.sc.on{background:var(--bg);border-color:var(--bd-soft)}
-.sc-code{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.1em}
-.sc[data-c=ALL] .sc-code{color:var(--gl)}
-.sc[data-c=CR] .sc-code{color:var(--cr)}
-.sc[data-c=EN] .sc-code{color:var(--en)}
-.sc[data-c=VU] .sc-code{color:var(--vu)}
-.sc[data-c=OTS] .sc-code{color:var(--ots)}
-/* Serif, like every other "big stat number" moment in this app (the
-   landing page's species counts use the same Cormorant Garamond) —
-   the old sans-serif number here was the odd one out. */
-.sc-n{font-family:"Cormorant Garamond",serif;font-size:19px;font-weight:700;line-height:1;
-  color:var(--mu);margin-top:2px}
-.sc.on .sc-n{color:var(--ink)}
+/* Stat tabs — back inline in the green brand row, sitting between the
+   title and the language/home controls, instead of a second row or a
+   detached card below. Small pills, code + count side by side on one
+   line, sized to sit comfortably inside the header's existing height
+   rather than adding any of their own. Text leans on rgba(255,255,255,x)
+   again since this is back on the green background; category colors
+   only show once a tab is active, using each status's light --*-bd
+   token (already tuned for readability on a dark fill) rather than the
+   dark, low-contrast --cr/--en/--vu/--ots hues those tokens border. */
+.stat-row{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.sc{display:flex;align-items:baseline;gap:5px;padding:5px 10px;border-radius:999px;
+  cursor:pointer;user-select:none;border:1px solid transparent;transition:var(--transition)}
+.sc:hover{background:rgba(255,255,255,.08)}
+.sc.on{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.2)}
+.sc-code{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.08em;
+  color:rgba(255,255,255,.6)}
+.sc.on .sc-code{color:#fff}
+.sc.on[data-c=CR] .sc-code{color:var(--cr-bd)}
+.sc.on[data-c=EN] .sc-code{color:var(--en-bd)}
+.sc.on[data-c=VU] .sc-code{color:var(--vu-bd)}
+.sc.on[data-c=OTS] .sc-code{color:var(--ots-bd)}
+.sc-n{font-family:"Cormorant Garamond",serif;font-size:14px;font-weight:700;line-height:1;
+  color:rgba(255,255,255,.85)}
+.sc.on .sc-n{color:#fff}
 
 /* ══════════════════════════════════════════
    UNIFIED TOOLBAR
@@ -1255,26 +1242,25 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      (unlike mobile's stacked title+DAO-badge, which needs flex-start so
      the icon lines up with the top of that taller two-line block), so
      it should sit centered on the icon's own horizontal band instead of
-     hugging its top edge. */
-  /* Bottom padding restored here — .stat-row used to sit inside .hdr
-     right after this and supply its own top padding, so .hdr-top never
-     needed a bottom edge of its own. Now that .stat-row is a detached
-     card below .hdr entirely (see markup + its own rules near the top
-     of the stylesheet), .hdr-top's own bottom edge IS the green area's
-     bottom edge, same reasoning mobile already applies for the same
-     reason (its .stat-row is display:none there). */
-  /* Sides dropped from 28px to 10px to match the sidebar/table/footer
-     column below — 28px was this app's own outlier, not the reference
-     the rest of the page should have been pulled up to. */
+     hugging its top edge. Sides at 10px to match the sidebar/table/
+     footer column below (28px was this app's own outlier). */
   .hdr-top{padding:14px 10px 16px;gap:14px;flex-wrap:nowrap;align-items:center}
   .hdr-ico{width:40px;height:40px;font-size:15px;border-radius:16px}
   .hdr-ey{font-size:10px;letter-spacing:.2em}
   /* 15px next to a 40px icon read as a caption, not a brand mark — even
      mobile's 28px icon pairs with an 18px title. Sized up to --t-xl so
      the title actually carries visual weight alongside the logo. */
-  .hdr-t{font-size:var(--t-xl);font-weight:700}
+  /* Single line, ellipsis, not wrap — with the status tabs now sharing
+     this row too, a narrower window (tablet width especially) could
+     force this onto 2 lines, which grows .hdr-top's own height (it's
+     the tallest child) and makes the whole green bar taller than it
+     ever was in the old two-row layout, the opposite of the point.
+     Truncating instead keeps the row's height fixed regardless of
+     width; the DAO badge (last in the DOM) is what actually gets
+     clipped first, only reaching the title itself once nothing else
+     is left to give up. */
+  .hdr-t{font-size:var(--t-xl);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hdr-s{font-size:11px;margin-top:2px;opacity:1}
-  .sc-code{font-size:10px;letter-spacing:.1em}
 
   /* ── TOOLBAR ── */
   .toolbar{height:var(--toolbar-h);position:relative;box-shadow:none}
@@ -1296,7 +1282,10 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      it never had a workable amount of room here even after the search
      fix above (still needed 1,686px of content in ~750px of space). */
   .toolbar-filters{display:none!important}
-  .toolbar-actions{height:100%;border-left:1px solid var(--bd);padding:0 12px;gap:2px}
+  /* border-left:none overrides the base rule's divider — it sat right
+     between the Filters button and Compact with nothing structurally
+     different on either side of it to justify a hard line. */
+  .toolbar-actions{height:100%;border-left:none;padding:0 12px;gap:2px}
   .action-btn{padding:5px 9px;min-width:auto;justify-content:flex-start}
   .btn-label{display:inline}
   /* Filters button — same component mobile uses, just relocated to sit
@@ -1859,6 +1848,32 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <span id="hdrTitle" data-i18n="hdrTitle">Threatened Philippine Plants</span>
       <span class="hdr-t-source">DAO 2026-20</span>
     </div>
+    <!-- Status tabs — inline in the brand row itself now, right before
+         the language/home controls, rather than a separate row/card
+         below. Hidden on mobile (bottom nav covers the same filter);
+         see .stat-row display rules. -->
+    <div class="stat-row">
+      <div class="sc on" data-c="ALL" title="Total Species — 920 endemic, 219 CITES">
+        <div class="sc-code">ALL</div>
+        <div class="sc-n">1,237</div>
+      </div>
+      <div class="sc" data-c="CR" title="Critically Endangered — 254 endemic">
+        <div class="sc-code">CR</div>
+        <div class="sc-n">270</div>
+      </div>
+      <div class="sc" data-c="EN" title="Endangered — 239 endemic">
+        <div class="sc-code">EN</div>
+        <div class="sc-n">304</div>
+      </div>
+      <div class="sc" data-c="VU" title="Vulnerable — 291 endemic">
+        <div class="sc-code">VU</div>
+        <div class="sc-n">433</div>
+      </div>
+      <div class="sc" data-c="OTS" title="Other Threatened — 136 endemic">
+        <div class="sc-code">OTS</div>
+        <div class="sc-n">230</div>
+      </div>
+    </div>
     <button class="lang-btn" id="langToggle" title="Switch language / Palitan ang wika">
       <span class="lang-btn-text">FIL</span>
     </button>
@@ -1868,33 +1883,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
     </button>
   </div>
 </header>
-
-<!-- Status tabs — a standalone floating card on the page canvas, not
-     inside .hdr, so the green brand bar above stays a single tight row
-     instead of stretching down to fit this too. Hidden on mobile
-     (bottom nav covers the same filter); see .stat-row display rules. -->
-<div class="stat-row">
-  <div class="sc on" data-c="ALL" title="Total Species — 920 endemic, 219 CITES">
-    <div class="sc-code">ALL</div>
-    <div class="sc-n">1,237</div>
-  </div>
-  <div class="sc" data-c="CR" title="Critically Endangered — 254 endemic">
-    <div class="sc-code">CR</div>
-    <div class="sc-n">270</div>
-  </div>
-  <div class="sc" data-c="EN" title="Endangered — 239 endemic">
-    <div class="sc-code">EN</div>
-    <div class="sc-n">304</div>
-  </div>
-  <div class="sc" data-c="VU" title="Vulnerable — 291 endemic">
-    <div class="sc-code">VU</div>
-    <div class="sc-n">433</div>
-  </div>
-  <div class="sc" data-c="OTS" title="Other Threatened — 136 endemic">
-    <div class="sc-code">OTS</div>
-    <div class="sc-n">230</div>
-  </div>
-</div>
 
 <!-- ══ UNIFIED TOOLBAR ══ -->
 <div class="toolbar">
