@@ -211,7 +211,24 @@ function applyLang(){
 <link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
 <link rel="apple-touch-icon" sizes="152x152" href="logo_152.png">
 <link rel="apple-touch-icon" sizes="192x192" href="logo_192.png">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- preconnect starts the DNS/TLS handshake to Google's font servers as
+     early as possible, so the actual font files (requested below) have
+     less to wait on once the browser gets to them. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- display=optional (not swap) — swap was the cause of the "text
+     flashes bold for a moment" report: it always paints in the fallback
+     serif/mono font first, then swaps to the real webfont the instant
+     it arrives, and a fallback rendered at this app's heavier weights
+     (600/700) gets browser-synthesized ("faux") bold, which looks
+     noticeably heavier than the real font it's about to be replaced by
+     — most visible exactly where the report says, the moment ~1,237
+     rows of scientific names paint at once entering the catalogue.
+     optional gives the font a very short window to be ready (already
+     cached) before that first paint; if it isn't, the page just keeps
+     the fallback for that view instead of swapping later, trading "the
+     branded font always eventually appears" for "no visible flash." -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=optional" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════
    DESIGN TOKENS
