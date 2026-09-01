@@ -1340,8 +1340,12 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   /* Was --t-lg (18px) — the same size as the panel title one click away,
      which made every row's headline compete with that. --t-md (15px)
      matches what mobile already settled on, and buys back row height
-     across a 1,237-row table. */
-  .csn{font-size:var(--t-md)}
+     across a 1,237-row table. Weight dropped from the base rule's 600
+     to 400 (a real loaded italic face, not a synthesized weight) —
+     the same 600 that reads fine on mobile looks noticeably heavier at
+     typical desktop-monitor pixel density, and 1,237 rows of it read
+     as bold text throughout the table. */
+  .csn{font-size:var(--t-md);font-weight:400}
   .cau{font-size:11px;margin-top:2px}
   .cco{font-size:12px;width:180px;max-width:180px}
   .cf{font-size:12px;width:124px}
@@ -1413,7 +1417,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .srch{font-size:12px}
 
   /* ── Table ── */
-  .csn{font-size:var(--t-md);line-height:1.25;font-weight:600}
+  .csn{font-size:var(--t-md);line-height:1.25;font-weight:400}
   .cau{font-size:11px;margin-top:2px}
   .cco{font-size:12px}
   .cf{font-size:12px}
