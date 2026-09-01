@@ -850,7 +850,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      margin-top:4px, both later in the file than this block, so a
      same-specificity override here would otherwise lose the cascade
      despite the media query. */
-  .hdr-top .lang-btn{width:28px;height:28px;padding:0;border-radius:50%;
+  .hdr-top .lang-btn{width:28px;height:28px;padding:0;border-radius:50%;overflow:hidden;
     display:flex;align-items:center;justify-content:center;margin-top:0}
   /* Show credit on mobile — pinned top right */
   .hdr-meta{display:block;margin-left:auto;flex-shrink:0;align-self:flex-start}
@@ -1220,15 +1220,23 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .copy-cite-btn:active{transform:scale(.98);opacity:.85}
 .ftr-feedback-btn:active{transform:scale(.95)}
 
-/* LANGUAGE TOGGLE — shows the flag of the language you'd switch TO */
-.lang-btn{padding:5px;border-radius:999px;border:1px solid rgba(255,255,255,.25);
+/* LANGUAGE TOGGLE — shows the flag of the language you'd switch TO.
+   A fixed 28x28 circle everywhere (mobile and desktop alike), the flag
+   zoomed to fill it edge-to-edge rather than sitting as a small 4:3
+   rectangle with visible padding around it. */
+.lang-btn{width:28px;height:28px;padding:0;border-radius:50%;overflow:hidden;
+  border:1px solid rgba(255,255,255,.25);
   background:rgba(255,255,255,.1);cursor:pointer;transition:all .15s;margin-top:4px;
   display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .lang-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45)}
 .lang-btn:active{transform:scale(.95)}
-/* 4:3 to match the flag artwork's real proportions (viewBox 640x480) —
-   stretching it to a square would distort every flag drawn against it. */
-.lang-btn-flag{width:18px;height:13.5px;display:block;border-radius:2px}
+/* Sized by height (fills the circle's full diameter) with width left to
+   follow the flag's real 4:3 ratio instead of the circle's 1:1 — that
+   makes it wider than the circle, and the parent's overflow:hidden
+   crops the excess evenly off both sides, the same "zoomed in, cropped
+   to fit" look a circular profile photo gets rather than a shrunk
+   rectangle floating inside a bigger circle. */
+.lang-btn-flag{height:100%;width:auto;aspect-ratio:4/3;flex-shrink:0}
 
 
 /* DISCLAIMER — a link into the full modal, not the text itself */
@@ -1478,8 +1486,14 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
     animation:modal-in .2s cubic-bezier(.4,0,.2,1)}
   .feedback-handle{display:none}
 
-  /* Lang toggle — slightly stronger chrome once it has room on desktop */
-  .lang-btn{padding:5px;border-radius:999px;
+  /* Lang toggle — slightly stronger chrome once it has room on desktop.
+     Width/height/padding/overflow repeated here (not just left to the
+     base rule) so this stays the same 28px circle with the flag zoomed
+     to fill it — this rule's border/background would otherwise win the
+     cascade over the base rule's sizing without actually touching it,
+     which is harmless here since the values are identical, but explicit
+     avoids relying on that. */
+  .lang-btn{width:28px;height:28px;padding:0;border-radius:50%;overflow:hidden;
     border:1.5px solid rgba(255,255,255,.3);
     background:rgba(255,255,255,.12)}
 
