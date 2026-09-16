@@ -140,7 +140,8 @@ EN/FIL toggle button in header stat row. Switches all UI chrome to Filipino. Sci
 - Similar species section in panel
 - Copy citation button
 - Share this tool (Web Share API with clipboard fallback)
-- Send Feedback panel (slide-up, with email + disclaimer)
+- Send Feedback panel (slide-up, with email + link to About)
+- About panel (`#disclaimerOverlay`, opened by `.js-open-disclaimer`) — attribution, source terms, licensing and warranty notice. Maintained in English only; the English text governs.
 - Vercel Analytics (`/_vercel/insights/script.js`)
 
 ---
@@ -307,12 +308,17 @@ var activeSpecies=null // Currently open species
 
 ---
 
-## Attribution & Disclaimer
-- Developer: **Mc Andrew Pranada**, Botanist
-- Data source: DAO 2026-20, DENR Philippines (official government issuance)
-- The developer does not claim authorship of the legal instrument or species list
-- Habit classifications verified species-by-species by the developer
-- Distribution data sourced from Co's Digital Flora of the Philippines (Pelser et al. 2011–)
+## Attribution & Rights
+
+The in-app **About** panel is the authoritative version of this; keep the two in step when either changes.
+
+- Developer: **Mc Andrew Pranada**, Botanist. Independent personal project — **not** a DENR or BMB publication, and carrying no official status. Where this tool and the official DAO 2026-20 text differ, the official text governs.
+- **Species list**: DAO 2026-20, DENR Philippines — an official government issuance. No authorship of the legal instrument or the list is claimed.
+- **Growth habit**: not part of DAO 2026-20. Assigned species by species by the developer; professional judgment, not an official determination.
+- **Distribution**: Co's Digital Flora of the Philippines (Pelser, Barcelona & Nickrent, 2011–). Condensed from their records; CDFP is authoritative.
+- **Photographs**: served live from GBIF occurrence records, never hosted or modified here. Open licences only (CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA, Public Domain Mark); All Rights Reserved and unlicensed images are not shown. Copyright stays with each photographer, each image is credited with its licence and links to its source record, and takedown requests are honoured.
+- **IUCN Red List**: not reproduced or redistributed. Their terms permit individual look-up and linking, so IUCN references are link-outs only.
+- **Warranty**: provided as is, without warranty. Not for permitting, enforcement, compliance, commercial or legal use.
 - Built with Claude (Anthropic)
 
 ---

@@ -54,8 +54,9 @@ var T={
     returnHome:'Return Home',
     landingDocLink:'Official Document',
     datasetLabel:'Dataset',
-    disclaimerLabel:'Disclaimer',
-    readDisclaimer:'Read the full disclaimer →'
+    disclaimerLabel:'About',
+    aboutLabel:'About',
+    readDisclaimer:'About this tool & data sources'
   },
   fil:{
     search:'Hanapin ang pangalan, awtor, karaniwang pangalan, pamilya\u2026',
@@ -105,8 +106,9 @@ var T={
     returnHome:'Bumalik sa Simula',
     landingDocLink:'Opisyal na Dokumento',
     datasetLabel:'Datos',
-    disclaimerLabel:'Paunawa',
-    readDisclaimer:'Basahin ang buong paunawa →'
+    disclaimerLabel:'Tungkol',
+    aboutLabel:'Tungkol',
+    readDisclaimer:'Tungkol sa tool at pinagkunan ng datos'
   }
 };
 function t(key){return(T[LANG]&&T[LANG][key])||T.en[key]||key;}
@@ -1987,7 +1989,11 @@ body.entering .body-wrap{animation:app-in .3s ease}
   letter-spacing:.1em;text-transform:uppercase;color:var(--gl)}
 .landing-ref-label{font-size:var(--t-xs);font-weight:600;color:var(--ink);
   display:flex;align-items:center;gap:5px}
-.landing-ref-label span[aria-hidden]{color:var(--fa-deco);transition:transform .16s}
+/* inline-flex, not inline: transform is ignored on inline boxes, so the
+   hover nudge below never actually ran. It also centres the icon against
+   the label instead of sitting it on the text baseline. */
+.landing-ref-label span[aria-hidden]{display:inline-flex;align-items:center;
+  color:var(--fa-deco);transition:transform .16s}
 .landing-ref-card:hover .landing-ref-label span[aria-hidden]{transform:translateX(2px);color:var(--gl)}
 
 /* Disclaimer stays a plain link, last in the flow — proportioned like a
@@ -2050,6 +2056,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17 1.39.34 2.34.34C15 20 22 16 22 3c-4 1-9 2-14 5"></path><path d="M2 21c0-3.5 2-6 5-8"></path></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></symbol>
   <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></symbol>
   <!-- Language toggle flags — sourced from flagicons.lipis.dev (flag-icons
        by lipis), embedded inline as symbols rather than the usual CDN
@@ -2099,7 +2106,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
     <div class="landing-refs">
       <a class="landing-ref-card" href="https://www.bmb.gov.ph/wp-content/uploads/2026/04/dao2026-20.pdf" target="_blank" rel="noopener">
         <div class="landing-ref-eyebrow">DAO 2026-20</div>
-        <div class="landing-ref-label"><span data-i18n="landingDocLink">Official Document</span> <span aria-hidden="true">&#8599;</span></div>
+        <div class="landing-ref-label"><span data-i18n="landingDocLink">Official Document</span> <span aria-hidden="true"><svg class="ic"><use href="#i-external"/></svg></span></div>
       </a>
       <button class="landing-ref-card js-open-analytics" type="button">
         <div class="landing-ref-eyebrow" data-i18n="datasetLabel">Dataset</div>
@@ -2108,7 +2115,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
     </div>
 
   </div>
-  <button class="landing-disclaimer-link js-open-disclaimer" type="button" data-i18n="disclaimerLabel">Disclaimer</button>
+  <button class="landing-disclaimer-link js-open-disclaimer" type="button" data-i18n="disclaimerLabel">About</button>
 </div>
 
 <!-- Temporary on-screen diagnostic for the landing-centering bug — only
@@ -2447,23 +2454,43 @@ body.entering .body-wrap{animation:app-in .3s ease}
 <div class="modal-overlay" id="disclaimerOverlay">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title">Disclaimer</div>
+      <div class="modal-title" data-i18n="aboutLabel">About</div>
       <button class="modal-close" id="disclaimerClose"><svg class="ic"><use href="#i-close"/></svg></button>
     </div>
     <div class="modal-body disclaimer-body">
-      <p>This application is an independent personal project developed and maintained in a personal capacity.</p>
+      <p>This is an independent reference tool for the Updated National List of Threatened Philippine Plants under DENR Administrative Order No.&nbsp;2026-20. It is a personal project, built and maintained in a personal capacity by a practising botanist. <strong>It is not a publication of the DENR, the Biodiversity Management Bureau, or any government agency, and it carries no official status.</strong></p>
 
-      <h4>Source data</h4>
-      <p>The species list, conservation categories, and legal classifications presented here are drawn from DAO 2026-20, an official issuance of the Department of Environment and Natural Resources (DENR), Philippines. The developer does not claim authorship of the legal instrument or the species list it contains. Growth habit annotations reflect the developer's own professional verification and judgment, and are not an official DENR determination.</p>
+      <p>Its purpose is to make an existing public issuance easier to search and read. Where this tool and the official DAO&nbsp;2026-20 text differ, <strong>the official text governs</strong>.</p>
 
-      <h4>Distribution and photographs</h4>
-      <p>Local distribution information has been compiled by the developer from <a href="https://www.philippineplants.org" target="_blank" rel="noopener">Co&rsquo;s Digital Flora of the Philippines</a> (CDFP), and photographs linked from this tool are sourced from CDFP. Full credit for this data and imagery belongs to CDFP, Pelser et al. 2011&ndash;, and its contributors.</p>
+      <h4>The species list</h4>
+      <p>The taxa, threat categories, CITES listings and legal classifications come from DAO&nbsp;2026-20, an official issuance of the Department of Environment and Natural Resources, Philippines. As a government issuance it is a public document; no authorship of the legal instrument or of the list it contains is claimed here. The <a href="https://www.bmb.gov.ph/wp-content/uploads/2026/04/dao2026-20.pdf" target="_blank" rel="noopener">official PDF</a> is linked from the cover page and should be treated as the authority.</p>
 
-      <h4>Accuracy and currency</h4>
-      <p>This tool is provided as a reference only, without warranty of any kind. While care has been taken in compiling and presenting this information, no guarantee is made that the data is complete, current, or error-free.</p>
+      <h4>Growth habit</h4>
+      <p>Habit classifications (tree, shrub, herb, vine, liana) are not part of DAO&nbsp;2026-20. They were assigned species by species by the developer as a working aid, and represent professional judgment rather than an official DENR determination.</p>
 
-      <h4>Third-party data</h4>
-      <p>Information sourced from external services (e.g., GBIF occurrence and taxonomic match data) is fetched live and is not independently verified. It reflects the state of those external databases at the time of viewing and may differ from official Philippine taxonomic determinations.</p>
+      <h4>Distribution</h4>
+      <p>Local distribution is compiled from <a href="https://www.philippineplants.org" target="_blank" rel="noopener">Co&rsquo;s Digital Flora of the Philippines</a> (CDFP), Pelser, Barcelona &amp; Nickrent, 2011 onward. Credit for that work belongs to CDFP and its contributors. Distribution shown here is a condensed reading of their records and may lag revisions on their site; CDFP should be consulted directly for authoritative distribution.</p>
+
+      <h4>Photographs</h4>
+      <p>Photographs are served live from <a href="https://www.gbif.org" target="_blank" rel="noopener">GBIF</a> occurrence records and are <strong>not hosted or modified by this tool</strong>. Only images published under Creative Commons terms &mdash; CC0, CC&nbsp;BY, CC&nbsp;BY-SA, CC&nbsp;BY-NC, CC&nbsp;BY-NC-SA, or the Public Domain Mark &mdash; are displayed. Images marked All Rights Reserved, or carrying no usable licence, are not shown.</p>
+      <p>Each photograph is credited to its photographer with its licence, and links back to the GBIF occurrence record holding the full provenance. <strong>Copyright in every photograph remains with its creator.</strong> If you are a rights holder and want an image removed, please get in touch and it will be taken down. Anyone reusing an image should take it from the source record under that image&rsquo;s own licence, not from this page.</p>
+
+      <h4>Live data from GBIF</h4>
+      <p>Occurrence counts and taxonomic matches are fetched from GBIF at the moment you view a species. They are not independently verified, reflect the state of those databases at that moment, and may differ from official Philippine taxonomic determinations. A GBIF name match is a database match, not a taxonomic opinion.</p>
+
+      <h4>IUCN Red List</h4>
+      <p>IUCN Red List assessments are <strong>not reproduced or redistributed here</strong>. IUCN&rsquo;s terms permit individual look-up and linking, so any IUCN reference is a link out to their own site.</p>
+
+      <h4>Accuracy and warranty</h4>
+      <p>This tool is provided as a reference only, <strong>as is and without warranty of any kind</strong>, express or implied. Care has been taken in compiling and presenting the information, but no guarantee is made that it is complete, current or free of error, and no liability is accepted for any loss or decision arising from its use. Do not rely on it for permitting, enforcement, compliance, commercial or legal purposes &mdash; consult the official DAO&nbsp;2026-20 text and the DENR directly.</p>
+
+      <h4>Using this tool</h4>
+      <p>You are welcome to use, cite and share it for research, education and conservation. Please cite DAO&nbsp;2026-20 as the source of the list, and CDFP and the individual photographers for their own material, rather than citing this tool as the origin of data it did not create.</p>
+
+      <h4>Corrections and contact</h4>
+      <p>Corrections, taxonomic notes and takedown requests are welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a>, or through Send Feedback in the app.</p>
+
+      <p style="font-size:var(--t-xs);color:var(--fa);border-top:1px solid var(--bd);padding-top:14px">Developed by Mc Andrew Pranada, botanist. Built with Claude (Anthropic). This notice is maintained in English; translations elsewhere in the app are provided for convenience and the English text governs.</p>
     </div>
   </div>
 </div>
@@ -2643,7 +2670,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <span data-i18n="shareTool">Share this tool</span>
       </a>
       <div class="feedback-note" id="fbNote" data-i18n="feedbackNote">This is a solo project maintained in a personal capacity. Feedback on species data, distribution, or features is welcome.</div>
-      <button class="feedback-disclaimer js-open-disclaimer" id="fbDisclaimer" type="button" data-i18n="readDisclaimer">Read the full disclaimer →</button>
+      <button class="feedback-disclaimer js-open-disclaimer" id="fbDisclaimer" type="button" data-i18n="readDisclaimer">About this tool &amp; data sources</button>
     </div>
   </div>
 </div>
@@ -3194,7 +3221,7 @@ function fetchGBIFMedia(token,key){
           });
           return lines.join(' &middot; ');
         })()
-        +' &middot; <a href="https://www.gbif.org/occurrence/gallery?taxonKey='+key+'" target="_blank" rel="noopener">'+esc(t('allPhotos'))+' &#8599;</a>'
+        +' &middot; <a href="https://www.gbif.org/occurrence/gallery?taxonKey='+key+'" target="_blank" rel="noopener">'+esc(t('allPhotos'))+' <svg class="ic"><use href="#i-external"/></svg></a>'
         +'</div>';
       sec.style.display='';
 
@@ -3266,7 +3293,7 @@ function fetchGBIF(s){
     .catch(function(){
       if(stale())return;
       block.innerHTML='<div class="live-err">Could not reach GBIF. Check your connection.</div>'
-        +'<div style="margin-top:6px"><a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search in GBIF &#8599;</a></div>';
+        +'<div style="margin-top:6px"><a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search in GBIF <svg class="ic"><use href="#i-external"/></svg></a></div>';
     });
 }
 
@@ -3316,8 +3343,8 @@ function renderGBIFNoMatch(block,token,s,fallbackUrl){
         +'<span class="gbif-match-badge match-none">NO MATCH</span></div>'
         +'<div style="font-size:var(--t-xs);color:var(--mu);margin:6px 0">Not in GBIF backbone — may be recently described or a synonym.</div>'
         +'<div style="display:flex;flex-direction:column;gap:4px">'
-        +(genusKey?'<a href="https://www.gbif.org/species/'+genusKey+'" target="_blank" rel="noopener" class="gbif-link">Genus <em>'+esc(genus)+'</em> in GBIF &#8599;</a>':'')
-        +'<a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search &#8220;'+esc(s.name)+'&#8221; in GBIF &#8599;</a>'
+        +(genusKey?'<a href="https://www.gbif.org/species/'+genusKey+'" target="_blank" rel="noopener" class="gbif-link">Genus <em>'+esc(genus)+'</em> in GBIF <svg class="ic"><use href="#i-external"/></svg></a>':'')
+        +'<a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search &#8220;'+esc(s.name)+'&#8221; in GBIF <svg class="ic"><use href="#i-external"/></svg></a>'
         +'</div>';
       /* Button subtitle — no direct page found */
       var gbifSub=document.getElementById('gbifExtSub');
@@ -3327,7 +3354,7 @@ function renderGBIFNoMatch(block,token,s,fallbackUrl){
       if(block._gbifToken!==token)return;
       block.innerHTML='<div class="live-stat"><span class="live-stat-label">'+t('match')+'</span>'
         +'<span class="gbif-match-badge match-none">NO MATCH</span></div>'
-        +'<div style="margin-top:6px"><a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search in GBIF &#8599;</a></div>';
+        +'<div style="margin-top:6px"><a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search in GBIF <svg class="ic"><use href="#i-external"/></svg></a></div>';
       var gbifSub=document.getElementById('gbifExtSub');
       if(gbifSub){gbifSub.textContent='Search species in GBIF';}
     });
