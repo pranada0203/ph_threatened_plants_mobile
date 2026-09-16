@@ -41,8 +41,8 @@ var T={
     spPerCat:'Species per Threat Category',divBreakdown:'Division Breakdown',
     citesStatus:'CITES Listing Status',growthHabit:'Growth Habit',
     topIslands:'Top Islands by Threatened Species',
-    endemByDiv:'Endemicity by Division',globalOcc:'Global occurrences',
-    phOcc:'Philippines occurrences',match:'Match',confidence:'Confidence',
+    endemByDiv:'Endemicity by Division',globalOcc:'Worldwide',phOccFull:'Philippines occurrences',photographs:'Photographs',allPhotos:'All photos',matchedTo:'Matched',
+    phOcc:'Philippines',match:'Match',confidence:'Confidence',
     acceptedAs:'Accepted as',gbifName:'GBIF name',
     hdrTitle:'Threatened Philippine Plants',
     builtWith:'Built with Claude \u00B7 Anthropic',
@@ -92,8 +92,8 @@ var T={
     spPerCat:'Species bawat Kategorya ng Banta',divBreakdown:'Breakdown ng Dibisyon',
     citesStatus:'Katayuan sa Listahan ng CITES',growthHabit:'Ugali ng Paglaki',
     topIslands:'Nangungunang mga Isla ayon sa Bilang ng Nanganganib na Species',
-    endemByDiv:'Endemisidad ayon sa Dibisyon',globalOcc:'Pandaigdigang okurensya',
-    phOcc:'Okurensya sa Pilipinas',match:'Tugma',confidence:'Kumpiyansa',
+    endemByDiv:'Endemisidad ayon sa Dibisyon',globalOcc:'Pandaigdigan',phOccFull:'Okurensya sa Pilipinas',photographs:'Mga Larawan',allPhotos:'Lahat ng larawan',matchedTo:'Itinugma',
+    phOcc:'Pilipinas',match:'Tugma',confidence:'Kumpiyansa',
     acceptedAs:'Tinatanggap bilang',gbifName:'Pangalan sa GBIF',
     hdrTitle:'Mga Nanganganib na Halaman ng Pilipinas',
     builtWith:'Ginawa gamit ang Claude \u00B7 Anthropic',
@@ -794,6 +794,47 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .ext-link-name{font-weight:600;font-size:var(--t-xs);display:block;color:inherit}
 .ext-link-sub{font-size:var(--t-micro);color:var(--fa);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:var(--transition)}
 .ext-link:hover .ext-link-sub{color:var(--gl)}
+
+/* ── Species photographs ─────────────────────────────────────
+   CC-licensed occurrence media from GBIF. Three across the panel, each
+   linking to the occurrence record it came from — that record is where
+   the full provenance lives, and linking to it is part of honouring the
+   licence, not decoration.
+
+   Only openly-licensed images are shown (CC0, CC BY, CC BY-SA, CC BY-NC,
+   CC BY-NC-SA, Public Domain Mark). Anything All-Rights-Reserved or
+   unlabelled is dropped rather than shown with a hedge, because this is a
+   reference tool attached to a government issuance and a wrong reuse is
+   the developer's problem, not GBIF's. Every photograph carries its
+   photographer and licence in the credit line beneath the strip.        */
+.sp-media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sp-media-item{display:block;position:relative;aspect-ratio:1;border-radius:10px;
+  overflow:hidden;background:var(--bg);border:1px solid var(--bd-soft);
+  text-decoration:none;transition:var(--transition)}
+.sp-media-item:hover{border-color:var(--gl);box-shadow:var(--shadow-sm)}
+.sp-media-item img{width:100%;height:100%;object-fit:cover;display:block}
+/* Marks the one image that could not load, so a dead host leaves a quiet
+   tile rather than a broken-image glyph. JS removes it outright. */
+.sp-media-item.failed{display:none}
+.sp-media-credit{font-size:var(--t-micro);color:var(--fa);line-height:1.5;margin-top:7px}
+.sp-media-credit a{color:var(--gl);text-decoration:none}
+.sp-media-credit a:hover{text-decoration:underline}
+.sp-media-lic{font-family:"IBM Plex Mono",monospace;color:var(--fa-deco)}
+
+/* ── GBIF record figures ─────────────────────────────────────
+   The occurrence counts are the two numbers anyone actually reads here,
+   so they are figures. The match metadata that used to sit above them as
+   four equal-weight rows — name, status, confidence, match type — is one
+   caption line underneath: it matters only when it is surprising, and
+   when it is surprising the words carry it. */
+.gbif-figs{display:flex;gap:26px;margin-bottom:8px}
+.gbif-fig-n{font-size:var(--t-xl);font-weight:700;line-height:1;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.gbif-fig-l{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+  color:var(--fa);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.gbif-caption{font-size:var(--t-xs);color:var(--fa);line-height:1.55;
+  border-top:1px solid var(--bd);padding-top:7px}
+.gbif-caption em{font-style:italic;color:var(--mu)}
 
 /* GBIF live block */
 .live-block{background:var(--bg);border-radius:10px;padding:10px 12px;border:1px solid var(--bd)}
@@ -2313,6 +2354,20 @@ body.entering .body-wrap{animation:app-in .3s ease}
           <!-- Scrollable body -->
           <div class="panel-body">
 
+            <!-- Photographs — CC-licensed occurrence media from GBIF.
+                 Hidden until images resolve: roughly a third of taxa have
+                 no openly-licensed photograph, and an empty frame on those
+                 reads worse than no section at all. First in the body so
+                 the answer to "what does it look like" sits directly under
+                 the name, but below the header block, which must never
+                 wait on a network round trip. -->
+            <div id="mediaSection" style="display:none">
+              <div class="panel-section-title"><span data-i18n="photographs">Photographs</span>
+                <span style="font-family:Inter,sans-serif;font-weight:400;font-size:var(--t-micro);color:var(--fa);margin-left:6px;text-transform:none;letter-spacing:0">GBIF occurrence media</span>
+              </div>
+              <div id="mediaBlock"></div>
+            </div>
+
             <!-- Distribution -->
             <div id="distSection" style="display:none">
               <div class="panel-section-title"><span id="distSectionTitle" data-i18n="localDist">Local Distribution</span>
@@ -3019,6 +3074,10 @@ function openPanel(s,fromNav){
 
   /* Reset live blocks */
   document.getElementById('gbifBlock').innerHTML='<div class="live-status loading-dots">Fetching from GBIF</div>';
+  /* Photographs stay hidden until images actually resolve for THIS species —
+     never carry the previous species' plate across a panel navigation. */
+  var mediaSec=document.getElementById('mediaSection');
+  if(mediaSec){mediaSec.style.display='none';document.getElementById('mediaBlock').innerHTML='';}
 
   /* Sync table row highlight and scroll into view when navigating */
   document.querySelectorAll('.active-row').forEach(function(r){r.classList.remove('active-row');});
@@ -3054,11 +3113,117 @@ function closePanel(){
 }
 
 /* ── GBIF API ── */
+
+/* Licences we may redisplay. Everything else — All Rights Reserved, an
+   unrecognised URI, or no licence field at all — is dropped. */
+var MEDIA_LICENCE_OK=/creativecommons\.org\/(licenses\/(by|by-sa|by-nc|by-nc-sa)\/|publicdomain\/(zero|mark))/i;
+
+function licenceLabel(url){
+  if(!url)return '';
+  if(/publicdomain\/zero/i.test(url))return 'CC0';
+  if(/publicdomain\/mark/i.test(url))return 'PDM';
+  var m=url.match(/licenses\/([a-z-]+)\//i);
+  return m?'CC '+m[1].toUpperCase():'';
+}
+
+/* iNaturalist serves the same photo at several sizes and GBIF always
+   records the original, which runs to ~2MB — measured 2,077KB against
+   195KB for the medium variant of the same image. Three of those in one
+   panel is 6MB on a phone, so rewrite the size segment where the host is
+   known to offer one. Other hosts are used as published. */
+function mediaThumbUrl(u){
+  /* iNaturalist: /original.jpg -> /medium.jpg, measured 2,077KB -> 195KB. */
+  if(/inaturalist/i.test(u))return u.replace(/\/original\.(jpe?g|png|webp)/i,'/medium.$1');
+  /* Smithsonian NMNH takes a height parameter; GBIF records h=2000, which
+     renders 1517x2000 into a 115px tile. h=400 returns 304x400. */
+  if(/collections\.nmnh\.si\.edu/i.test(u))return u.replace(/([?&]h=)\d+/i,'$1400');
+  /* Every other host is used as published — there is no portable resize,
+     and guessing at one risks requesting a URL that does not exist. */
+  return u;
+}
+
+function fetchGBIFMedia(token,key){
+  var sec=document.getElementById('mediaSection');
+  var block=document.getElementById('mediaBlock');
+  var gbifBlock=document.getElementById('gbifBlock');
+  if(!sec||!block||!gbifBlock)return;
+
+  /* 20 occurrences is enough to find three openly-licensed photographs
+     without making the panel wait on a large response. */
+  fetch('https://api.gbif.org/v1/occurrence/search?taxonKey='+key+'&mediaType=StillImage&limit=20')
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if(gbifBlock._gbifToken!==token)return;
+      var seen={},picks=[];
+      (res&&res.results||[]).forEach(function(o){
+        (o.media||[]).forEach(function(m){
+          if(picks.length>=3)return;
+          if(!m.identifier||m.type!=='StillImage')return;
+          if(m.identifier.indexOf('https://')!==0)return;   /* no mixed content */
+          var lic=m.license||o.license||'';
+          if(!MEDIA_LICENCE_OK.test(lic))return;
+          if(seen[m.identifier])return;                      /* GBIF repeats media rows */
+          seen[m.identifier]=1;
+          picks.push({url:m.identifier,
+            creator:m.creator||o.recordedBy||o.rightsHolder||'Unknown',
+            lic:licenceLabel(lic),
+            occ:o.key});
+        });
+      });
+      if(!picks.length)return;                               /* stays hidden */
+
+      block.innerHTML='<div class="sp-media-grid">'
+        +picks.map(function(p){
+          return '<a class="sp-media-item" href="https://www.gbif.org/occurrence/'+p.occ+'"'
+            +' target="_blank" rel="noopener" title="'+esc(p.creator)+' — '+esc(p.lic)+'">'
+            +'<img src="'+esc(mediaThumbUrl(p.url))+'" alt="" loading="lazy" decoding="async"></a>';
+        }).join('')
+        +'</div>'
+        +'<div class="sp-media-credit">'
+        /* One entry per photographer, not per photograph — the same person
+           often contributes two of the three, and naming them twice reads
+           as a rendering bug rather than as thorough attribution. Each
+           distinct creator and licence still appears. */
+        +(function(){
+          var seenCredit={},lines=[];
+          picks.forEach(function(p){
+            var k=p.creator+'|'+p.lic;
+            if(seenCredit[k])return;
+            seenCredit[k]=1;
+            lines.push(esc(p.creator)+' <span class="sp-media-lic">'+esc(p.lic)+'</span>');
+          });
+          return lines.join(' &middot; ');
+        })()
+        +' &middot; <a href="https://www.gbif.org/occurrence/gallery?taxonKey='+key+'" target="_blank" rel="noopener">'+esc(t('allPhotos'))+' &#8599;</a>'
+        +'</div>';
+      sec.style.display='';
+
+      /* A dead host should leave nothing, not a broken-image glyph. If
+         every image fails, the section retires itself. */
+      block.querySelectorAll('.sp-media-item img').forEach(function(img){
+        img.addEventListener('error',function(){
+          var a=img.closest('.sp-media-item');
+          if(a)a.classList.add('failed');
+          if(!block.querySelector('.sp-media-item:not(.failed)'))sec.style.display='none';
+        });
+      });
+    })
+    .catch(function(){ /* photographs are a bonus; silence is the right failure */ });
+}
+
+/* Monotonic, NOT Date.now(). Two openPanel calls inside the same
+   millisecond — which holding the down-arrow through the panel does
+   routinely — produced an identical Date.now() token, so the staleness
+   check `block._gbifToken!==token` compared a number against itself and
+   passed. The first species' response then rendered into the second
+   species' panel. A counter cannot collide. */
+var gbifSeq=0;
+
 function fetchGBIF(s){
   var block=document.getElementById('gbifBlock');
   if(!block)return;
   /* Stamp this fetch with a token so stale responses from previous species are ignored */
-  var token=Date.now();
+  var token=++gbifSeq;
   block._gbifToken=token;
   var searchName=encodeURIComponent(s.name);
   var fallbackUrl='https://www.gbif.org/species/search?q='+searchName+'&rank=SPECIES';
@@ -3088,6 +3253,7 @@ function fetchGBIF(s){
               };
               renderGBIFResult(block,token,synMatch,fallbackUrl);
               fetchGBIFOccurrences(block,token,acceptedKey);
+              fetchGBIFMedia(token,acceptedKey);
             } else {
               renderGBIFNoMatch(block,token,s,fallbackUrl);
             }
@@ -3095,7 +3261,7 @@ function fetchGBIF(s){
       }
       var key=match.usageKey||match.speciesKey;
       renderGBIFResult(block,token,match,fallbackUrl);
-      if(key)fetchGBIFOccurrences(block,token,key);
+      if(key){fetchGBIFOccurrences(block,token,key);fetchGBIFMedia(token,key);}
     })
     .catch(function(){
       if(stale())return;
@@ -3109,20 +3275,22 @@ function renderGBIFResult(block,token,match,fallbackUrl){
   var mtype=match.matchType||'UNKNOWN';
   var mclass=mtype==='EXACT'?'match-exact':mtype==='FUZZY'?'match-fuzzy':'match-fuzzy';
   var key=match.usageKey||match.speciesKey||null;
-  var html='';
-  html+='<div class="live-stat"><span class="live-stat-label">'+t('match')+'</span>'
-    +'<span class="gbif-match-badge '+mclass+'">'+esc(mtype)+'</span></div>';
-  if(match.canonicalName)html+='<div class="live-stat"><span class="live-stat-label">'+t('gbifName')+'</span>'
-    +'<span class="live-stat-val" style="font-style:italic">'+esc(match.canonicalName)+'</span></div>';
-  if(match.acceptedName)html+='<div class="live-stat"><span class="live-stat-label">'+t('acceptedAs')+'</span>'
-    +'<span class="live-stat-val" style="font-style:italic;color:var(--g)">'+esc(match.acceptedName)+'</span></div>';
-  if(match.status)html+='<div class="live-stat"><span class="live-stat-label">'+t('taxonStatus')+'</span>'
-    +'<span class="live-stat-val">'+esc(match.status)+'</span></div>';
-  if(match.confidence!=null)html+='<div class="live-stat"><span class="live-stat-label">'+t('confidence')+'</span>'
-    +'<span class="live-stat-val">'+match.confidence+'%</span></div>';
-  /* Named placeholder div — occurrences injected into this after they load */
-  html+='<div class="gbif-occ-slot" style="margin-top:6px">'
+  /* Occurrence counts lead as figures; the match metadata that used to
+     occupy four equal-weight rows above them is now one caption line
+     below. Someone reading this wants "how many records exist" as a
+     number — the taxonomic bookkeeping matters only when it is
+     surprising, and when it is, the words carry it. */
+  var html='<div class="gbif-occ-slot">'
     +'<div class="live-status loading-dots">Loading occurrences</div></div>';
+
+  var bits=[];
+  if(match.canonicalName)bits.push(t('matchedTo')+' <em>'+esc(match.canonicalName)+'</em>');
+  else bits.push(t('match'));
+  bits.push('<span class="gbif-match-badge '+mclass+'">'+esc(mtype)+'</span>');
+  if(match.acceptedName)bits.push(t('acceptedAs')+' <em>'+esc(match.acceptedName)+'</em>');
+  else if(match.status)bits.push(esc(String(match.status).toLowerCase()));
+  if(match.confidence!=null)bits.push(match.confidence+'%');
+  html+='<div class="gbif-caption">'+bits.join(' &middot; ')+'</div>';
   block.innerHTML=html;
   /* Upgrade the GBIF external button to the resolved species page */
   if(key){
@@ -3176,10 +3344,10 @@ function fetchGBIFOccurrences(block,token,key){
     if(!slot)return;
     var total=res[0]&&res[0].count!=null?res[0].count.toLocaleString():'—';
     var ph=res[1]&&res[1].count!=null?res[1].count.toLocaleString():'—';
-    slot.innerHTML='<div class="live-stat"><span class="live-stat-label">'+t('globalOcc')+'</span>'
-      +'<span class="live-stat-val">'+total+'</span></div>'
-      +'<div class="live-stat"><span class="live-stat-label">'+t('phOcc')+'</span>'
-      +'<span class="live-stat-val">'+ph+'</span></div>';
+    slot.innerHTML='<div class="gbif-figs">'
+      +'<div><div class="gbif-fig-n">'+total+'</div><div class="gbif-fig-l">'+esc(t('globalOcc'))+'</div></div>'
+      +'<div><div class="gbif-fig-n">'+ph+'</div><div class="gbif-fig-l">'+esc(t('phOcc'))+'</div></div>'
+      +'</div>';
   }).catch(function(){
     if(block._gbifToken!==token)return;
     var slot=block.querySelector('.gbif-occ-slot');

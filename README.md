@@ -99,13 +99,25 @@ Opens from row click. Contains:
 - Scientific name (italic), authority, threat/division/CITES/endemic/habit/infraspecific badges
 - Common name
 - Copy citation button
+- Photographs — CC-licensed GBIF occurrence media (see below); hidden when none qualify
 - External databases: IPNI, GBIF (with live occurrence data via GBIF API)
 - Co's Digital Flora of the Philippines (CDFP) photo link — links to family page
 - Local Distribution — parsed from dist field, all-caps = island label, mixed case = provinces, (photos) badge, ? uncertain badge
 - Similar species (same family + category)
 
 ### GBIF Integration
-Live API calls to `api.gbif.org`. Uses token-based staleness guard to prevent race conditions. Fallback to synonym search if species not matched. Occurrence counts for global and Philippines.
+Live API calls to `api.gbif.org`. Fallback to synonym search if the species is not matched. Occurrence counts lead the block as figures; the taxonomic match metadata sits beneath them as one caption line.
+
+**Staleness guard.** Every fetch is stamped with a token from a monotonic counter (`gbifSeq`), and each response checks it before writing to the DOM. It must not be `Date.now()` — two `openPanel` calls in the same millisecond, which holding the down-arrow through the panel produces routinely, yielded identical tokens, so the check compared a number against itself and one species' results rendered into another's panel.
+
+### Species Photographs
+Up to three CC-licensed images per species, pulled from GBIF occurrence media (`mediaType=StillImage`), shown at the top of the panel body.
+
+- **Licensing is a hard filter.** Only CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA and the Public Domain Mark are displayed (`MEDIA_LICENCE_OK`). All Rights Reserved, unrecognised URIs and missing licence fields are dropped rather than shown with a hedge — this tool is attached to a government issuance, so a wrong reuse is the developer's problem, not GBIF's.
+- Every photograph is credited by photographer and licence beneath the strip, and each tile links to the GBIF occurrence record it came from. Credits are deduplicated per photographer, not per photo.
+- Roughly **a third of taxa have no openly-licensed image**; the section stays hidden for those rather than rendering an empty frame. It also hides itself if every image fails to load.
+- **Thumbnail sizing** is host-specific in `mediaThumbUrl()`. GBIF records originals: an iNaturalist original measured 2,077KB against 195KB for its `medium` variant, and a Smithsonian NMNH image arrives at 1517×2000 for a 115px tile. Both hosts are rewritten; every other host is used as published, because there is no portable resize and guessing risks a URL that does not exist.
+- `https` only, so no mixed content.
 
 ### Analytics Modal
 Charts describe the **current filtered view**, not the whole dataset. Top 15 Families, Threat Category (with a per-category breakdown table), Division donut with Endemicity by Division, CITES Listing Status, Growth Habit, Top Islands by Threatened Species.
@@ -222,6 +234,9 @@ All 1,237 rows are in the DOM at once (~23,500 nodes), so two rules matter:
 | `distIslands(dist)` | Pulls the all-caps island names out of a CDFP `dist` string |
 | `titleCaseIsland(s)` | Title-cases an all-caps island name for display |
 | `distCell(rec)` | Builds the Distribution cell — first two islands plus a `+N` counter, full list on hover |
+| `fetchGBIFMedia(token,key)` | Fetches occurrence media, filters to open licences, dedupes, renders the photo strip |
+| `mediaThumbUrl(u)` | Host-specific thumbnail rewrite (iNaturalist, Smithsonian NMNH) |
+| `licenceLabel(url)` | Turns a Creative Commons URI into a short code (CC0, CC BY-NC, …) |
 | `barRow(label,value,pct,colour,title)` | One bar row for every analytics chart; owns the rule that a value sits outside its bar, or inside it once the bar passes 86% |
 | `buildFams()` | Renders family sidebar |
 | `openPanel(s)` | Opens species detail panel |
@@ -280,12 +295,12 @@ var activeSpecies=null // Currently open species
 ---
 
 ## Known Issues / Pending Work
-1. **No plant imagery** — the app is a botanical reference with no photographs. CDFP photos are linked but never shown. GBIF's occurrence-media endpoint returns CC-licensed images with attribution and the app already calls GBIF, so a thumbnail in the species panel is within reach of the existing integration. Open product decision.
-2. **Filipino column headers truncate** — `Kategorya` and `Karaniwang Pangalan` ellipse, by choice. Widening those columns costs the Scientific Name column ~65px in *both* languages to fix a problem that exists in one, and letting headers wrap breaks English `Common Name` onto two lines and grows the header row. Every `<th>` carries a `title` with the full label. The real fix is shorter Filipino labels — a translation call, not a layout one.
-3. **Language toggle** — some dynamic panel content (GBIF responses, similar species section titles) may not fully translate.
-4. **`habitConf`** — every record is `"verified"`, so the `?` suffix `render()` emits for `"mixed"` is currently unreachable. Harmless, but it can go if the field is never used.
+1. **Filipino column headers truncate** — `Kategorya` and `Karaniwang Pangalan` ellipse, by choice. Widening those columns costs the Scientific Name column ~65px in *both* languages to fix a problem that exists in one, and letting headers wrap breaks English `Common Name` onto two lines and grows the header row. Every `<th>` carries a `title` with the full label. The real fix is shorter Filipino labels — a translation call, not a layout one.
+2. **Language toggle** — some dynamic panel content (GBIF responses, similar species section titles) may not fully translate.
+3. **`habitConf`** — every record is `"verified"`, so the `?` suffix `render()` emits for `"mixed"` is currently unreachable. Harmless, but it can go if the field is never used.
 
 ### Resolved
+- ~~No plant imagery~~ — CC-licensed GBIF occurrence photographs now appear in the species panel; roughly two thirds of taxa have at least one.
 - ~~Distribution data incomplete~~ — coverage measured at **1,232 of 1,237** (99.6%), and it now has its own table column.
 - ~~Script tag balance~~ — verified balanced (4 opens / 4 closes).
 - ~~Desktop responsive breakpoint~~ — column widths re-measured against real content at every breakpoint; verified at 375, 768, 800, 1001, 1100, 1261 and 1440 in both languages.
