@@ -51,6 +51,11 @@ var T={
     landingStatLabel:'Threatened Philippine Vascular Plant Taxa',
     landingSubstats:'920 Philippine endemic \u00B7 219 CITES-listed',
     landingCta:'Explore the List',
+    landingSearchPh:'Search species or common name',
+    landingSearchGo:'Search',
+    landingMatchOne:'1 match — press Enter',
+    landingMatchMany:'{n} matches — press Enter',
+    landingMatchNone:'No matches',
     returnHome:'Return Home',
     landingDocLink:'Official Document',
     datasetLabel:'Dataset',
@@ -103,6 +108,11 @@ var T={
     landingStatLabel:'Nanganganib na Vascular na Halaman sa Pilipinas',
     landingSubstats:'920 endemiko sa Pilipinas \u2022 219 nakalista sa CITES',
     landingCta:'Tuklasin ang Listahan',
+    landingSearchPh:'Espesye o karaniwang pangalan',
+    landingSearchGo:'Maghanap',
+    landingMatchOne:'1 tugma — pindutin ang Enter',
+    landingMatchMany:'{n} tugma — pindutin ang Enter',
+    landingMatchNone:'Walang tugma',
     returnHome:'Bumalik sa Simula',
     landingDocLink:'Opisyal na Dokumento',
     datasetLabel:'Datos',
@@ -1934,6 +1944,39 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
 .landing-desc{font-size:var(--t-base);line-height:1.65;color:var(--mu);max-width:440px;margin-bottom:36px}
 
+/* ── Cover search ────────────────────────────────────────────
+   Sits above the card, so the page offers "find one" before "browse all"
+   — which is the order most visits actually want from a 1,237-row
+   reference. The card keeps its own CTA for the browse path.
+   Same soft-card language as everything else on the cover: --r-sm
+   radius, soft border, shadow on rest, brand border on focus.           */
+.landing-search{display:flex;align-items:center;gap:8px;width:100%;max-width:420px;
+  margin:0 auto 6px;padding:0 5px 0 13px;background:var(--sf);
+  border:1px solid var(--bd-soft);border-radius:var(--r-sm);
+  box-shadow:var(--shadow-sm);transition:var(--transition)}
+.landing-search:focus-within{border-color:var(--gl);box-shadow:var(--shadow-md)}
+.landing-search-ico{color:var(--fa);flex-shrink:0;font-size:var(--t-base);transition:var(--transition)}
+.landing-search:focus-within .landing-search-ico{color:var(--gl)}
+/* 16px floor: iOS Safari zooms the whole page when a focused input is
+   below that, exactly as the catalogue's own search box does. */
+.landing-search-input{flex:1;min-width:0;border:none;outline:none;background:transparent;
+  font-family:Inter,sans-serif;font-size:16px;color:var(--ink);padding:11px 0}
+.landing-search-input::placeholder{color:var(--fa)}
+/* Native search affordances are inconsistent across engines and fight
+   the field's own styling; the submit button is the clear control. */
+.landing-search-input::-webkit-search-decoration,
+.landing-search-input::-webkit-search-cancel-button{-webkit-appearance:none}
+.landing-search-go{flex-shrink:0;width:34px;height:34px;border:none;border-radius:8px;
+  background:var(--gbg);color:var(--g);font-size:var(--t-md);line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.landing-search-go:hover{background:var(--g);color:#fff}
+.landing-search-go:active{transform:scale(.94)}
+/* Reserves its own line height so the cover does not reflow — and the
+   card below it does not jump — as the count appears and disappears. */
+.landing-search-hint{min-height:16px;margin-bottom:8px;font-size:var(--t-xs);
+  color:var(--fa);font-family:"IBM Plex Mono",monospace;letter-spacing:.02em}
+.landing-search-hint b{color:var(--g);font-weight:600}
+
 /* Single entry-point card — DAO 2026-20. IUCN's terms prohibit
    redistributing their dataset (only individual-lookup/link use is
    permitted without a written waiver), so there's no second list to
@@ -2042,29 +2085,29 @@ body.entering .body-wrap{animation:app-in .3s ease}
    single orphaned word is worse than a slightly wider measure.
 ══════════════════════════════════════════════════════════ */
 @media (min-width:769px){
-  .landing{padding:40px 24px}
+  .landing{padding:30px 24px}
   .landing-inner{max-width:720px}
-  .landing-mark{width:64px;height:64px;margin-bottom:18px}
-  .landing-title{font-size:clamp(38px,3.6vw,46px);margin-bottom:12px}
-  .landing-desc{font-size:var(--t-base);line-height:1.6;max-width:56ch;margin-bottom:26px}
-  .landing-list-card{max-width:420px;padding:22px 24px}
+  .landing-mark{width:56px;height:56px;margin-bottom:14px}
+  .landing-title{font-size:clamp(38px,3.6vw,46px);margin-bottom:10px}
+  .landing-desc{font-size:var(--t-base);line-height:1.6;max-width:56ch;margin-bottom:20px}
+  .landing-list-card{max-width:420px;padding:18px 24px}
   .landing-list-stat{font-size:58px;margin-bottom:8px}
   .landing-list-label{font-size:var(--t-base)}
   .landing-prop{height:7px;margin-top:16px}
   .landing-list-breakdown{margin-top:10px}
   .landing-list-go{padding-top:16px;font-size:var(--t-sm)}
-  .landing-refs{max-width:420px;margin-top:12px}
-  .landing-ref-card{padding:12px 15px}
-  .landing-disclaimer-link{margin-top:16px}
+  .landing-refs{max-width:420px;margin-top:10px}
+  .landing-ref-card{padding:11px 15px}
+  .landing-disclaimer-link{margin-top:12px}
 }
 
 /* Taller desktops only — this tier spends vertical room it has verified. */
 @media (min-width:769px) and (min-height:880px){
-  .landing{padding:48px 24px}
-  .landing-mark{width:76px;height:76px;margin-bottom:26px}
-  .landing-title{font-size:clamp(44px,4.2vw,56px);margin-bottom:18px}
-  .landing-desc{font-size:var(--t-md);margin-bottom:38px}
-  .landing-list-card{padding:26px 28px}
+  .landing{padding:40px 24px}
+  .landing-mark{width:68px;height:68px;margin-bottom:20px}
+  .landing-title{font-size:clamp(44px,4.2vw,56px);margin-bottom:14px}
+  .landing-desc{font-size:var(--t-md);margin-bottom:28px}
+  .landing-list-card{padding:22px 28px}
   .landing-list-stat{font-size:var(--t-landing-stat);margin-bottom:10px}
   .landing-prop{height:8px;margin-top:20px}
   .landing-list-go{padding-top:18px;font-size:var(--t-base)}
@@ -2092,15 +2135,20 @@ body.entering .body-wrap{animation:app-in .3s ease}
      Every value below is trimmed and verified (by measuring real
      rendered height at a 393x695 viewport, matching that device) to
      comfortably clear that with room to spare, not just to look denser. */
-  .landing{padding:28px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
+  .landing{padding:20px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
   .landing-mark{width:52px;height:52px;font-size:var(--t-xl);margin-bottom:14px}
   .landing-title{font-size:26px;margin-bottom:8px}
-  .landing-desc{font-size:var(--t-sm);margin-bottom:18px}
+  .landing-desc{font-size:var(--t-sm);margin-bottom:14px}
   .landing-list-card{padding:16px}
   .landing-list-breakdown{margin-top:10px;padding-top:10px}
   .landing-list-go{padding-top:10px}
   .landing-list-stat{font-size:32px}
-  .landing-refs{margin-top:10px;flex-direction:column}
+  /* Side by side, not stacked. Stacking these two cost ~67px of a budget
+     that the cover search now also draws on, and it bought nothing —
+     "Official Document" and "Analytics" both fit a half-width card at
+     this size. Reverting the direction is what made room for the search
+     field without shortening any copy. */
+  .landing-refs{margin-top:10px;gap:10px}
   .landing-ref-card{padding:10px 14px}
   /* Out of the centered group and pinned to .landing's own bottom edge
      (position:relative, set in the base rule) — reads as a page footer
@@ -2155,6 +2203,23 @@ body.entering .body-wrap{animation:app-in .3s ease}
     <div class="landing-mark"><img src="logo_192.png" alt=""></div>
     <h1 class="landing-title" data-i18n="landingTitle">Threatened Philippine Plants</h1>
     <p class="landing-desc" data-i18n="landingDesc">An independent reference for the Updated National List of Threatened Philippine Plants under DAO 2026-20 &mdash; searchable by taxonomy, conservation status, distribution, and CITES listing.</p>
+
+    <!-- Cover search. Hands straight to the catalogue's own search box
+         rather than keeping any state of its own, so there is one search
+         in the app and the URL it produces is the same shareable hash a
+         search typed inside the catalogue produces. -->
+    <form class="landing-search" id="landingSearchForm" role="search">
+      <svg class="ic landing-search-ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="search" id="landingSearch" class="landing-search-input"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             data-i18n-ph="landingSearchPh"
+             placeholder="Search species or common name">
+      <button type="submit" class="landing-search-go" id="landingSearchGo"
+              data-i18n-title="landingSearchGo" title="Search" aria-label="Search">
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    </form>
+    <div class="landing-search-hint" id="landingSearchHint" role="status" aria-live="polite"></div>
 
     <div class="landing-lists">
       <button class="landing-list-card" id="landingCta">
@@ -2958,6 +3023,14 @@ function islandMatches(dist,isl){
   return re.test(dist.toUpperCase());
 }
 
+/* The fields a search query is tested against. Factored out because the
+   cover's live match count has to agree with what the catalogue will
+   actually show — two copies of this expression would drift the first
+   time a field was added to either one. */
+function searchHaystack(s){
+  return normalize(s.name+' '+s.authority+' '+(s.common||'')+' '+s.family+' '+(s.cites||''));
+}
+
 function getFiltered(){
   var q=document.getElementById('srch').value.toLowerCase().trim();
   var rows=DATA.filter(function(s){
@@ -2971,7 +3044,7 @@ function getFiltered(){
     if(habit&&s.habit!==habit)return false;
     if(region&&(!s.groups||s.groups.indexOf(region)===-1))return false;
     if(island&&!islandMatches(s.dist,island))return false;
-    if(q){var h=normalize(s.name+' '+s.authority+' '+(s.common||'')+' '+s.family+' '+(s.cites||''));if(h.indexOf(normalize(q))<0)return false;}
+    if(q&&searchHaystack(s).indexOf(normalize(q))<0)return false;
     return true;
   });
   if(sortCol){
@@ -4335,8 +4408,69 @@ function enterCatalogue(animate){
   if(cta)cta.addEventListener('click',function(){enterCatalogue(true);});
 })();
 
+/* ── Cover search ──
+   Owns no state. It writes into the catalogue's own #srch box and lets
+   the normal render path do the work, so a query typed here and the same
+   query typed inside the catalogue produce identical results and an
+   identical shareable hash. */
+(function(){
+  var form=document.getElementById('landingSearchForm');
+  if(!form)return;
+  var input=document.getElementById('landingSearch');
+  var hint=document.getElementById('landingSearchHint');
+  var timer=null;
+
+  function countMatches(q){
+    var n=normalize(q),c=0;
+    for(var i=0;i<DATA.length;i++){if(searchHaystack(DATA[i]).indexOf(n)>=0)c++;}
+    return c;
+  }
+
+  function updateHint(){
+    var q=input.value.trim();
+    if(!q){hint.innerHTML='';return;}
+    var c=countMatches(q);
+    if(!c){hint.textContent=t('landingMatchNone');return;}
+    hint.innerHTML=c===1
+      ? t('landingMatchOne')
+      : t('landingMatchMany').replace('{n}','<b>'+c.toLocaleString()+'</b>');
+  }
+
+  /* Debounced for the same reason the catalogue's box is: this scans all
+     1,237 records per call. 120ms matches the table's search. */
+  input.addEventListener('input',function(){
+    if(timer)clearTimeout(timer);
+    timer=setTimeout(function(){timer=null;updateHint();},120);
+  });
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var q=input.value.trim();
+    var box=document.getElementById('srch');
+    if(box)box.value=q;
+    enterCatalogue(true);
+    render();
+    if(typeof encodeHash==='function')encodeHash();
+    /* Blur first: on a phone, leaving focus in a now-hidden input keeps
+       the keyboard up over the results. */
+    input.blur();
+    if(q&&box&&window.innerWidth>=769)box.focus();
+  });
+})();
+
 function returnToLanding(){
   closePanel();
+  /* Going back to the cover is a start-over, so the query goes with it.
+     Without this, a search made from the cover stayed in #srch, and the
+     next "Explore the List" — a button that says it shows the list —
+     silently returned that earlier filtered set instead. Reset lives
+     here rather than on the home button so any future caller gets it. */
+  var box=document.getElementById('srch');
+  if(box&&box.value){box.value='';render();if(typeof encodeHash==='function')encodeHash();}
+  var cover=document.getElementById('landingSearch');
+  if(cover)cover.value='';
+  var hint=document.getElementById('landingSearchHint');
+  if(hint)hint.innerHTML='';
   document.body.classList.remove('view-catalogue');
   document.body.classList.add('view-landing');
 }
