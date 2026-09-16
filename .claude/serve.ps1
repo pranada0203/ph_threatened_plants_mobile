@@ -1,4 +1,4 @@
-$root = "C:\Users\prana\OneDrive\Desktop\ph_threatened_plants_mobile"
+$root = Split-Path -Parent $PSScriptRoot
 $port = 8642
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
