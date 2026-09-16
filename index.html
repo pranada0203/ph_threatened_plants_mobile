@@ -28,7 +28,7 @@ var T={
     similar:'Similar \u2014 Same Family & Status',
     cdfpHint:'Open page \u2192 find species \u2192 tap the camera icon for photos',
     alsoFoundIn:'Also found in:',foundAcross:'Found across:',
-    sciName:'Scientific Name & Authority',commonNameCol:'Common Name',
+    sciName:'Scientific Name & Authority',distributionCol:'Distribution',commonNameCol:'Common Name',
     noSpecies:'No species found',trySearch:'Try a different search or adjust your filters.',
     all:'All',sendFeedback:'Send Feedback',
     sendFeedbackBtn:'Send feedback',shareTool:'Share this tool',linkCopied:'Link copied!',
@@ -77,7 +77,7 @@ var T={
     similar:'Katulad \u2014 Parehong Pamilya at Kategorya',
     cdfpHint:'Buksan ang pahina \u2192 hanapin ang species \u2192 pindutin ang icon ng camera para sa mga larawan',
     alsoFoundIn:'Matatagpuan din sa:',foundAcross:'Matatagpuan sa:',
-    sciName:'Siyentipikong Pangalan at Awtor',commonNameCol:'Karaniwang Pangalan',
+    sciName:'Siyentipikong Pangalan at Awtor',distributionCol:'Distribusyon',commonNameCol:'Karaniwang Pangalan',
     noSpecies:'Walang nahanap na species',
     trySearch:'Subukan ang ibang paghahanap o baguhin ang salain.',
     all:'Lahat',sendFeedback:'Magpadala ng Puna',
@@ -172,6 +172,15 @@ function applyLang(){
     var label=t(el.getAttribute('data-i18n-title'));
     el.title=label;el.setAttribute('aria-label',label);
   });
+  /* Column headers are nowrap + ellipsis (see the thead th comment in the
+     stylesheet), and the Filipino labels are long enough that two of them
+     truncate. Mirror each label into a title so the full text is always
+     reachable, in either language. */
+  document.querySelectorAll('thead th').forEach(function(th){
+    var lbl=th.textContent.replace(/[⇅▲▼]/g,'').trim();
+    if(lbl)th.title=lbl;
+  });
+
   /* Cases an attribute can't express */
   var langBtn=document.getElementById('langToggle');
   if(langBtn){
@@ -251,8 +260,25 @@ function applyLang(){
   /* CITES */
   --c1:#7c2d12;--c1-bg:#fff7ed;--c1-bd:#fdba74;
   --c2:#1e3a5f;--c2-bg:#eff6ff;--c2-bd:#93c5fd;
-  /* Neutral surface */
-  --bg:#f5f4ef;--sf:#ffffff;--ink:#1a1a1a;--mu:#5c5c5c;--fa:#a0a0a0;--bd:#e4e2da;
+  /* Neutral surface.
+     --fa was #a0a0a0, which measured 2.61:1 on --sf and 2.37:1 on --bg —
+     both well under the 4.5:1 WCAG AA floor for normal text, and it was
+     carrying real content (authority lines, mono eyebrows, chart values,
+     counts) at the smallest sizes in the app.
+
+     Split by job. --fa is now for anything meant to be read, and it has
+     to clear 4.5:1 against BOTH grounds, not just white: .kbd,
+     .ext-link-sub, .similar-common, .live-status and both search
+     placeholders sit on --bg, not --sf. #767676 clears white at 4.54:1
+     but only reaches 4.12:1 on the paper, so it fails where it is most
+     used. #6f6f6f is the lightest value that passes both — 5.02:1 on
+     --sf, 4.56:1 on --bg.
+
+     The old value survives as --fa-deco for genuine decoration only:
+     scrollbar thumbs, aria-hidden arrows, em-dash placeholders. Never
+     text — if it is read, it takes --fa. */
+  --bg:#f5f4ef;--sf:#ffffff;--ink:#1a1a1a;--mu:#5c5c5c;--fa:#6f6f6f;--bd:#e4e2da;
+  --fa-deco:#a0a0a0;
   --bd-strong:#ccc9be;
   /* Endemic */
   --endemic:#15803d;--endemic-bg:#dcfce7;--endemic-bd:#86efac;
@@ -261,18 +287,32 @@ function applyLang(){
   --sidebar:216px;
   --toolbar-h:48px;
 
-  /* ── Type scale — 10px floor.
+  /* ── Type scale — 11px floor.
      24 sizes (7.5px to 40px, six of them hand-tuned half-pixel values)
-     collapsed onto these 8 steps. The floor is 10px: the old 7.5/8/8.5px
-     tier was unreadable, but the interface is a dense reference table and
-     a higher floor cost too many rows per screen.
+     collapsed onto these 8 steps.
+
+     The scale used to be declared here and then ignored: only 17
+     declarations called it while 187 wrote raw px, including two at 9px
+     that sat below the floor this comment claimed. All 191 now resolve
+     through these tokens, so the density of the whole interface is
+     tunable from this block instead of 126 hand edits.
+
+     The floor moved 10px → 11px at the same time, and the four steps
+     above it moved with it. 10px was chosen when a higher floor "cost
+     too many rows per screen"; that trade reads differently for a public
+     reference used outdoors, where the old effective body size of 11px
+     was the real problem. The cost is roughly one row per screen, and
+     demoting the family/division/habit pill columns to a single meta
+     line under the name gives back more height than this spends.
+
      Exception: the mobile search input is pinned to 16px, since iOS Safari
-     zooms the whole page when a focused input is below that. */
-  --t-micro:10px;   /* mono eyebrows, pills, badges */
-  --t-xs:11px;      /* captions, authority, secondary meta */
-  --t-sm:12px;      /* body-small: table cells, chips, list items */
-  --t-base:13px;    /* base body, inputs */
-  --t-md:15px;      /* hero taxonomic names, section headings */
+     zooms the whole page when a focused input is below that. It is the
+     only font-size in the file deliberately left off this scale. */
+  --t-micro:11px;   /* mono eyebrows, pills, badges */
+  --t-xs:12px;      /* captions, authority, secondary meta */
+  --t-sm:13px;      /* body-small: table cells, chips, list items */
+  --t-base:14px;    /* base body, inputs */
+  --t-md:16px;      /* hero taxonomic names, section headings */
   --t-lg:18px;      /* panel titles */
   --t-xl:22px;      /* modal titles, stat figures */
   --t-2xl:28px;     /* empty-state glyph */
@@ -308,7 +348,7 @@ function applyLang(){
    RESET & BASE
 ══════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-size:var(--t-base);
   overflow:hidden;height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 
 /* Keyboard focus — one consistent ring in the brand accent, shown only
@@ -327,24 +367,24 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   padding-top:env(safe-area-inset-top)}
 .hdr-top{display:flex;align-items:center;gap:14px;padding:14px 28px 0}
 .hdr-ico{width:40px;height:40px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
-  border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+  border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:var(--t-md);flex-shrink:0;
   overflow:hidden}
 .hdr-ico img{width:100%;height:100%;object-fit:cover;display:block}
-.hdr-ey{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+.hdr-ey{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.2em;text-transform:uppercase;
   color:rgba(255,255,255,.45);margin-bottom:2px}
-.hdr-t{font-family:"Cormorant Garamond",serif;font-size:15px;font-weight:700;line-height:1.2;color:#fff;flex:1;min-width:0}
+.hdr-t{font-family:"Cormorant Garamond",serif;font-size:var(--t-md);font-weight:700;line-height:1.2;color:#fff;flex:1;min-width:0}
 .hdr-t-source{font-weight:400;opacity:.6;font-size:.85em;margin-left:3px}
-.hdr-s{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+.hdr-s{font-size:var(--t-xs);color:rgba(255,255,255,.5);margin-top:2px}
 
 .hdr-home-btn{flex-shrink:0;display:flex;align-items:center;gap:5px;
   padding:5px 10px;border-radius:var(--r-pill);
   border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);
-  color:rgba(255,255,255,.85);font-size:11px;font-weight:500;
+  color:rgba(255,255,255,.85);font-size:var(--t-xs);font-weight:500;
   cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
 .hdr-home-btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);color:#fff}
 .hdr-home-btn svg{width:13px;height:13px;flex-shrink:0}
 .hdr-meta{margin-left:auto;display:flex;gap:16px;flex-shrink:0;align-self:flex-start;margin-top:4px}
-.hdr-meta-item{font-size:10px;color:rgba(255,255,255,.45);line-height:1.5;max-width:180px}
+.hdr-meta-item{font-size:var(--t-micro);color:rgba(255,255,255,.45);line-height:1.5;max-width:180px}
 .hdr-meta-item b{color:rgba(255,255,255,.75);font-weight:500}
 
 /* Stat tabs — back inline in the green brand row, sitting between the
@@ -361,7 +401,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   cursor:pointer;user-select:none;border:1px solid transparent;transition:var(--transition)}
 .sc:hover{background:rgba(255,255,255,.08)}
 .sc.on{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.2)}
-.sc-code{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.08em;
+.sc-code{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);font-weight:600;letter-spacing:.08em;
   color:rgba(255,255,255,.6)}
 .sc.on .sc-code{color:#fff}
 .sc.on[data-c=CR] .sc-code{color:var(--cr-bd)}
@@ -386,26 +426,32 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm);
   transition:var(--transition)}
 .toolbar-search:focus-within{background:var(--sf);border-color:var(--gl);box-shadow:var(--shadow-xs)}
-.si{color:var(--fa);font-size:12px;flex-shrink:0;transition:var(--transition)}
+.si{color:var(--fa);font-size:var(--t-sm);flex-shrink:0;transition:var(--transition)}
 .toolbar-search:focus-within .si{color:var(--gl)}
-.srch{flex:1;border:none;outline:none;font-size:12px;font-family:Inter,sans-serif;
+.srch{flex:1;border:none;outline:none;font-size:var(--t-sm);font-family:Inter,sans-serif;
   background:transparent;color:var(--ink)}
 .srch::placeholder{color:var(--fa)}
-.rc{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--fa);white-space:nowrap;flex-shrink:0}
+.rc{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);color:var(--fa);white-space:nowrap;flex-shrink:0}
 
 /* Filter groups — center zone */
 .toolbar-filters{display:flex;align-items:center;flex:1;height:100%;overflow-x:auto;
   scrollbar-width:none;padding:0 12px;gap:2px}
 .toolbar-filters::-webkit-scrollbar{display:none}
-.tf-label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+.tf-label{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.12em;
   text-transform:uppercase;color:var(--fa);padding:0 8px 0 6px;white-space:nowrap;flex-shrink:0}
 .tf-sep{width:1px;height:20px;background:var(--bd);margin:0 8px;flex-shrink:0}
 
 /* Unified filter/toggle chip */
-.chip{padding:4px 10px;border-radius:10px;border:1.5px solid transparent;background:transparent;
-  font-size:11px;font-weight:500;cursor:pointer;color:var(--mu);transition:var(--transition);
+/* Resting state used to be fully transparent — no border, no fill — so an
+   unselected chip was indistinguishable from a plain text label. In the
+   mobile filter sheet that put two affordances side by side in one sheet:
+   Division/CITES/Habit/Flags read as text, while the island-group chips
+   below them read as buttons. One resting style now applies everywhere;
+   hover deepens the border rather than introducing one. */
+.chip{padding:4px 10px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);
+  font-size:var(--t-xs);font-weight:500;cursor:pointer;color:var(--mu);transition:var(--transition);
   white-space:nowrap;font-family:Inter,sans-serif;line-height:1}
-.chip:hover{background:var(--bg);border-color:var(--bd);color:var(--ink)}
+.chip:hover{background:var(--sf);border-color:var(--bd-strong);color:var(--ink)}
 .chip.on{background:var(--gl);border-color:var(--gl);color:#fff}
 /* Status-colored chips */
 .chip.on-A{background:var(--ang-bg);border-color:var(--ang-bd);color:var(--ang)}
@@ -420,13 +466,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .chip.on-liana{background:#fff1f2;color:#9f1239;border-color:#fda4af}
 .chip.on-endemic{background:var(--endemic-bg);border-color:var(--endemic-bd);color:var(--endemic)}
 .chip.on-ne{background:#fff7ed;border-color:#fdba74;color:#c2410c}
-.chip.on-nocommon{background:var(--bg);border-color:var(--bd-strong);color:var(--mu)}
+/* Was bg:--bg / border:--bd-strong, which is now only a hair off the
+   resting state — selected read as unselected. This flag is a data
+   filter rather than a taxonomic category, so it takes a solid neutral
+   fill instead of one of the semantic hues. */
+.chip.on-nocommon{background:var(--mu);border-color:var(--mu);color:#fff}
 
 /* Actions — right zone */
 .toolbar-actions{display:flex;align-items:center;gap:2px;padding:0 12px;
   border-left:1px solid var(--bd);height:100%;flex-shrink:0}
 .action-btn{padding:5px 9px;border-radius:10px;border:none;background:transparent;
-  font-size:11px;font-weight:500;cursor:pointer;color:var(--mu);transition:var(--transition);
+  font-size:var(--t-xs);font-weight:500;cursor:pointer;color:var(--mu);transition:var(--transition);
   white-space:nowrap;display:flex;align-items:center;gap:4px;font-family:Inter,sans-serif}
 .action-btn:hover{background:var(--bg);color:var(--ink)}
 .action-btn svg{width:13px;height:13px;flex-shrink:0}
@@ -448,24 +498,24 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   border-radius:var(--r-md);box-shadow:var(--shadow-sm);
   display:flex;flex-direction:column;overflow:hidden}
 .sb-h{padding:10px 13px 8px;flex-shrink:0}
-.sb-title{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
+.sb-title{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.14em;
   text-transform:uppercase;color:var(--fa);margin-bottom:6px;font-weight:500}
 .sb-search{display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid var(--bd-soft);
   border-radius:10px;background:var(--bg);box-shadow:var(--shadow-xs);transition:var(--transition)}
 .sb-search:focus-within{border-color:var(--gl);background:var(--sf);box-shadow:var(--shadow-sm)}
-.sb-search input{border:none;outline:none;font-size:12px;background:transparent;
+.sb-search input{border:none;outline:none;font-size:var(--t-sm);background:transparent;
   color:var(--ink);width:100%;font-family:Inter,sans-serif}
 .sb-search input::placeholder{color:var(--fa)}
-.sb-search-ico{color:var(--fa);font-size:11px;flex-shrink:0;transition:var(--transition)}
+.sb-search-ico{color:var(--fa);font-size:var(--t-xs);flex-shrink:0;transition:var(--transition)}
 .sb-search:focus-within .sb-search-ico{color:var(--gl)}
 .sb-l{overflow-y:auto;flex:1;padding:4px 0}
 .fi{display:flex;align-items:center;justify-content:space-between;padding:5px 13px;
-  cursor:pointer;border-left:2px solid transparent;font-size:12px;color:var(--mu);
+  cursor:pointer;border-left:2px solid transparent;font-size:var(--t-sm);color:var(--mu);
   gap:5px;transition:var(--transition);position:relative}
 .fi:hover{background:var(--bg);color:var(--ink)}
 .fi.on{background:var(--gbg);border-left-color:var(--gl);color:var(--g);font-weight:600}
 .fi-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fi-n{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--fa);
+.fi-n{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);color:var(--fa);
   padding:1px 4px;flex-shrink:0}
 .fi.on .fi-n{color:var(--gl)}
 .fi-div{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-right:1px}
@@ -473,10 +523,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 /* Family stats tooltip */
 .fi-stats{display:none;position:absolute;left:calc(100% + 4px);top:0;z-index:30;
   background:#fff;border:1px solid var(--bd);border-radius:16px;padding:10px 12px;
-  min-width:160px;box-shadow:var(--shadow-md);font-size:11px;pointer-events:none}
+  min-width:160px;box-shadow:var(--shadow-md);font-size:var(--t-xs);pointer-events:none}
 .fi:hover .fi-stats{display:block}
-.fi-stats-title{font-weight:600;font-size:11px;margin-bottom:6px;color:var(--ink)}
-.fi-stats-div{font-size:10px;color:var(--fa);margin-bottom:6px;font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.08em}
+.fi-stats-title{font-weight:600;font-size:var(--t-xs);margin-bottom:6px;color:var(--ink)}
+.fi-stats-div{font-size:var(--t-micro);color:var(--fa);margin-bottom:6px;font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.08em}
 .fi-stat-row{display:flex;justify-content:space-between;gap:12px;margin-bottom:3px}
 .fi-stat-lbl{color:var(--mu)}
 .fi-stat-val{font-family:"IBM Plex Mono",monospace;font-weight:500}
@@ -493,13 +543,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   box-shadow:var(--shadow-sm)}
 .tw{overflow:auto;flex:1;background:var(--sf)}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
-/* overflow:hidden + ellipsis is a safety net, not the primary fix for any
-   one column — column widths below are sized to fit real content. It
-   exists so a header label that doesn't fit (the Filipino translations
-   run noticeably longer than English, e.g. "Kategorya" vs "Status") gets
-   contained and truncated instead of visually bleeding into the next
-   column's cell, which is what "Status" was doing before. */
-thead th{background:var(--sf);padding:10px 12px;text-align:left;font-size:10px;font-weight:600;
+/* nowrap + ellipsis, deliberately. The Filipino labels run longer than
+   English — "Kategorya" needs 23px more than "Status" has, "Karaniwang
+   Pangalan" 41px more than "Common Name" — and two of the five ellipse
+   under FIL. Both alternatives were tried and are worse: widening those
+   columns to fit costs the Scientific Name column ~65px at every width
+   in BOTH languages to solve a problem that exists in one, and letting
+   the labels wrap breaks English "Common Name" onto two lines and grows
+   the header row from 37px to 53px everywhere. Truncating a header whose
+   column content is self-evident is the cheapest of the three, and every
+   th carries a title attribute so the full label is one hover away.
+   The real fix is shorter FIL column labels, which is a translation
+   call, not a layout one. */
+thead th{background:var(--sf);padding:10px 12px;text-align:left;font-size:var(--t-micro);font-weight:600;
   letter-spacing:.07em;text-transform:uppercase;color:var(--fa);
   border-bottom:1px solid var(--bd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   position:sticky;top:0;z-index:5;
@@ -507,53 +563,122 @@ thead th{background:var(--sf);padding:10px 12px;text-align:left;font-size:10px;f
 thead th:first-child{padding-left:20px}
 thead th.sortable{cursor:pointer;user-select:none}
 thead th.sortable:hover{background:var(--bg);color:var(--mu)}
-thead th .sort-icon{margin-left:3px;opacity:.4;font-size:10px}
+thead th .sort-icon{margin-left:3px;opacity:.4;font-size:var(--t-micro)}
 thead th.asc .sort-icon::after{content:"▲"}
 thead th.desc .sort-icon::after{content:"▼"}
 thead th:not(.asc):not(.desc) .sort-icon::after{content:"⇅"}
-tbody tr{border-bottom:1px solid var(--bd);transition:background .1s;cursor:pointer}
+/* All 1,237 rows are in the DOM at once, but only ~20 are ever on screen.
+   content-visibility lets the browser skip layout and paint for the rest;
+   the 'auto' in contain-intrinsic-size means the guess below is only used
+   before a row has been rendered once, after which its real measured
+   height is remembered. Scroll height and the scrollbar stay correct.
+   Reset under @media print — a skipped row would otherwise print blank. */
+tbody tr{border-bottom:1px solid var(--bd);transition:background .1s;cursor:pointer;
+  content-visibility:auto;contain-intrinsic-size:auto 44px}
 tbody tr:hover{background:var(--bg)}
 tbody tr.active-row{background:var(--g-light)}
 tbody td{padding:9px 12px;vertical-align:top}
 tbody td:first-child{padding-left:20px}
-.cn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--fa)}
-/* 40px only ever fit 3-digit row numbers — the last ~240 rows of 1,237
-   total (#1000+) were clipping their own index at this width. */
-.cn{width:48px}
-/* 52px used to clip the "Status" header itself ("Status" + sort icon
-   needs ~79px at this padding/font) — not just a tight fit, the label
-   was genuinely truncated on every desktop/tablet load. 84px clears it
-   with a few px to spare; the data cells (a small CR/EN/VU/OTS pill)
-   never needed the width, the header always did. */
-.cc{width:84px}
-/* Family: allowed to wrap. The longest names (Pentaphragmataceae) are single
-   unbreakable words that overflowed into the Division column at the old
-   11.5px and would bleed further at 13px. Width is deliberately left at
-   124px — the fixed columns already sum past the available width at iPad
-   portrait, so widening this one collapses the Scientific Name column. */
-.cf{width:124px;font-size:12px;color:var(--fa);overflow-wrap:break-word}
-/* Both bumped ~10-14px from their old values, which clipped real
-   content: .cdv's "Gymnosperm" pill needed 90px in an 86px column,
-   .cct's "App. II" pill needed 68px in a 62px column — every Gymnosperm
-   and Appendix-II row was rendering a truncated pill. */
-.cdv{width:96px}.cct{width:74px}.chb{width:76px}
+/* ── Columns ────────────────────────────────────────────────
+   Restructured. The table used to run
+     # · Status · Family · Division · CITES · Habit · NAME · Common
+   which put the scientific name — the only thing most visitors come
+   for — seventh of eight, behind four coloured pill columns. Three of
+   those columns are near-constant across the dataset (84% Angiosperm,
+   82% no CITES listing), so the strongest signals in the row were
+   spent on its weakest information.
+
+   Now:
+     Status · SPECIES · Family · Common · Distribution
+
+   The row index is gone (it was a filter-relative counter, already
+   hidden on tablet and mobile, and the panel shows "5/1237").
+   Division, CITES and habit stop being columns: habit joins the
+   authority line as quiet text, while division and CITES appear only
+   when they are NOT the default — see .mk below. Distribution, which
+   a botanist actually wants and which had no column at all, takes the
+   width those four gave back. Fixed columns drop 735px → 518px.       */
+/* Sized by the HEADER, not the pill: the CR/EN/VU/OTS pill is only 36px
+   at its widest, but "Status" plus its sort icon needs 60px of text in a
+   cell — and as the first column it also carries the 20px row gutter, so
+   its content box is 32px narrower than the width suggests. The Filipino
+   "Kategorya" is longer still and ellipses, as it did before. */
+.cc{width:96px}
+/* Family: allowed to wrap. The longest names (Pentaphragmataceae) are
+   single unbreakable words; at 13px one needs 159px, so it wraps to two
+   lines here by design rather than overflowing. */
+.cf{width:124px;font-size:var(--t-sm);color:var(--fa);overflow-wrap:break-word}
+.cco{width:160px;max-width:160px;font-size:var(--t-sm);color:var(--mu)}
+.cds{width:160px;font-size:var(--t-xs);color:var(--fa);line-height:1.45}
+.ds-more{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+  color:var(--fa-deco);margin-left:4px;white-space:nowrap}
+
+/* Species cell — the row's headline. */
 .sci-wrap{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
 .csn{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:600;font-size:var(--t-md);line-height:1.25;color:var(--g)}
-.cau{font-size:11px;color:var(--fa);margin-top:2px}
-.cco{width:180px;max-width:180px;font-size:12px;color:var(--mu)}
+/* Meta line under the binomial. Flex so the running order can differ by
+   breakpoint, and so only ONE part is allowed to truncate: family and
+   habit are short and fixed-width, the authority is the long variable one
+   (the widest in the dataset is 382px), so it takes min-width:0 and the
+   ellipsis. That keeps the line to exactly one row at every width without
+   ever hiding the family — which is what a naive clamp on the whole line
+   did, since the authority comes first in reading order.
+   Visual order: desktop = authority · habit (Family has its own column);
+   phone = family · habit · authority (no Family column there). */
+.cau{display:flex;align-items:baseline;font-size:var(--t-xs);color:var(--fa);
+  margin-top:2px;min-width:0}
+.cau-fam{display:none;flex-shrink:0}
+.cau-auth{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cau-habit{flex-shrink:0;color:var(--fa)}
+/* Separators belong to whatever is NOT first in the current visual order. */
+.cau-habit::before{content:"·";color:var(--fa-deco);padding:0 5px}
+
+/* ── Exception marks ────────────────────────────────────────
+   Tier 2 of the colour contract. Division, CITES and infraspecific
+   rank used to be three separate filled-and-bordered pill families,
+   each with its own hue, stamped on every row whether or not they
+   said anything. They are now one shape — a neutral outlined chip —
+   with meaning carried by a 6px dot, and they render ONLY for the
+   exception:
+
+     division   1,044 of 1,237 are Angiosperm, so only the 27
+                Gymnosperms and 166 Pteridophytes are marked
+     CITES      1,018 of 1,237 are unlisted, so only the 219 listed
+                are marked
+     infra      14 taxa carry var./subsp./f.
+
+   Endemism is the one flag that stays on the majority (920 of 1,237),
+   because on a list of Philippine plants it is the fact people scan
+   for — but it drops to a bare dot rather than a filled green badge
+   with a star and a word. The footer legend names all four.         */
+.mk{display:inline-flex;align-items:center;gap:4px;padding:1px 6px;
+  border-radius:var(--r-pill);border:1px solid var(--bd-strong);background:var(--sf);
+  font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);font-weight:600;
+  color:var(--mu);white-space:nowrap;line-height:1.5;flex-shrink:0}
+.mk-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:currentColor}
+.mk-G .mk-dot{background:var(--gym)}
+.mk-P .mk-dot{background:var(--pte)}
+.mk-cI .mk-dot{background:var(--c1)}
+.mk-cII .mk-dot{background:var(--c2)}
+.mk-infra .mk-dot{background:#0369a1}
+/* Endemic: bare dot, no chrome. 920 rows carry it, so it has to be
+   near-silent; the title/aria-label carry the meaning for anyone not
+   reading colour, and the footer legend repeats it. */
+.mk-endemic{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--endemic);flex-shrink:0;align-self:center}
 /* Pills */
 .pl{display:inline-flex;padding:2px 6px;border-radius:6px;font-family:"IBM Plex Mono",monospace;
-  font-size:10px;font-weight:600;letter-spacing:.04em}
+  font-size:var(--t-micro);font-weight:600;letter-spacing:.04em}
 .CR{background:var(--cr-bg);color:var(--cr);border:1px solid var(--cr-bd)}
 .EN{background:var(--en-bg);color:var(--en);border:1px solid var(--en-bd)}
 .VU{background:var(--vu-bg);color:var(--vu);border:1px solid var(--vu-bd)}
 .OTS{background:var(--ots-bg);color:var(--ots);border:1px solid var(--ots-bd)}
-.div-pill{display:inline-flex;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:500;white-space:nowrap}
+.div-pill{display:inline-flex;padding:2px 6px;border-radius:6px;font-size:var(--t-micro);font-weight:500;white-space:nowrap}
 .div-pill-A{background:var(--ang-bg);color:var(--ang);border:1px solid var(--ang-bd)}
 .div-pill-G{background:var(--gym-bg);color:var(--gym);border:1px solid var(--gym-bd)}
 .div-pill-P{background:var(--pte-bg);color:var(--pte);border:1px solid var(--pte-bd)}
 .cites-pill{display:inline-flex;padding:2px 6px;border-radius:6px;font-family:"IBM Plex Mono",monospace;
-  font-size:10px;font-weight:600;white-space:nowrap}
+  font-size:var(--t-micro);font-weight:600;white-space:nowrap}
 .cites-I{background:var(--c1-bg);color:var(--c1);border:1px solid var(--c1-bd)}
 .cites-II{background:var(--c2-bg);color:var(--c2);border:1px solid var(--c2-bd)}
 /* Shared line-icon sizing — icons scale to the font-size of whatever
@@ -562,30 +687,20 @@ tbody td:first-child{padding-left:20px}
 .ic{width:1em;height:1em;display:inline-block;vertical-align:-0.15em;flex-shrink:0}
 .endemic-badge{display:inline-flex;align-items:center;gap:2px;background:var(--endemic-bg);
   color:var(--endemic);border:1px solid var(--endemic-bd);border-radius:6px;padding:1px 5px;
-  font-size:10px;font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:nowrap;flex-shrink:0;line-height:1.6}
-/* Table-row badge is star-only at every width, not just mobile — the
-   full "★ Endemic" text competed with the scientific name for
-   attention in a dense list row. The star alone still reads clearly
-   once you know the color code, and the full word+star badge is still
-   shown in the species detail panel (.panel-status .endemic-badge),
-   which has room for it. A fixed 8x8 SVG (not a text/emoji glyph) so
-   align-items:center centers it exactly regardless of font metrics. */
-.endemic-badge-row{padding:1px 4px}
-.endemic-badge-row .badge-text{display:none}
-.endemic-badge-row .badge-star{display:flex;align-items:center;justify-content:center}
-.endemic-badge-row .badge-star svg{width:8px;height:8px;display:block}
-.habit-pill{display:inline-flex;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600;white-space:nowrap}
+  font-size:var(--t-micro);font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:nowrap;flex-shrink:0;line-height:1.6}
+/* .endemic-badge is now panel-only (.panel-status .endemic-badge), where
+   there is room for the full star + word. The table row carries the much
+   quieter .mk-endemic dot instead — see the exception-marks block above. */
+.habit-pill{display:inline-flex;padding:2px 7px;border-radius:6px;font-size:var(--t-micro);font-weight:600;white-space:nowrap}
 .habit-pill.tree{background:#ecfdf5;color:#047857;border:1px solid #6ee7b7}
 .habit-pill.shrub{background:#fefce8;color:#854d0e;border:1px solid #fde047}
 .habit-pill.herb{background:#f0fdfa;color:#0f766e;border:1px solid #5eead4}
 .habit-pill.vine{background:#fdf4ff;color:#86198f;border:1px solid #f0abfc}
 .habit-pill.liana{background:#fff1f2;color:#9f1239;border:1px solid #fda4af}
-.habit-unverified{opacity:.5}
-.habit-unverified::after{content:" ?";font-weight:700}
 mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .empty{padding:80px 24px;text-align:center;color:var(--fa)}
-.empty-i{font-size:28px;margin-bottom:12px}
-.empty-h{font-size:13px;font-weight:600;color:var(--mu);margin-bottom:5px}
+.empty-i{font-size:var(--t-2xl);margin-bottom:12px}
+.empty-h{font-size:var(--t-base);font-weight:600;color:var(--mu);margin-bottom:5px}
 /* Non-endemic highlight */
 .show-nonendem tbody tr.sp-row:not([data-endemic="1"]){background:#fffbeb}
 /* Compact mode */
@@ -605,12 +720,12 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* Panel toolbar — minimal, functional */
 .panel-toolbar{display:flex;align-items:center;padding:10px 14px 0;gap:4px;flex-shrink:0}
 .panel-nav-btn{background:none;border:1.5px solid var(--bd);cursor:pointer;color:var(--mu);
-  font-size:11px;line-height:1;padding:4px 8px;border-radius:6px;transition:var(--transition);font-family:Inter,sans-serif}
+  font-size:var(--t-xs);line-height:1;padding:4px 8px;border-radius:6px;transition:var(--transition);font-family:Inter,sans-serif}
 .panel-nav-btn:hover:not(:disabled){border-color:var(--gl);color:var(--g);background:var(--gbg)}
 .panel-nav-btn:disabled{opacity:.25;cursor:default}
-.panel-nav-pos{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--fa);padding:0 6px}
+.panel-nav-pos{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);color:var(--fa);padding:0 6px}
 .panel-spacer{flex:1}
-.panel-close{background:none;border:none;cursor:pointer;color:var(--fa);font-size:13px;
+.panel-close{background:none;border:none;cursor:pointer;color:var(--fa);font-size:var(--t-base);
   line-height:1;padding:5px 6px;border-radius:6px;transition:var(--transition)}
 .panel-close:hover{background:var(--bg);color:var(--ink)}
 
@@ -621,8 +736,8 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .panel-hdr{padding:12px 16px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
 .panel-sci{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:600;font-size:20px;
   line-height:1.2;color:var(--g);margin-bottom:4px}
-.panel-auth{font-size:11px;color:var(--fa);margin-bottom:10px;letter-spacing:.01em}
-.panel-common{font-size:12px;color:var(--mu);font-style:italic;margin-bottom:10px}
+.panel-auth{font-size:var(--t-xs);color:var(--fa);margin-bottom:10px;letter-spacing:.01em}
+.panel-common{font-size:var(--t-sm);color:var(--mu);font-style:italic;margin-bottom:10px}
 
 /* Header section labels sit tighter than body-section labels — same
    mono-eyebrow language, less room since the header doesn't scroll. */
@@ -632,8 +747,8 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    below it (.panel-meta), rather than sized up past them; the two rows
    read as one system of supporting facts under the scientific name. */
 .panel-status{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:12px}
-.panel-status .pl{font-size:11px;padding:2px 7px}
-.panel-status-label{font-size:11px;font-weight:600;color:var(--ink)}
+.panel-status .pl{font-size:var(--t-xs);padding:2px 7px}
+.panel-status-label{font-size:var(--t-xs);font-weight:600;color:var(--ink)}
 /* Label text takes the same color as the status pill beside it, rather
    than a fixed neutral — status and its name should read as one fact. */
 .panel-status .pl.CR + .panel-status-label{color:var(--cr)}
@@ -646,7 +761,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    this badge ~4px taller than the CR/EN/VU/OTS pill even at equal
    font-size. Reset to the same tight line-height every other pill in
    this row uses. */
-.panel-status .endemic-badge{font-size:11px;padding:2px 7px;line-height:normal}
+.panel-status .endemic-badge{font-size:var(--t-xs);padding:2px 7px;line-height:normal}
 
 /* Classification metadata — division, CITES, habit, infraspecific rank.
    Same pill components used everywhere else, nudged up half a step from
@@ -654,19 +769,19 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    instead of reading as a different, smaller component entirely. */
 .panel-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
 .panel-meta .div-pill,.panel-meta .cites-pill,.panel-meta .habit-pill,.panel-meta .infra-badge{
-  font-size:11px;padding:2px 7px}
+  font-size:var(--t-xs);padding:2px 7px}
 
 /* Copy citation */
 .copy-cite-btn{display:flex;align-items:center;gap:6px;padding:7px 10px;
   border:1.5px dashed var(--bd);border-radius:10px;background:transparent;
-  font-size:11px;color:var(--mu);cursor:pointer;width:100%;text-align:left;
+  font-size:var(--t-xs);color:var(--mu);cursor:pointer;width:100%;text-align:left;
   font-family:Inter,sans-serif;transition:var(--transition)}
 .copy-cite-btn:hover{border-color:var(--gl);color:var(--g);background:var(--gbg)}
 .copy-cite-btn.copied{border-color:var(--endemic);color:var(--endemic);background:var(--endemic-bg)}
 
 /* Panel body */
 .panel-body{overflow-y:auto;flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:14px}
-.panel-section-title{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.15em;
+.panel-section-title{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.15em;
   text-transform:uppercase;color:var(--fa);margin-bottom:8px;font-weight:500}
 
 /* External links */
@@ -674,28 +789,28 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .ext-link{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--bd);
   border-radius:10px;text-decoration:none;color:var(--ink);transition:var(--transition);background:var(--bg)}
 .ext-link:hover{border-color:var(--gl);background:var(--gbg);color:var(--g);transform:translateX(2px)}
-.ext-link-ico{font-size:13px;flex-shrink:0;width:22px;text-align:center}
+.ext-link-ico{font-size:var(--t-base);flex-shrink:0;width:22px;text-align:center}
 .ext-link-info{min-width:0;flex:1}
-.ext-link-name{font-weight:600;font-size:11px;display:block;color:inherit}
-.ext-link-sub{font-size:10px;color:var(--fa);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:var(--transition)}
+.ext-link-name{font-weight:600;font-size:var(--t-xs);display:block;color:inherit}
+.ext-link-sub{font-size:var(--t-micro);color:var(--fa);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:var(--transition)}
 .ext-link:hover .ext-link-sub{color:var(--gl)}
 
 /* GBIF live block */
 .live-block{background:var(--bg);border-radius:10px;padding:10px 12px;border:1px solid var(--bd)}
 .live-stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .live-stat:last-child{margin-bottom:0}
-.live-stat-label{font-size:11px;color:var(--mu)}
-.live-stat-val{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;color:var(--ink)}
+.live-stat-label{font-size:var(--t-xs);color:var(--mu)}
+.live-stat-val{font-family:"IBM Plex Mono",monospace;font-size:var(--t-xs);font-weight:500;color:var(--ink)}
 .loading-dots::after{content:"...";animation:dots 1.2s steps(4,end) infinite}
 @keyframes dots{0%,100%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
-.live-status{font-size:11px;color:var(--fa);font-style:italic}
-.live-err{font-size:11px;color:var(--cr);font-style:italic}
+.live-status{font-size:var(--t-xs);color:var(--fa);font-style:italic}
+.live-err{font-size:var(--t-xs);color:var(--cr);font-style:italic}
 .gbif-match-badge{display:inline-block;padding:1px 6px;border-radius:6px;
-  font-size:10px;font-family:"IBM Plex Mono",monospace;font-weight:600}
+  font-size:var(--t-micro);font-family:"IBM Plex Mono",monospace;font-weight:600}
 .match-exact{background:#dcfce7;color:#15803d;border:1px solid #86efac}
 .match-fuzzy{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
 .match-none{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
-.gbif-link{font-size:11px;color:var(--gl);text-decoration:none;font-weight:500}
+.gbif-link{font-size:var(--t-xs);color:var(--gl);text-decoration:none;font-weight:500}
 .gbif-link:hover{text-decoration:underline}
 
 /* Similar species */
@@ -703,21 +818,21 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .similar-item{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:10px;
   border:1px solid var(--bd);cursor:pointer;transition:var(--transition);background:var(--bg)}
 .similar-item:hover{border-color:var(--gl);background:var(--gbg);transform:translateX(2px)}
-.similar-name{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;
+.similar-name{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:var(--t-sm);
   flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.similar-common{font-size:11px;color:var(--fa);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px}
+.similar-common{font-size:var(--t-xs);color:var(--fa);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px}
 
 /* ══════════════════════════════════════════
    KEYBOARD HINTS
 ══════════════════════════════════════════ */
 .kbd{display:inline-block;padding:1px 5px;border:1px solid var(--bd);border-radius:4px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--fa);background:var(--bg)}
+  font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);color:var(--fa);background:var(--bg)}
 
 /* ══════════════════════════════════════════
    FOOTER
 ══════════════════════════════════════════ */
 /* 10px sides — matches the sidebar/table/panel column above it. */
-.ftr{background:var(--sf);border-top:1px solid var(--bd);padding:9px 10px;font-size:10px;
+.ftr{background:var(--sf);border-top:1px solid var(--bd);padding:9px 10px;font-size:var(--t-micro);
   color:var(--fa);display:flex;justify-content:space-between;align-items:center;
   flex-wrap:wrap;gap:5px;flex-shrink:0}
 .leg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -735,37 +850,86 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 @keyframes modal-in{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
 .modal-hdr{padding:18px 24px 14px;border-bottom:1px solid var(--bd);
   display:flex;align-items:center;gap:10px;flex-shrink:0}
-.modal-title{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:700;flex:1}
-.modal-close{background:none;border:none;cursor:pointer;color:var(--fa);font-size:15px;
+.modal-title{font-family:"Cormorant Garamond",serif;font-size:var(--t-lg);font-weight:700;flex:1}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--fa);font-size:var(--t-md);
   padding:4px 8px;border-radius:6px;transition:var(--transition)}
 .modal-close:hover{background:var(--bg);color:var(--ink)}
 .modal-body{overflow-y:auto;padding:20px 24px;flex:1}
 
-.disclaimer-body p{font-size:12px;line-height:1.7;color:var(--mu);margin-bottom:16px}
+.disclaimer-body p{font-size:var(--t-sm);line-height:1.7;color:var(--mu);margin-bottom:16px}
 .disclaimer-body p:last-child{margin-bottom:0}
-.disclaimer-body h4{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+.disclaimer-body h4{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.12em;
   text-transform:uppercase;color:var(--g);margin-bottom:6px;font-weight:600}
 .disclaimer-body a{color:var(--gl)}
 
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .chart-card{background:var(--bg);border-radius:16px;padding:16px;border:1px solid var(--bd)}
 .chart-card.wide{grid-column:1/-1}
-.chart-title{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
+.chart-title{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.14em;
   text-transform:uppercase;color:var(--fa);margin-bottom:12px;font-weight:500}
 .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.bar-label{font-size:11px;width:120px;flex-shrink:0;color:var(--mu);
+/* Width is set per breakpoint below; this is the shared shape. */
+.bar-label{font-size:var(--t-xs);width:128px;flex-shrink:0;color:var(--mu);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar-track{flex:1;height:14px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden}
+/* The value used to sit in a fixed 36px column pinned to the far right of
+   the card, so a short bar and its number were separated by most of the
+   chart's width and the eye had to travel back to pair them. It now rides
+   the end of its own bar. Bars longer than 86% flip the number inside the
+   fill (white on colour) so it can never overflow the track. */
+.bar-track{flex:1;height:15px;background:rgba(0,0,0,.05);border-radius:4px;position:relative}
 .bar-fill{height:100%;border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.bar-val{font-family:"IBM Plex Mono",monospace;font-size:10px;width:36px;
-  text-align:right;flex-shrink:0;color:var(--mu)}
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.bar-val{position:absolute;top:50%;transform:translateY(-50%);
+  font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+  color:var(--mu);font-variant-numeric:tabular-nums;white-space:nowrap;
+  padding-left:7px;line-height:1}
+.bar-val.inside{color:#fff;padding-left:0;padding-right:7px;
+  transform:translate(-100%,-50%)}
+/* Bars are scaled to the largest value in their own chart, not to the
+   dataset total — without saying so, a full-width bar reads as "all of
+   them" rather than "the most of any one". */
+.chart-scale{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+  color:var(--fa);margin:-6px 0 10px;letter-spacing:.04em}
+
+/* ── Proportion bar — replaces the CITES donut ──────────────
+   That donut spent 82% of its area drawing the ABSENCE of a listing,
+   which pushed App. I (13 taxa, 1%) down to a hairline nobody could
+   see or hover. A single stacked bar shows the same split honestly:
+   the listed share reads as a share, and the two counts that matter
+   get their own figures beside it. */
+.prop-bar{display:flex;height:22px;border-radius:5px;overflow:hidden;
+  background:var(--bd);margin-bottom:12px}
+.prop-seg{height:100%;transition:width .5s cubic-bezier(.4,0,.2,1);min-width:2px}
+.prop-figs{display:flex;gap:22px;flex-wrap:wrap}
+.prop-fig-n{font-size:var(--t-xl);font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.prop-fig-l{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+  color:var(--fa);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.prop-fig-s{font-size:var(--t-xs);color:var(--mu);margin-top:3px}
+
+/* ── Mini data table — replaces the mono shorthand strip ────
+   The old row read "CR ★254 endemic A:241 G:9 P:20", which is not
+   parseable without a key that was never shown. Same numbers, with
+   column headers doing the work the abbreviations were doing badly. */
+.mini-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:var(--t-xs)}
+.mini-table th{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fa);
+  text-align:right;padding:0 0 5px 10px;white-space:nowrap}
+.mini-table th:first-child{text-align:left;padding-left:0}
+.mini-table td{text-align:right;padding:4px 0 4px 10px;color:var(--mu);
+  font-variant-numeric:tabular-nums;border-top:1px solid var(--bd)}
+.mini-table td:first-child{text-align:left;padding-left:0;font-weight:600}
+/* auto-fit rather than a fixed count: the builder emits five tiles, and an
+   inline grid-template-columns:repeat(5,1fr) used to sit on the element
+   itself, which out-specified every responsive rule below it and pushed
+   the row off the right edge of a phone. Letting the tiles wrap handles
+   every width without a breakpoint. */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+  gap:10px;margin-bottom:16px}
 .stat-tile{background:#fff;border-radius:16px;padding:14px;border:1px solid var(--bd);text-align:center}
-.stat-tile-n{font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
-.stat-tile-l{font-size:10px;color:var(--mu);font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.08em}
+.stat-tile-n{font-size:var(--t-xl);font-weight:700;line-height:1;margin-bottom:3px}
+.stat-tile-l{font-size:var(--t-micro);color:var(--mu);font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.08em}
 .donut-wrap{display:flex;align-items:center;gap:16px}
 .donut-legend{flex:1;display:flex;flex-direction:column;gap:5px}
-.legend-row{display:flex;align-items:center;gap:6px;font-size:11px}
+.legend-row{display:flex;align-items:center;gap:6px;font-size:var(--t-xs)}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 
 /* ══════════════════════════════════════════
@@ -781,6 +945,8 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .stat-row{display:flex!important;background:transparent}
   .hdr{print-color-adjust:exact;-webkit-print-color-adjust:exact}
   table{page-break-inside:auto}
+  /* Undo the on-screen virtualisation: every row must be laid out to print. */
+  tbody tr{content-visibility:visible;contain-intrinsic-size:auto}
   tr{page-break-inside:avoid}
   thead{display:table-header-group}
   @page{margin:15mm}
@@ -789,7 +955,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
 /* INFRASPECIFIC BADGE */
 .infra-badge{display:inline-flex;align-items:center;padding:1px 6px;border-radius:6px;
-  font-size:10px;font-family:"IBM Plex Mono",monospace;font-weight:600;letter-spacing:.04em;
+  font-size:var(--t-micro);font-family:"IBM Plex Mono",monospace;font-weight:600;letter-spacing:.04em;
   background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;white-space:nowrap;flex-shrink:0}
 
 /* ══════════════════════════════════════════
@@ -806,7 +972,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      .landing directly via --vh. Using the same --vh here keeps body
      and .landing agreeing on one real, JS-measured number instead of
      two different height sources that can drift apart. */
-  body{overflow:auto;height:auto;min-height:calc(var(--vh, 1dvh) * 100);font-size:12px}
+  body{overflow:auto;height:auto;min-height:calc(var(--vh, 1dvh) * 100);font-size:var(--t-sm)}
 
   /* ── STICKY HEADER + TOOLBAR GROUP ── */
   .hdr-toolbar-wrap{position:sticky;top:0;z-index:21}
@@ -817,26 +983,42 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      Now that .stat-row is hidden on mobile, .hdr-top's own bottom edge
      IS the header's bottom edge — without this, the DAO badge sat
      flush against the divider line below it. */
-  .hdr-top{padding:12px 16px 16px;gap:10px;flex-wrap:nowrap;align-items:flex-start}
-  .hdr-ico{width:28px;height:28px;font-size:12px;border-radius:10px;flex-shrink:0;margin-top:-2px}
-  .hdr-ey{font-size:10px;letter-spacing:.1em}
-  /* Bigger, bolder — this is the app's actual name and should read as
-     branding, not a caption. Title and DAO source are stacked as two
-     deliberate lines (not left to wrap inline) so the source always
-     lands in the same tidy spot under the title, in both languages —
-     including the much longer Filipino translation, which routinely
-     wraps to 2+ lines on its own. */
-  .hdr-t{font-size:18px;line-height:1.28;font-weight:700}
+  .hdr-top{padding:11px 16px 13px;gap:10px;flex-wrap:nowrap;align-items:center}
+  .hdr-ico{width:28px;height:28px;font-size:var(--t-sm);border-radius:10px;flex-shrink:0}
+  .hdr-ey{font-size:var(--t-micro);letter-spacing:.1em}
+  /* Masthead lockup: DAO citation ABOVE the title, not below it.
+     As a pill underneath, it opened a second 20px band that held an
+     82px badge and ~220px of nothing — the two control circles sit on
+     the title's line, so the space beside the badge was dead, and the
+     badge's own padding pushed its text 12px right of the title's left
+     edge, so it did not even line up with what it sat under. In
+     Filipino, where the title wraps to two lines, that pushed the
+     header to 99px.
+
+     Reading DAO -> name is also the right order: the issuance is the
+     context, the app name is the subject. It is the same lockup the
+     landing page already uses above its hero figure, so the two entry
+     points now introduce the app the same way.
+
+     column-reverse gets the source above the title without touching the
+     markup, which keeps the desktop inline treatment (title followed by
+     a dimmed source on one line) exactly as it was. */
+  .hdr-t{display:flex;flex-direction:column-reverse;align-items:flex-start;
+    font-size:var(--t-lg);line-height:1.25;font-weight:700}
   #hdrTitle{display:block}
-  /* A small badge, not just a dim caption — the DAO citation is real
-     branding for this app (its whole reason for existing is that
-     issuance), so it gets a pill of its own under the title instead of
-     reading like an afterthought. */
-  .hdr-t-source{display:inline-block;font-size:10px;font-weight:600;
-    letter-spacing:.04em;margin-top:5px;padding:2px 8px;border-radius:999px;
-    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);
-    opacity:1}
-  .hdr-s{font-size:10px;margin-top:2px;opacity:.75}
+  .hdr-t-source{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+    font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+    /* .72, not the .45-.52 the other header captions use: over the brand
+       green those land at 2.97:1 and 3.45:1, under the 4.5:1 floor for
+       11px text. .72 measures 5.06:1. The eyebrow still reads as
+       subordinate to the title — it is smaller, lighter in weight, mono
+       and letterspaced — which is a better way to rank two lines than
+       dimming one of them below legibility. */
+    color:rgba(255,255,255,.72);
+    /* Source sits above the title in column-reverse, so its bottom edge
+       is the one facing the title — margin-bottom is the gap. */
+    margin:0 0 2px;padding:0;background:none;border:none;opacity:1}
+  .hdr-s{font-size:var(--t-micro);margin-top:2px;opacity:.75}
   /* Icon-only on mobile — no room for the label next to a wrapping title.
      Explicit width/height (not padding-around-content) so this and
      .lang-btn resolve to the exact same circle — padding-based sizing
@@ -897,11 +1079,14 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      clipped by .tw's overflow-x:hidden mid-word. Fixed makes them
      strict, same as desktop/tablet already rely on. */
   table{table-layout:fixed;width:100%}
-  thead th:nth-child(1),tbody td:nth-child(1){display:none} /* # */
-  thead th:nth-child(4),tbody td:nth-child(4){display:none} /* division */
-  thead th:nth-child(5),tbody td:nth-child(5){display:none} /* CITES */
-  thead th:nth-child(6),tbody td:nth-child(6){display:none} /* habit */
-  thead th:nth-child(8),tbody td:nth-child(8){display:none} /* common name */
+  /* Class-based rather than nth-child: the column order changed once
+     already and positional selectors silently retarget when it does.
+     Phone keeps Status + Species only — family, common name and habit
+     all fold into the meta line under the binomial, so the name gets
+     ~280px instead of ~167px. */
+  thead th.cf,tbody td.cf,
+  thead th.cco,tbody td.cco,
+  thead th.cds,tbody td.cds{display:none}
   /* Status header ("Status" + sort icon, uppercase + letter-spaced) no
      longer fits an 8px-padded 46px column — it overflowed under the
      Family header next to it. Tighter letter-spacing/icon gap plus a
@@ -910,7 +1095,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      (actual system font metrics, Dynamic Type, etc.) can't be counted
      on to hold, so this carries a genuine buffer instead of a
      hairline fit. */
-  thead th{padding:8px 8px;font-size:10px;letter-spacing:.02em}
+  thead th{padding:8px 8px;font-size:var(--t-micro);letter-spacing:.02em}
   thead th .sort-icon{margin-left:2px}
   /* 80px column was sized entirely by the header label's real-device
      needs (see above) — the actual data in this column is just a
@@ -921,7 +1106,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      the number proven safe on-device — while shrinking the column
      itself by the padding saved. That freed width goes to Scientific
      Name, which was the other half of the same report (cramped). */
-  thead th:nth-child(2){width:72px;padding-left:4px;padding-right:4px}
+  thead th.cc{width:72px;padding-left:4px;padding-right:4px}
   /* Family: wide enough that "Pentaphragmataceae" — the longest family
      in the dataset — renders on one line with no wrapped remainder.
      Every shorter family name clears with room to spare, which also
@@ -930,19 +1115,30 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      into at the old 100px. The extra width comes out of Scientific
      Name, which already wraps its longest entries at the old width too
      — a much less noticeable cost than an orphaned letter. */
-  thead th:nth-child(3){width:136px}
+  /* Family no longer has a column here — it moved into the meta line. */
   tbody td{padding:10px 8px;vertical-align:top}
-  tbody td:nth-child(2){padding-left:12px}
-  tbody td:nth-child(3){padding-right:12px} /* a little more air before the scientific name */
+  /* Mobile rows run much taller than desktop's 44px and vary a lot with
+     how the binomial and authority wrap, so the pre-render guess is
+     raised to match; real heights are remembered after first paint. */
+  tbody tr{contain-intrinsic-size:auto 96px}
+  tbody td.cc{padding-left:12px}
   .cc{width:72px}
-  .cf{font-size:11px;width:136px}
-  .csn{font-size:15px;line-height:1.3}
-  .cau{font-size:11px;margin-top:3px}
-  /* Star-only badge sizing now lives in the base rules (applies at
-     every width, not just mobile) — see .endemic-badge-row near the
-     top of the stylesheet. */
-  .infra-badge{font-size:10px}
-  .mob-common{font-size:11px;color:var(--gl);margin-top:2px;
+  .csn{font-size:var(--t-md);line-height:1.3}
+  /* Phone has no Family column, so family joins the meta line and leads
+     it — it and habit are the two fields worth scanning, and putting the
+     authority last means the ellipsis eats the authority rather than the
+     family. Measured over 120 rows at 375px: the binomial never wraps
+     (widest 230px in a 281px cell), so this line wrapping was the only
+     thing making row heights ragged — they ran 59 / 76 / 90px. Now 77px
+     is the common case, 60px without a common name, and the only taller
+     rows are the few taxa carrying three exception marks. */
+  .cau{margin-top:3px}
+  .cau-fam{display:inline;order:1}
+  .cau-habit{order:2}
+  .cau-auth{order:3}
+  .cau-auth::before{content:"·";color:var(--fa-deco);padding:0 5px}
+  .infra-badge{font-size:var(--t-micro)}
+  .mob-common{font-size:var(--t-xs);color:var(--gl);margin-top:2px;
     font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     max-width:100%;display:block;font-weight:500}
 
@@ -959,9 +1155,9 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
     transform:translateX(-50%);width:36px;height:4px;
     background:var(--bd-strong);border-radius:4px}
   .panel-hdr{padding:8px 16px 12px}
-  .panel-sci{font-size:18px}
-  .panel-auth{font-size:11px}
-  .copy-cite-btn{font-size:11px}
+  .panel-sci{font-size:var(--t-lg)}
+  .panel-auth{font-size:var(--t-xs)}
+  .copy-cite-btn{font-size:var(--t-xs)}
   .panel-body{padding:12px 14px;gap:12px}
 
   /* ── FOOTER ── */
@@ -972,14 +1168,17 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
     position:fixed;bottom:0;left:0;right:0;margin:0;animation:sheet-in .24s cubic-bezier(.4,0,.2,1)}
   .modal-overlay{align-items:flex-end}
   .modal-hdr{padding:16px 18px 12px}
-  .modal-title{font-size:15px}
+  .modal-title{font-size:var(--t-md)}
   .modal-body{padding:14px 16px}
   .chart-grid{grid-template-columns:1fr;gap:12px}
   .chart-card.wide{grid-column:auto}
-  .stat-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .stat-grid{gap:8px}
   .stat-tile{padding:10px 8px}
-  .stat-tile-n{font-size:18px}
-  .bar-label{width:90px;font-size:11px}
+  .stat-tile-n{font-size:var(--t-lg)}
+  /* Phone keeps a narrower label so the bar itself stays readable —
+     104px fits every family name and "Other Threatened"; only
+     "Critically Endangered" ellipses, and only here. */
+  .bar-label{width:104px;font-size:var(--t-xs)}
 
   /* ── BOTTOM NAV ── */
   .mob-nav{display:flex!important}
@@ -989,14 +1188,14 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
 /* ── MOBILE-ONLY COMPONENTS (hidden on desktop) ── */
 .mob-filter-btn{display:none;align-items:center;gap:5px;padding:6px 10px;
-  border:none;background:transparent;font-size:12px;font-weight:500;
+  border:none;background:transparent;font-size:var(--t-sm);font-weight:500;
   color:var(--mu);cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap;
   border-left:1px solid var(--bd);height:100%}
 .mob-filter-btn:active{background:var(--bg)}
 .mob-filter-btn svg{width:14px;height:14px}
 .mob-filter-btn .mob-filter-count{display:inline-flex;align-items:center;justify-content:center;
   width:16px;height:16px;background:var(--gl);color:#fff;border-radius:50%;
-  font-size:10px;font-weight:700;margin-left:2px;display:none}
+  font-size:var(--t-micro);font-weight:700;margin-left:2px;display:none}
 .mob-filter-btn .mob-filter-count.has-filters{display:inline-flex}
 
 /* BOTTOM NAV */
@@ -1023,7 +1222,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   cursor:pointer;padding:6px 4px;border:none;background:none;
   font-family:Inter,sans-serif;transition:var(--transition)}
 .mob-nav-item svg{width:20px;height:20px;color:var(--fa)}
-.mob-nav-item span{font-size:10px;color:var(--fa);font-weight:500}
+.mob-nav-item span{font-size:var(--t-micro);color:var(--fa);font-weight:500}
 
 /* Feedback FAB — floated out of the filter-pill row and pinned to the
    lower-right corner instead, so it reads as its own action rather than
@@ -1052,7 +1251,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    unchanged — it's the primary action, not a filter option). */
 .mob-nav-item .mob-nav-pill{display:inline-flex;align-items:center;justify-content:center;
   min-width:34px;height:22px;padding:0 8px;border-radius:var(--r-sm);
-  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;
+  font-family:"IBM Plex Mono",monospace;font-size:var(--t-xs);font-weight:700;
   letter-spacing:.02em;border:1.5px solid transparent;background:transparent;
   transition:var(--transition)}
 /* Scoped under .mob-nav-item (not bare .mob-nav-pill-CR etc) so this
@@ -1066,7 +1265,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .mob-nav-item.active .mob-nav-pill-EN{color:var(--en);border-color:var(--en)}
 .mob-nav-item.active .mob-nav-pill-VU{color:var(--vu);border-color:var(--vu)}
 .mob-nav-item.active .mob-nav-pill-OTS{color:var(--ots);border-color:var(--ots)}
-.mob-nav-item .mob-nav-count{font-size:9px;font-weight:500}
+.mob-nav-item .mob-nav-count{font-size:var(--t-micro);font-weight:500}
 
 /* ALL — raised solid circle in the center of the row (CR/EN to its
    left, VU/OTS to its right), standing apart from the four outline
@@ -1086,9 +1285,9 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* .mob-nav-item scoped, same reason as everywhere else on this bar —
    without it the generic ".mob-nav-item span{color:var(--fa)}" rule
    would turn these gray instead of white against the green circle. */
-.mob-nav-item .mob-nav-all-label{font-size:13px;font-weight:700;
+.mob-nav-item .mob-nav-all-label{font-size:var(--t-base);font-weight:700;
   letter-spacing:.03em;line-height:1;color:#fff}
-.mob-nav-item .mob-nav-all-count{font-size:9px;font-weight:600;
+.mob-nav-item .mob-nav-all-count{font-size:var(--t-micro);font-weight:600;
   line-height:1;color:#fff;opacity:.8}
 
 .mob-nav-spacer{height:64px;flex-shrink:0} /* pushes content above nav */
@@ -1108,21 +1307,21 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   border-radius:4px;margin:12px auto 0}
 .filter-sheet-hdr{padding:14px 20px 10px;display:flex;align-items:center;
   justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
-.filter-sheet-title{font-size:13px;font-weight:600}
-.filter-sheet-clear{font-size:12px;color:var(--gl);font-weight:500;
+.filter-sheet-title{font-size:var(--t-base);font-weight:600}
+.filter-sheet-clear{font-size:var(--t-sm);color:var(--gl);font-weight:500;
   background:none;border:none;cursor:pointer;font-family:Inter,sans-serif}
 .filter-sheet-body{overflow-y:auto;padding:16px 20px 24px;display:flex;flex-direction:column;gap:18px}
 .filter-sheet-section{}
-.filter-sheet-label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
+.filter-sheet-label{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.14em;
   text-transform:uppercase;color:var(--fa);margin-bottom:8px;font-weight:500;display:block}
 .filter-sheet-chips{display:flex;flex-wrap:wrap;gap:6px}
 .filter-sheet-fams{display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:200px;overflow-y:auto}
 .fam-chip{padding:6px 10px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);
-  font-size:11px;color:var(--mu);cursor:pointer;text-align:left;font-family:Inter,sans-serif;
+  font-size:var(--t-xs);color:var(--mu);cursor:pointer;text-align:left;font-family:Inter,sans-serif;
   transition:var(--transition);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fam-chip.on{background:var(--gbg);border-color:var(--gl);color:var(--g);font-weight:600}
 .filter-sheet-apply{margin:0 20px 16px;padding:14px;background:var(--g);color:#fff;
-  border:none;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;
+  border:none;border-radius:16px;font-size:var(--t-base);font-weight:600;cursor:pointer;
   font-family:Inter,sans-serif;width:calc(100% - 40px)}
 
 
@@ -1132,38 +1331,38 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   background:var(--bg);transition:var(--transition);margin-top:4px}
 .cdfp-btn:hover{border-color:var(--gl);background:var(--gbg);transform:translateX(2px)}
 .cdfp-btn-top{display:flex;align-items:center;gap:8px}
-.cdfp-btn-ico{font-size:15px;flex-shrink:0;line-height:1}
+.cdfp-btn-ico{font-size:var(--t-md);flex-shrink:0;line-height:1}
 .cdfp-btn-info{flex:1;min-width:0}
-.cdfp-btn-name{font-size:11px;font-weight:700;color:var(--g);display:block;line-height:1.2}
-.cdfp-btn-credit{font-size:10px;color:var(--gl);display:block;margin-top:1px;
+.cdfp-btn-name{font-size:var(--t-xs);font-weight:700;color:var(--g);display:block;line-height:1.2}
+.cdfp-btn-credit{font-size:var(--t-micro);color:var(--gl);display:block;margin-top:1px;
   font-family:"IBM Plex Mono",monospace;letter-spacing:.02em}
 .cdfp-photo-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;
-  background:var(--g);color:#fff;border-radius:16px;font-size:10px;
+  background:var(--g);color:#fff;border-radius:16px;font-size:var(--t-micro);
   font-weight:600;font-family:Inter,sans-serif;flex-shrink:0}
-.cdfp-btn-hint{font-size:10px;color:var(--gl);padding-left:2px;font-style:italic;
+.cdfp-btn-hint{font-size:var(--t-micro);color:var(--gl);padding-left:2px;font-style:italic;
   opacity:.8}
 
 /* DISTRIBUTION */
 .dist-block{background:var(--bg);border-radius:10px;padding:10px 12px;border:1px solid var(--bd)}
 .dist-group{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
 .dist-group:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
-.dist-island-label{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:700;
+.dist-island-label{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);font-weight:700;
   letter-spacing:.12em;color:var(--gl);margin-bottom:3px;white-space:nowrap;
   display:flex;align-items:center;gap:5px}
-.dist-provinces{color:var(--mu);font-size:11px;line-height:1.7}
-.dist-photo{display:inline-flex;align-items:center;gap:2px;font-size:10px;
+.dist-provinces{color:var(--mu);font-size:var(--t-xs);line-height:1.7}
+.dist-photo{display:inline-flex;align-items:center;gap:2px;font-size:var(--t-micro);
   color:var(--g);background:var(--gbg);border:1px solid #86efac;border-radius:4px;
   padding:1px 5px;margin-left:3px;font-weight:600;vertical-align:middle;white-space:nowrap}
-.dist-uncertain{display:inline-flex;align-items:center;font-size:10px;
+.dist-uncertain{display:inline-flex;align-items:center;font-size:var(--t-micro);
   color:#92400e;background:#fef3c7;border:1px solid #fcd34d;border-radius:4px;
   padding:1px 5px;margin-left:3px;font-weight:600;vertical-align:middle;white-space:nowrap}
-.dist-nodata{font-size:11px;color:var(--fa);font-style:italic}
-.dist-also{font-size:11px;color:var(--fa);margin-top:7px;padding-top:6px;
+.dist-nodata{font-size:var(--t-xs);color:var(--fa);font-style:italic}
+.dist-also{font-size:var(--t-xs);color:var(--fa);margin-top:7px;padding-top:6px;
   border-top:1px dashed var(--bd);font-style:italic}
 .dist-also strong{color:var(--mu);font-style:normal}
 /* Island group tabs */
 .ig-tab{padding:5px 10px;border-radius:10px;border:1.5px solid var(--bd);
-  background:var(--bg);font-size:11px;font-weight:500;cursor:pointer;
+  background:var(--bg);font-size:var(--t-xs);font-weight:500;cursor:pointer;
   color:var(--mu);transition:var(--transition);font-family:Inter,sans-serif}
 .ig-tab.active{background:var(--g);border-color:var(--g);color:#fff}
 .ig-sub{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;
@@ -1183,21 +1382,21 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .feedback-handle{width:36px;height:4px;background:var(--bd-strong);
   border-radius:4px;margin:12px auto 0}
 .feedback-hdr{padding:16px 22px 10px;border-bottom:1px solid var(--bd)}
-.feedback-title{font-family:"Cormorant Garamond",serif;font-size:15px;font-weight:700}
-.feedback-subtitle{font-size:11px;color:var(--fa);margin-top:2px}
+.feedback-title{font-family:"Cormorant Garamond",serif;font-size:var(--t-md);font-weight:700}
+.feedback-subtitle{font-size:var(--t-xs);color:var(--fa);margin-top:2px}
 .feedback-body{padding:18px 22px 24px;display:flex;flex-direction:column;gap:12px}
 .feedback-dev{display:flex;align-items:center;gap:12px;padding:12px;
   background:var(--bg);border-radius:16px;border:1px solid var(--bd)}
 .feedback-dev-ico{width:40px;height:40px;border-radius:16px;overflow:hidden;flex-shrink:0}
 .feedback-dev-ico img{width:100%;height:100%;object-fit:cover}
-.feedback-dev-name{font-size:12px;font-weight:600}
-.feedback-dev-role{font-size:11px;color:var(--fa);margin-top:1px}
+.feedback-dev-name{font-size:var(--t-sm);font-weight:600}
+.feedback-dev-role{font-size:var(--t-xs);color:var(--fa);margin-top:1px}
 .feedback-email-btn{display:flex;align-items:center;justify-content:center;gap:7px;
   padding:12px;border:1.5px solid var(--gl);border-radius:16px;background:var(--gbg);
-  text-decoration:none;color:var(--g);font-size:12px;font-weight:600;
+  text-decoration:none;color:var(--g);font-size:var(--t-sm);font-weight:600;
   font-family:Inter,sans-serif;transition:var(--transition)}
 .feedback-email-btn:hover{background:var(--g);color:#fff}
-.feedback-note{font-size:11px;color:var(--fa);text-align:center;line-height:1.6;
+.feedback-note{font-size:var(--t-xs);color:var(--fa);text-align:center;line-height:1.6;
   padding:0 4px}
 
 /* ── ACTIVE/PRESSED STATES — mobile tactile feedback ── */
@@ -1240,7 +1439,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
 
 /* DISCLAIMER — a link into the full modal, not the text itself */
-.feedback-disclaimer{display:block;width:100%;text-align:left;font-size:11px;
+.feedback-disclaimer{display:block;width:100%;text-align:left;font-size:var(--t-xs);
   color:var(--mu);font-weight:500;padding:10px 12px;background:var(--bg);
   border-radius:10px;border:1px solid var(--bd-soft);margin-top:4px;
   cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
@@ -1261,8 +1460,8 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      hugging its top edge. Sides at 10px to match the sidebar/table/
      footer column below (28px was this app's own outlier). */
   .hdr-top{padding:14px 10px 16px;gap:14px;flex-wrap:nowrap;align-items:center}
-  .hdr-ico{width:40px;height:40px;font-size:15px;border-radius:16px}
-  .hdr-ey{font-size:10px;letter-spacing:.2em}
+  .hdr-ico{width:40px;height:40px;font-size:var(--t-md);border-radius:16px}
+  .hdr-ey{font-size:var(--t-micro);letter-spacing:.2em}
   /* 15px next to a 40px icon read as a caption, not a brand mark — even
      mobile's 28px icon pairs with an 18px title. Sized up to --t-xl so
      the title actually carries visual weight alongside the logo. */
@@ -1276,7 +1475,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      clipped first, only reaching the title itself once nothing else
      is left to give up. */
   .hdr-t{font-size:var(--t-xl);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hdr-s{font-size:11px;margin-top:2px;opacity:1}
+  .hdr-s{font-size:var(--t-xs);margin-top:2px;opacity:1}
 
   /* ── TOOLBAR ── */
   .toolbar{height:var(--toolbar-h);position:relative;box-shadow:none}
@@ -1291,8 +1490,8 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      clears the hairline gap before that button's own left border. */
   .toolbar-search{min-width:220px;flex:1;padding:0 14px;margin:7px 12px 7px 12px;
     height:34px;background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm)}
-  .srch{font-size:12px}
-  .rc{display:flex;font-size:10px}
+  .srch{font-size:var(--t-sm)}
+  .rc{display:flex;font-size:var(--t-micro)}
   /* The inline chip row is retired on desktop/tablet in favor of the
      same Filters button + slide-in sheet mobile already uses (below) —
      it never had a workable amount of room here even after the search
@@ -1327,12 +1526,11 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
   /* ── TABLE — restore all columns ── */
   table{table-layout:fixed;width:100%}
-  thead th:nth-child(1),tbody td:nth-child(1){display:table-cell} /* # */
-  thead th:nth-child(4),tbody td:nth-child(4){display:table-cell} /* division */
-  thead th:nth-child(5),tbody td:nth-child(5){display:table-cell} /* CITES */
-  thead th:nth-child(6),tbody td:nth-child(6){display:table-cell} /* habit */
-  thead th:nth-child(8),tbody td:nth-child(8){display:table-cell} /* common name */
-  thead th{padding:10px 12px;font-size:10px}
+  thead th.cf,tbody td.cf,
+  thead th.cco,tbody td.cco,
+  thead th.cds,tbody td.cds{display:table-cell}
+  .cau-fam{display:none}
+  thead th{padding:10px 12px;font-size:var(--t-micro)}
   thead th:first-child{padding-left:20px}
   tbody td{padding:12px 12px;vertical-align:top}
   tbody td:first-child{padding-left:20px}
@@ -1345,9 +1543,9 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      typical desktop-monitor pixel density, and 1,237 rows of it read
      as bold text throughout the table. */
   .csn{font-size:var(--t-md);font-weight:400}
-  .cau{font-size:11px;margin-top:2px}
-  .cco{font-size:12px;width:180px;max-width:180px}
-  .cf{font-size:12px;width:124px}
+  .cau{font-size:var(--t-xs);margin-top:2px}
+  .cco{font-size:var(--t-sm);width:180px;max-width:180px}
+  .cf{font-size:var(--t-sm);width:124px}
   .mob-common{display:none} /* hide stacked common name on desktop */
 
   /* ── PANEL — restore side panel ── */
@@ -1360,7 +1558,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .panel-toolbar{padding:10px 14px 0;position:relative}
   .panel-toolbar::before{display:none} /* no drag handle on desktop */
   .panel-hdr{padding:12px 16px 14px}
-  .panel-sci{font-size:18px}
+  .panel-sci{font-size:var(--t-lg)}
 
   /* ── BOTTOM NAV — hide on desktop ── */
   .mob-nav{display:none!important}
@@ -1399,79 +1597,80 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 @media (min-width:769px){
 
   /* ── HEADER typography ── */
-  .hdr-ey{font-size:10px;letter-spacing:.2em}
-  .hdr-ico{width:40px;height:40px;font-size:15px}
+  .hdr-ey{font-size:var(--t-micro);letter-spacing:.2em}
+  .hdr-ico{width:40px;height:40px;font-size:var(--t-md)}
   .hdr-t{font-size:var(--t-xl);line-height:1.2;font-weight:700}
-  .hdr-s{font-size:11px;opacity:1}
+  .hdr-s{font-size:var(--t-xs);opacity:1}
 
   /* ── Stat tabs — sizing already matches in the base rules; this
      component only ever renders on desktop/tablet now, so there's
      nothing left to override at this breakpoint. ── */
 
   /* ── Toolbar ── */
-  .tf-label{font-size:10px;letter-spacing:.12em}
-  .chip{font-size:11px;padding:4px 10px}
-  .action-btn{font-size:11px;padding:5px 9px}
-  .rc{font-size:10px}
-  .srch{font-size:12px}
+  .tf-label{font-size:var(--t-micro);letter-spacing:.12em}
+  .chip{font-size:var(--t-xs);padding:4px 10px}
+  .action-btn{font-size:var(--t-xs);padding:5px 9px}
+  .rc{font-size:var(--t-micro)}
+  .srch{font-size:var(--t-sm)}
 
   /* ── Table ── */
   .csn{font-size:var(--t-md);line-height:1.25;font-weight:400}
-  .cau{font-size:11px;margin-top:2px}
-  .cco{font-size:12px}
-  .cf{font-size:12px}
-  .cn{font-size:11px}
-  thead th{font-size:10px;letter-spacing:.07em;padding:10px 12px}
+  .cau{font-size:var(--t-xs);margin-top:2px}
+  .cco{font-size:var(--t-sm)}
+  .cf{font-size:var(--t-sm)}
+  thead th{font-size:var(--t-micro);letter-spacing:.07em;padding:10px 12px}
   tbody td{padding:12px 12px}
-  .pl{font-size:10px;padding:2px 6px}
-  .div-pill{font-size:10px;padding:2px 6px}
-  .cites-pill{font-size:10px;padding:2px 6px}
-  .endemic-badge{font-size:10px;padding:1px 5px}
-  .habit-pill{font-size:10px;padding:2px 7px}
-  .infra-badge{font-size:10px}
+  .pl{font-size:var(--t-micro);padding:2px 6px}
+  .div-pill{font-size:var(--t-micro);padding:2px 6px}
+  .cites-pill{font-size:var(--t-micro);padding:2px 6px}
+  .endemic-badge{font-size:var(--t-micro);padding:1px 5px}
+  .habit-pill{font-size:var(--t-micro);padding:2px 7px}
+  .infra-badge{font-size:var(--t-micro)}
 
   /* ── Sidebar ── */
-  .sb-title{font-size:10px;letter-spacing:.14em}
-  .fi{font-size:12px;padding:5px 13px}
-  .fi-n{font-size:10px}
+  .sb-title{font-size:var(--t-micro);letter-spacing:.14em}
+  .fi{font-size:var(--t-sm);padding:5px 13px}
+  .fi-n{font-size:var(--t-micro)}
 
   /* ── Panel ── */
   /* Sized up from the 20px base (not down, like most rules in this
      block) — on the wider desktop panel the scientific name needs to
      outweigh the pill row below it to read as the headline. */
   .panel-sci{font-size:24px;line-height:1.15}
-  .panel-auth{font-size:11px}
-  .panel-common{font-size:12px}
-  .panel-section-title{font-size:10px;letter-spacing:.15em}
-  .panel-nav-btn{font-size:12px;padding:4px 8px}
-  .live-stat-label{font-size:11px}
-  .live-stat-val{font-size:11px}
-  .ext-link-name{font-size:11px}
-  .ext-link-sub{font-size:10px}
-  .similar-name{font-size:12px}
-  .copy-cite-btn{font-size:11px}
-  .dist-island-label{font-size:10px;letter-spacing:.12em}
-  .dist-provinces{font-size:11px;line-height:1.7}
-  .dist-nodata{font-size:11px}
-  .dist-also{font-size:11px}
-  .cdfp-btn-name{font-size:11px}
-  .cdfp-btn-credit{font-size:10px}
-  .cdfp-btn-hint{font-size:10px}
+  .panel-auth{font-size:var(--t-xs)}
+  .panel-common{font-size:var(--t-sm)}
+  .panel-section-title{font-size:var(--t-micro);letter-spacing:.15em}
+  .panel-nav-btn{font-size:var(--t-sm);padding:4px 8px}
+  .live-stat-label{font-size:var(--t-xs)}
+  .live-stat-val{font-size:var(--t-xs)}
+  .ext-link-name{font-size:var(--t-xs)}
+  .ext-link-sub{font-size:var(--t-micro)}
+  .similar-name{font-size:var(--t-sm)}
+  .copy-cite-btn{font-size:var(--t-xs)}
+  .dist-island-label{font-size:var(--t-micro);letter-spacing:.12em}
+  .dist-provinces{font-size:var(--t-xs);line-height:1.7}
+  .dist-nodata{font-size:var(--t-xs)}
+  .dist-also{font-size:var(--t-xs)}
+  .cdfp-btn-name{font-size:var(--t-xs)}
+  .cdfp-btn-credit{font-size:var(--t-micro)}
+  .cdfp-btn-hint{font-size:var(--t-micro)}
 
   /* ── Analytics ── */
-  .modal-title{font-size:18px}
-  .chart-title{font-size:10px;letter-spacing:.14em}
-  .bar-label{font-size:11px;width:110px}
-  .bar-val{font-size:10px}
-  .stat-tile-n{font-size:22px}
-  .stat-tile-l{font-size:10px}
-  .legend-row{font-size:11px}
+  .modal-title{font-size:var(--t-lg)}
+  .chart-title{font-size:var(--t-micro);letter-spacing:.14em}
+  /* 128px, not 110: "Critically Endangered" measures 122px at 12px and
+     was ellipsing to "Critically Endang..." on every load. */
+  .bar-label{font-size:var(--t-xs);width:128px}
+  .bar-val{font-size:var(--t-micro)}
+  .stat-tile-n{font-size:var(--t-xl)}
+  .stat-tile-l{font-size:var(--t-micro)}
+  .legend-row{font-size:var(--t-xs)}
 
 }
 
 /* DESKTOP FOOTER EXTRAS */
 .ftr-feedback-btn{padding:3px 10px;border-radius:999px;border:1px solid var(--bd);
-  background:var(--bg);font-size:10px;font-weight:500;cursor:pointer;
+  background:var(--bg);font-size:var(--t-micro);font-weight:500;cursor:pointer;
   color:var(--mu);font-family:Inter,sans-serif;transition:var(--transition)}
 .ftr-feedback-btn:hover{border-color:var(--gl);color:var(--g);background:var(--gbg)}
 
@@ -1513,7 +1712,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   .tw::-webkit-scrollbar{width:6px;height:6px}
   .tw::-webkit-scrollbar-track{background:transparent}
   .tw::-webkit-scrollbar-thumb{background:var(--bd-strong);border-radius:4px}
-  .tw::-webkit-scrollbar-thumb:hover{background:var(--fa)}
+  .tw::-webkit-scrollbar-thumb:hover{background:var(--fa-deco)}
   .sb-l::-webkit-scrollbar{width:4px}
   .sb-l::-webkit-scrollbar-track{background:transparent}
   .sb-l::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
@@ -1576,7 +1775,7 @@ thead th{border-bottom-color:var(--bd)}
 .analytics-scope b{color:var(--g);font-size:var(--t-xs)}
 
 /* ══════════════════════════════════════════
-   TABLET — iPad portrait (769–1024px)
+   TABLET — iPad portrait and small laptops (769–1260px)
    The eight fixed colgroup widths sum to 606px. With the 216px sidebar
    that leaves ~612px of table, so the auto-width Scientific Name column
    — the primary content of the whole tool — collapsed to 2px. Reclaim
@@ -1584,34 +1783,71 @@ thead th{border-bottom-color:var(--bd)}
    (Division is still filterable and shown in the detail panel), and
    tighten Common Name.
 ══════════════════════════════════════════ */
-@media (min-width:769px) and (max-width:1024px){
+/* Upper bound moved 1024 → 1260. The desktop fixed columns now sum to
+   735px, so below roughly 1261px viewport (735 + 216 sidebar + 30 gutter
+   + a 280px name column) the one flexible column — Scientific Name — is
+   what absorbs the shortfall, and the longest binomial in the dataset,
+   Stigmatodactylus dalagangpalawanicum, needs 230px on its own. This
+   band already ran tight before the type scale changed; it just now
+   starts higher. The tablet rules here were built for exactly this
+   problem: they drop the row index and Division, tighten padding, and
+   float the panel instead of letting it squeeze the table. Small
+   laptops get the layout that already solves it. */
+@media (min-width:769px) and (max-width:1260px){
   :root{--sidebar:170px}
-  /* Same selector shape as the desktop `display:table-cell` rules above,
-     which out-specify a bare .cn / .cdv class selector. */
-  thead th:nth-child(1),tbody td:nth-child(1){display:none}  /* # — a filter-relative index */
-  thead th:nth-child(4),tbody td:nth-child(4){display:none}  /* Division — filterable + in panel */
   .cf{width:104px}
   /* Same header-clipping problem as the desktop base rule above, just
      with tablet's tighter 9px cell padding — "Status" and "Habit" were
      losing more than half their own label. Widened by the same margin,
      scaled down for the smaller padding here. */
-  .cc{width:78px}
-  .cct{width:68px}
-  .chb{width:70px}
+  .cc{width:74px}
   .cco{width:144px;max-width:144px}   /* fits the "Karaniwang Pangalan" header */
+  .cds{width:130px}
   tbody td,thead th{padding-left:9px;padding-right:9px}
   tbody td:first-child,thead th:first-child{padding-left:14px}
 
-  /* Detail panel floats as its own card instead of squeezing the table's
-     fixed columns. At this width there isn't room to dock it inline
-     without the Scientific Name column collapsing and Common Name
-     reflowing underneath it — floating keeps every column exactly where
-     it was, panel open or closed. */
+}
+
+/* ══════════════════════════════════════════════════════════
+   NARROW TABLET (769–1000px)
+   Even with the tablet rules above, the fixed columns leave the
+   Scientific Name column at ~40px here — the binomial wrapped one
+   or two characters per line. Common Name is the widest remaining
+   fixed column at 144px, and mobile already solves this by stacking
+   the common name under the scientific name instead of giving it a
+   column of its own. Same trade applied one breakpoint earlier: the
+   data stays on the row, it just stops costing 144px of width.
+══════════════════════════════════════════════════════════ */
+@media (min-width:769px) and (max-width:1000px){
+  thead th.cco,tbody td.cco,
+  thead th.cds,tbody td.cds{display:none}  /* → stacked / dropped below */
+  .mob-common{display:block;font-size:var(--t-xs);color:var(--gl);margin-top:2px;
+    font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    max-width:100%;font-weight:500}
+}
+
+/* ══════════════════════════════════════════════════════════
+   FLOATING DETAIL PANEL (769–1600px)
+   The panel used to dock inline and take its 400px out of the table.
+   Seven of the eight columns are fixed, so the one flexible column —
+   Scientific Name — absorbed the entire loss: at 1440px it fell from
+   451px to 59px and binomials wrapped four lines deep. Floating the
+   panel over the table instead leaves every column exactly where it
+   was, open or closed.
+
+   The rules themselves are unchanged; only their range is. They lived
+   in the tablet block (769–1260) where this problem was worst, but the
+   squeeze does not stop at 1260 — it needs 735px of fixed columns plus
+   400px of panel plus the sidebar and gutters before docking inline is
+   affordable, which is ~1600px. Above that there is genuinely room and
+   the panel docks as before.
+══════════════════════════════════════════════════════════ */
+@media (min-width:769px) and (max-width:1600px){
   .panel{position:absolute;top:10px;right:10px;bottom:10px;width:0;z-index:20;
     border:1px solid var(--bd-soft);border-radius:var(--r-md)}
   /* Matches the :not(.closed) specificity of the earlier desktop-shadow
-     rule above so this tablet shadow actually wins instead of losing to
-     it despite coming later in the file. */
+     rule so this shadow wins instead of losing to it despite coming
+     later in the file. */
   .panel:not(.closed){width:min(var(--panel),85vw);box-shadow:var(--shadow-lg)}
   .panel-inner{width:100%;min-width:0}
 }
@@ -1645,7 +1881,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
 .landing-mark{width:64px;height:64px;background:var(--gbg);border:1.5px solid var(--g-light);
   border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;
-  font-size:28px;margin-bottom:22px;overflow:hidden}
+  font-size:var(--t-2xl);margin-bottom:22px;overflow:hidden}
 .landing-mark img{width:100%;height:100%;object-fit:cover;display:block}
 
 .landing-title{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:var(--t-landing-title);
@@ -1683,10 +1919,10 @@ body.entering .body-wrap{animation:app-in .3s ease}
 .landing-list-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
   margin-top:14px;padding-top:14px;border-top:1px solid var(--bd-soft)}
 .landing-list-cat{display:flex;flex-direction:column;gap:2px}
-.landing-list-cat-code{font-family:"IBM Plex Mono",monospace;font-size:10px;
+.landing-list-cat-code{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
   font-weight:700;letter-spacing:.03em}
 .landing-list-cat-n{font-family:"Cormorant Garamond",serif;font-weight:700;
-  font-size:18px;color:var(--ink);line-height:1.1}
+  font-size:var(--t-lg);color:var(--ink);line-height:1.1}
 .landing-list-cat-CR .landing-list-cat-code{color:var(--cr)}
 .landing-list-cat-EN .landing-list-cat-code{color:var(--en)}
 .landing-list-cat-VU .landing-list-cat-code{color:var(--vu)}
@@ -1706,11 +1942,11 @@ body.entering .body-wrap{animation:app-in .3s ease}
   box-shadow:var(--shadow-xs);cursor:pointer;font-family:Inter,sans-serif;
   text-decoration:none;text-align:left;transition:var(--transition)}
 .landing-ref-card:hover{border-color:var(--gl);box-shadow:var(--shadow-sm)}
-.landing-ref-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:10px;
+.landing-ref-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
   letter-spacing:.1em;text-transform:uppercase;color:var(--gl)}
 .landing-ref-label{font-size:var(--t-xs);font-weight:600;color:var(--ink);
   display:flex;align-items:center;gap:5px}
-.landing-ref-label span[aria-hidden]{color:var(--fa);transition:transform .16s}
+.landing-ref-label span[aria-hidden]{color:var(--fa-deco);transition:transform .16s}
 .landing-ref-card:hover .landing-ref-label span[aria-hidden]{transform:translateX(2px);color:var(--gl)}
 
 /* Disclaimer stays a plain link, last in the flow — proportioned like a
@@ -1741,7 +1977,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
      rendered height at a 393x695 viewport, matching that device) to
      comfortably clear that with room to spare, not just to look denser. */
   .landing{padding:28px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
-  .landing-mark{width:52px;height:52px;font-size:22px;margin-bottom:14px}
+  .landing-mark{width:52px;height:52px;font-size:var(--t-xl);margin-bottom:14px}
   .landing-title{font-size:26px;margin-bottom:8px}
   .landing-desc{font-size:var(--t-sm);margin-bottom:18px}
   .landing-list-card{padding:16px}
@@ -2023,18 +2259,18 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <!-- Table -->
       <div class="tw">
         <table id="tbl">
-          <!-- Column widths live on the th classes (.cn/.cc/.cf/.cdv/.cct/.chb/.cco).
+          <!-- Column widths live on the th classes (.cc/.csp/.cf/.cco/.cds).
                A <colgroup> cannot be used here: when a column is hidden at a
-               breakpoint the remaining cells re-map onto the wrong <col>. -->
+               breakpoint the remaining cells re-map onto the wrong <col>.
+               Show/hide is keyed off those same classes rather than
+               :nth-child, so changing the column order cannot silently
+               retarget a breakpoint rule at the wrong column. -->
           <thead><tr>
-            <th class="cn">#</th>
             <th class="cc sortable" data-col="cat"><span data-i18n="status">Status</span><span class="sort-icon"></span></th>
+            <th class="csp sortable" data-col="name"><span id="thSci" data-i18n="sciName">Scientific Name &amp; Authority</span><span class="sort-icon"></span></th>
             <th class="cf sortable" data-col="family"><span data-i18n="family">Family</span><span class="sort-icon"></span></th>
-            <th class="cdv sortable" data-col="division"><span data-i18n="division">Division</span><span class="sort-icon"></span></th>
-            <th class="cct">CITES</th>
-            <th class="chb sortable" data-col="habit"><span data-i18n="habit">Habit</span><span class="sort-icon"></span></th>
-            <th class="sortable" data-col="name"><span id="thSci" data-i18n="sciName">Scientific Name &amp; Authority</span><span class="sort-icon"></span></th>
             <th class="cco sortable" data-col="common"><span data-i18n="commonNameCol">Common Name</span><span class="sort-icon"></span></th>
+            <th class="cds"><span data-i18n="distributionCol">Distribution</span></th>
           </tr></thead>
           <tbody id="tbody"></tbody>
         </table>
@@ -2080,7 +2316,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
             <!-- Distribution -->
             <div id="distSection" style="display:none">
               <div class="panel-section-title"><span id="distSectionTitle" data-i18n="localDist">Local Distribution</span>
-                <span style="font-family:Inter,sans-serif;font-weight:400;font-size:10px;color:var(--fa);margin-left:6px;text-transform:none;letter-spacing:0">Co's Digital Flora of the Philippines</span>
+                <span style="font-family:Inter,sans-serif;font-weight:400;font-size:var(--t-micro);color:var(--fa);margin-left:6px;text-transform:none;letter-spacing:0">Co's Digital Flora of the Philippines</span>
               </div>
               <div id="distBlock"></div>
             </div>
@@ -2127,13 +2363,15 @@ body.entering .body-wrap{animation:app-in .3s ease}
     <span>DAO 2026-20 &bull; 1,237 species</span>
     <button class="ftr-feedback-btn" id="ftrFeedbackBtn"><svg class="ic"><use href="#i-chat"/></svg> <span data-i18n="sendFeedback">Send Feedback</span></button>
   </div>
+  <!-- Legend matches what the table actually draws: the four status
+       pills, plus the exception marks. Angiosperm is not listed because
+       it is no longer marked — it is the unmarked default. -->
   <div class="leg">
-    <div class="li"><span class="endemic-badge"><svg class="ic"><use href="#i-star"/></svg> Endemic</span></div>
-    <div class="li"><span class="div-pill div-pill-A">Angiosperm</span></div>
-    <div class="li"><span class="div-pill div-pill-G">Gymnosperm</span></div>
-    <div class="li"><span class="div-pill div-pill-P">Pteridophyte</span></div>
-    <div class="li"><span class="cites-pill cites-I">CITES I</span></div>
-    <div class="li"><span class="cites-pill cites-II">CITES II</span></div>
+    <div class="li"><span class="mk-endemic"></span>&nbsp;<span>Endemic</span></div>
+    <div class="li"><span class="mk mk-G"><i class="mk-dot"></i>Gymnosperm</span></div>
+    <div class="li"><span class="mk mk-P"><i class="mk-dot"></i>Pteridophyte</span></div>
+    <div class="li"><span class="mk mk-cI"><i class="mk-dot"></i>CITES I</span></div>
+    <div class="li"><span class="mk mk-cII"><i class="mk-dot"></i>CITES II</span></div>
     <div class="li"><span class="pl CR">CR</span>&nbsp;<span class="pl EN">EN</span>&nbsp;<span class="pl VU">VU</span>&nbsp;<span class="pl OTS">OTS</span></div>
   </div>
 </footer>
@@ -2361,6 +2599,50 @@ var DATA=[{"cat": "CR", "family": "Acanthaceae", "no": 1, "scientific": "Thunber
 var cat='ALL',fam='',endemic=false,nocommon=false,div='',cites='',habit='',region='',island='',activeRow=null,activeSpecies=null;
 var sortCol='',sortDir=1;
 var DIV_CODE={Angiosperm:'A',Gymnosperm:'G',Pteridophyte:'P'};
+
+/* ── Compact distribution label ──────────────────────────────
+   CDFP writes `dist` as "ISLAND: Province, Province. ISLAND2: ..." —
+   all-caps runs are island names, mixed case are provinces inside them.
+   The table column wants one short line, so pull just the island names;
+   the detail panel still renders the full province hierarchy through
+   renderDist(). Computed once per record at startup rather than inside
+   render(), which rebuilds all 1,237 rows.
+   Coverage is 1,232 of 1,237; the handful with no parseable island fall
+   back to their island-group tags. */
+function distIslands(d){
+  if(!d)return [];
+  var m=d.match(/[A-Z][A-Z0-9'’\-]*(?:\s+[A-Z][A-Z0-9'’\-]*)*/g)||[];
+  var seen={},out=[];
+  for(var i=0;i<m.length;i++){
+    var t=m[i].trim();
+    if(t.length<3||seen[t])continue;
+    seen[t]=1;out.push(t);
+  }
+  return out;
+}
+function titleCaseIsland(x){
+  return x.toLowerCase().replace(/(^|[\s\-])([a-z])/g,function(_,a,b){return a+b.toUpperCase();});
+}
+(function precomputeDist(){
+  for(var i=0;i<DATA.length;i++){
+    var rec=DATA[i],isl=distIslands(rec.dist);
+    if(!isl.length){
+      isl=(rec.groups||[]).map(function(x){return x.replace(/ Group$/,'');});
+    }else{
+      isl=isl.map(titleCaseIsland);
+    }
+    rec._dIsl=isl;
+    rec._dFull=isl.join(', ');
+  }
+})();
+/* First two islands inline, the rest as a "+N" counter with the full
+   list on hover — median taxon occupies one island, the widest 27. */
+function distCell(rec){
+  var a=rec._dIsl||[];
+  if(!a.length)return '<span style="color:var(--fa-deco)">&mdash;</span>';
+  var more=a.length>2?'<span class="ds-more">+'+(a.length-2)+'</span>':'';
+  return '<span title="'+esc(rec._dFull)+'">'+esc(a.slice(0,2).join(', '))+'</span>'+more;
+}
 var CAT_LABEL={CR:'Critically Endangered',EN:'Endangered',VU:'Vulnerable',OTS:'Other Threatened'};
 
 /* ── UTILITIES ── */
@@ -2576,8 +2858,8 @@ function buildFams(){
     var fEnd=fSpecies.filter(function(s){return s.endemic;}).length;
     var fDiv=sample?sample.division:'';
     var statsHtml='<div class="fi-stats">'
-      +'<div style="font-weight:600;margin-bottom:5px;font-size:11px">'+esc(f)+'</div>'
-      +'<div style="font-size:10px;color:var(--mu);margin-bottom:5px">'+esc(fDiv)+'</div>'
+      +'<div style="font-weight:600;margin-bottom:5px;font-size:var(--t-xs)">'+esc(f)+'</div>'
+      +'<div style="font-size:var(--t-micro);color:var(--mu);margin-bottom:5px">'+esc(fDiv)+'</div>'
       +(fCR?'<div class="fi-stat-row"><span class="fi-stat-lbl" style="color:var(--cr)">CR</span><span class="fi-stat-val">'+fCR+'</span></div>':'')
       +(fEN?'<div class="fi-stat-row"><span class="fi-stat-lbl" style="color:var(--en)">EN</span><span class="fi-stat-val">'+fEN+'</span></div>':'')
       +(fVU?'<div class="fi-stat-row"><span class="fi-stat-lbl" style="color:var(--vu)">VU</span><span class="fi-stat-val">'+fVU+'</span></div>':'')
@@ -2610,24 +2892,42 @@ function render(){
   }
   document.getElementById('tbl').style.display='';
   document.getElementById('empty').style.display='none';
-  var badge='<span class="endemic-badge endemic-badge-row"><span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.9L18 22l-6-3.7L6 22l1.5-7.5L2 9.6l7.1-.7z"/></svg></span><span class="badge-text"> Endemic</span></span>';
+  var endemicDot='<span class="mk-endemic" role="img" aria-label="Philippine endemic" title="Philippine endemic"></span>';
+  var emdash='<span style="color:var(--fa-deco);font-style:italic">&mdash;</span>';
   var buf=[];
   for(var i=0;i<rows.length;i++){
     var s=rows[i];
     var dc=DIV_CODE[s.division]||'A';
-    var cp=s.cites?'<span class="cites-pill cites-'+s.cites+'">App. '+s.cites+'</span>':'<span style="color:var(--fa);font-size:11px">&mdash;</span>';
     var isActive=activeSpecies&&activeSpecies.no===s.no&&activeSpecies.cat===s.cat?' active-row':'';
-    buf.push('<tr class="sp-row'+isActive+'" data-no="'+s.no+'" data-cat="'+s.cat+'" data-endemic="'+(s.endemic?'1':'0')+'">');
-    buf.push('<td class="cn">'+(i+1)+'</td>');
-    buf.push('<td class="cc"><span class="pl '+s.cat+'">'+s.cat+'</span></td>');
-    buf.push('<td class="cf">'+hl(s.family,q)+'</td>');
-    buf.push('<td class="cdv"><span class="div-pill div-pill-'+dc+'">'+s.division+'</span></td>');
-    buf.push('<td class="cct">'+cp+'</td>');
-    buf.push('<td class="chb"><span class="habit-pill '+s.habit+(s.habitConf==="mixed"?' habit-unverified':'')+'" title="Verified by Mc Andrew K. Pranada, DENR BMB">'+s.habit+'</span></td>');
     var iRank=getInfraRank(s.scientific);
+
+    /* Exception marks only — see the .mk block in the stylesheet for why
+       Angiosperm and "no CITES listing" render nothing at all. */
+    var marks=s.endemic?endemicDot:'';
+    if(dc!=='A')marks+='<span class="mk mk-'+dc+'"><i class="mk-dot"></i>'+s.division+'</span>';
+    if(s.cites)marks+='<span class="mk mk-c'+s.cites+'"><i class="mk-dot"></i>CITES '+s.cites+'</span>';
+    if(iRank)marks+='<span class="mk mk-infra"><i class="mk-dot"></i>'+iRank+'</span>';
+
     var mobCom=s.common?'<span class="mob-common">'+esc(s.common)+'</span>':'';
-    buf.push('<td><div class="sci-wrap"><span class="csn">'+hl(s.name,q)+'</span>'+(s.endemic?badge:'')+(iRank?'<span class="infra-badge">'+iRank+'</span>':'')+'</div><div class="cau">'+hl(s.authority,q)+'</div>'+mobCom+'</td>');
-    buf.push('<td class="cco">'+(s.common?hl(s.common,q):'<span style="color:var(--fa);font-style:italic">&mdash;</span>')+'</td>');
+    /* One meta line for every width. The spans are always emitted in the
+       same DOM order; which are shown and in what visual order is a CSS
+       concern (see .cau). Family is hidden wherever it has its own column.
+       Emitting it once rather than once per breakpoint keeps search
+       highlighting working on phone too. */
+    var metaHtml='<div class="cau">'
+      +'<span class="cau-fam">'+hl(s.family,q)+'</span>'
+      +'<span class="cau-auth">'+hl(s.authority,q)+'</span>'
+      +(s.habit?'<span class="cau-habit" title="Verified by Mc Andrew K. Pranada, DENR BMB">'
+        +esc(s.habit)+(s.habitConf==='mixed'?' ?':'')+'</span>':'')
+      +'</div>';
+
+    buf.push('<tr class="sp-row'+isActive+'" data-no="'+s.no+'" data-cat="'+s.cat+'" data-endemic="'+(s.endemic?'1':'0')+'">');
+    buf.push('<td class="cc"><span class="pl '+s.cat+'">'+s.cat+'</span></td>');
+    buf.push('<td class="csp"><div class="sci-wrap"><span class="csn">'+hl(s.name,q)+'</span>'+marks+'</div>'
+            +metaHtml+mobCom+'</td>');
+    buf.push('<td class="cf">'+hl(s.family,q)+'</td>');
+    buf.push('<td class="cco">'+(s.common?hl(s.common,q):emdash)+'</td>');
+    buf.push('<td class="cds">'+distCell(s)+'</td>');
     buf.push('</tr>');
   }
   document.getElementById('tbody').innerHTML=buf.join('');
@@ -2671,7 +2971,7 @@ function openPanel(s,fromNav){
       return '<div class="similar-item" data-no="'+x.no+'" data-cat="'+x.cat+'">'
         +'<span class="similar-name"><em>'+esc(x.name)+'</em></span>'
         +'<span class="similar-common">'+esc(x.common||'no common name')+'</span>'
-        +'<span class="pl '+x.cat+'" style="font-size:10px">'+x.cat+'</span>'
+        +'<span class="pl '+x.cat+'" style="font-size:var(--t-micro)">'+x.cat+'</span>'
         +'</div>';
     }).join('');
   } else if(simSec){simSec.style.display='none';}
@@ -2846,7 +3146,7 @@ function renderGBIFNoMatch(block,token,s,fallbackUrl){
       var genusKey=gm&&gm.usageKey;
       block.innerHTML='<div class="live-stat"><span class="live-stat-label">'+t('match')+'</span>'
         +'<span class="gbif-match-badge match-none">NO MATCH</span></div>'
-        +'<div style="font-size:11px;color:var(--mu);margin:6px 0">Not in GBIF backbone — may be recently described or a synonym.</div>'
+        +'<div style="font-size:var(--t-xs);color:var(--mu);margin:6px 0">Not in GBIF backbone — may be recently described or a synonym.</div>'
         +'<div style="display:flex;flex-direction:column;gap:4px">'
         +(genusKey?'<a href="https://www.gbif.org/species/'+genusKey+'" target="_blank" rel="noopener" class="gbif-link">Genus <em>'+esc(genus)+'</em> in GBIF &#8599;</a>':'')
         +'<a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search &#8220;'+esc(s.name)+'&#8221; in GBIF &#8599;</a>'
@@ -2948,7 +3248,18 @@ document.getElementById('dbC2').addEventListener('click',function(){
   else{cites='II';document.getElementById('dbC1').className='chip';this.className='chip on-C2';}
   fam='';buildFams();render();
 });
-document.getElementById('srch').addEventListener('input',render);
+/* render() rebuilds all 1,237 rows through innerHTML — ~25,600 nodes, 90%
+   of the document, measured at 41.5ms on desktop and well past that on a
+   mid-range phone. Bound straight to 'input' it ran once per keystroke, so
+   typing outran the renderer. Filter clicks still call render() directly
+   (one render, and the user expects the click to land); only typing is
+   debounced, since intermediate substrings are results nobody reads. */
+var srchTimer=null;
+function debouncedRender(){
+  if(srchTimer)clearTimeout(srchTimer);
+  srchTimer=setTimeout(function(){srchTimer=null;render();},120);
+}
+document.getElementById('srch').addEventListener('input',debouncedRender);
 document.querySelectorAll('.chip[data-h]:not(.sheet-chip)').forEach(function(el){
   el.addEventListener('click',function(){
     var h=el.dataset.h;
@@ -3153,6 +3464,16 @@ var _origBuildFams=buildFams;
 buildFams=function(){_origBuildFams();};
 
 /* ── ANALYTICS ── */
+/* One bar-row builder for every bar chart in the modal, so the value
+   placement rule (outside the bar, or inside it once the bar is long
+   enough that an outside label would overflow) is defined once. */
+function barRow(label,value,pct,colour,title){
+  var inside=pct>86;
+  return '<div class="bar-row"><span class="bar-label"'+(title?' title="'+esc(title)+'"':'')+'>'+esc(label)+'</span>'
+    +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+colour+'"></div>'
+    +'<span class="bar-val'+(inside?' inside':'')+'" style="left:'+pct+'%">'+value+'</span></div></div>';
+}
+
 function buildAnalytics(){
   var body=document.getElementById('analyticsBody');
 
@@ -3214,7 +3535,7 @@ function buildAnalytics(){
         +' <b>'+SET.length.toLocaleString()+'</b> / '+DATA.length.toLocaleString()+'</div>'
       : '<div class="analytics-scope">'+esc(t('scopeAll'))
         +' <b>'+DATA.length.toLocaleString()+'</b></div>')
-    +'<div class="stat-grid" style="margin-bottom:20px;grid-template-columns:repeat(5,1fr)">'
+    +'<div class="stat-grid" style="margin-bottom:20px">'
       +'<div class="stat-tile"><div class="stat-tile-n" style="color:var(--g)">'+SET.length.toLocaleString()+'</div><div class="stat-tile-l">'+esc(t('totalTaxa'))+'</div></div>'
       +'<div class="stat-tile"><div class="stat-tile-n" style="color:var(--endemic)">'+nE+'</div><div class="stat-tile-l">'+esc(t('phlEndemic'))+'</div></div>'
       +'<div class="stat-tile"><div class="stat-tile-n" style="color:var(--c1)">'+nC1+'</div><div class="stat-tile-l">CITES App. I</div></div>'
@@ -3225,31 +3546,25 @@ function buildAnalytics(){
 
     /* ── Top 15 Families ── */
     +'<div class="chart-card wide"><div class="chart-title">'+esc(t('top15'))+'</div>'
+    +'<div class="chart-scale">Bars scaled to '+maxFam+' &mdash; '+esc(famArr[0].f)+'</div>'
     +famArr.map(function(d){
-      var pct=pctOf(d.n,maxFam);
-      return '<div class="bar-row"><span class="bar-label" title="'+esc(d.f)+'">'+esc(d.f)+'</span>'
-        +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--gl)"></div></div>'
-        +'<span class="bar-val">'+d.n+'</span></div>';
+      return barRow(d.f,d.n,pctOf(d.n,maxFam),'var(--g)',d.f);
     }).join('')+'</div>'
 
     /* ── Threat Category Breakdown ── */
     +'<div class="chart-card"><div class="chart-title">'+esc(t('spPerCat'))+'</div>'
     +catData.map(function(d){
-      var pct=pctOf(d.total,maxCat);
-      return '<div class="bar-row"><span class="bar-label">'+catLabels[d.cat]+'</span>'
-        +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+catColors[d.cat]+'"></div></div>'
-        +'<span class="bar-val">'+d.total+'</span></div>';
+      return barRow(catLabels[d.cat],d.total,pctOf(d.total,maxCat),catColors[d.cat]);
     }).join('')
-    +'<div style="margin-top:12px;border-top:1px solid var(--bd);padding-top:10px">'
+    +'<table class="mini-table"><thead><tr>'
+      +'<th>'+esc(t('status'))+'</th><th>Total</th><th>Endemic</th>'
+      +'<th title="Angiosperm">Angio</th><th title="Gymnosperm">Gymno</th><th title="Pteridophyte">Pterido</th>'
+    +'</tr></thead><tbody>'
     +catData.map(function(d){
-      return '<div style="font-size:11px;color:var(--mu);margin-bottom:3px;display:flex;justify-content:space-between">'
-        +'<span style="color:'+catColors[d.cat]+';font-weight:600">'+d.cat+'</span>'
-        +'<span><svg class="ic"><use href="#i-star"/></svg> '+d.endemic+' endemic</span>'
-        +'<span style="color:var(--ang)">A:'+d.angio+'</span>'
-        +'<span style="color:var(--gym)">G:'+d.gymno+'</span>'
-        +'<span style="color:var(--pte)">P:'+d.pteri+'</span>'
-        +'</div>';
-    }).join('')+'</div>'
+      return '<tr><td style="color:'+catColors[d.cat]+'">'+d.cat+'</td>'
+        +'<td>'+d.total+'</td><td>'+d.endemic+'</td>'
+        +'<td>'+d.angio+'</td><td>'+d.gymno+'</td><td>'+d.pteri+'</td></tr>';
+    }).join('')+'</tbody></table>'
     +'</div>'
 
     /* ── Division Breakdown ── */
@@ -3257,7 +3572,7 @@ function buildAnalytics(){
     +'<div class="donut-wrap">'
     +'<svg viewBox="0 0 120 120" width="120" height="120">'
     +function(){
-      var data=[{v:nAngio,c:'#6b21a8'},{v:nGymno,c:'#0e7490'},{v:nPteri,c:'#854d0e'}];
+      var data=[{v:nAngio,c:'var(--ang)'},{v:nGymno,c:'var(--gym)'},{v:nPteri,c:'var(--pte)'}];
       var total=(nAngio+nGymno+nPteri)||1;var cx=60,cy=60,r=50,ri=28;
       var ang=-Math.PI/2;var segs='';
       data.forEach(function(d){
@@ -3271,79 +3586,70 @@ function buildAnalytics(){
           +' L'+xi2+','+yi2+' A'+ri+','+ri+' 0 '+lg+',0 '+xi1+','+yi1+' Z" fill="'+d.c+'" opacity=".85"/>';
         ang+=sweep;
       });
-      return segs+'<text x="60" y="56" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">'+total+'</text>'
-        +'<text x="60" y="70" text-anchor="middle" font-size="8" fill="#5c5c5c">species</text>';
+      return segs+'<text x="60" y="56" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">'+total.toLocaleString()+'</text>'
+        +'<text x="60" y="70" text-anchor="middle" font-size="8" fill="var(--mu)">species</text>';
     }()
     +'</svg>'
     +'<div class="donut-legend">'
-    +'<div class="legend-row"><div class="legend-dot" style="background:#6b21a8"></div><span>Angiosperm — '+nAngio+'</span></div>'
-    +'<div class="legend-row"><div class="legend-dot" style="background:#0e7490"></div><span>Gymnosperm — '+nGymno+'</span></div>'
-    +'<div class="legend-row"><div class="legend-dot" style="background:#854d0e"></div><span>Pteridophyte — '+nPteri+'</span></div>'
+    +'<div class="legend-row"><div class="legend-dot" style="background:var(--ang)"></div><span>Angiosperm — '+nAngio+'</span></div>'
+    +'<div class="legend-row"><div class="legend-dot" style="background:var(--gym)"></div><span>Gymnosperm — '+nGymno+'</span></div>'
+    +'<div class="legend-row"><div class="legend-dot" style="background:var(--pte)"></div><span>Pteridophyte — '+nPteri+'</span></div>'
     +'</div></div>'
     /* Endemic rate bar */
     +'<div style="margin-top:14px;border-top:1px solid var(--bd);padding-top:10px">'
-    +'<div style="font-size:11px;color:var(--fa);margin-bottom:6px;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">'+esc(t('endemByDiv'))+'</div>'
-    +[{label:'Angiosperm',total:nAngio,endemic:SET.filter(function(s){return s.division==='Angiosperm'&&s.endemic;}).length,c:'#6b21a8'},
-      {label:'Gymnosperm',total:nGymno,endemic:SET.filter(function(s){return s.division==='Gymnosperm'&&s.endemic;}).length,c:'#0e7490'},
-      {label:'Pteridophyte',total:nPteri,endemic:SET.filter(function(s){return s.division==='Pteridophyte'&&s.endemic;}).length,c:'#854d0e'}
+    +'<div style="font-size:var(--t-xs);color:var(--fa);margin-bottom:6px;font-family:monospace;text-transform:uppercase;letter-spacing:.1em">'+esc(t('endemByDiv'))+'</div>'
+    +[{label:'Angiosperm',total:nAngio,endemic:SET.filter(function(s){return s.division==='Angiosperm'&&s.endemic;}).length,c:'var(--ang)'},
+      {label:'Gymnosperm',total:nGymno,endemic:SET.filter(function(s){return s.division==='Gymnosperm'&&s.endemic;}).length,c:'var(--gym)'},
+      {label:'Pteridophyte',total:nPteri,endemic:SET.filter(function(s){return s.division==='Pteridophyte'&&s.endemic;}).length,c:'var(--pte)'}
     ].map(function(d){
       var pct=pctOf(d.endemic,d.total);
-      return '<div class="bar-row"><span class="bar-label">'+d.label+'</span>'
-        +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+d.c+'"></div></div>'
-        +'<span class="bar-val">'+pct+'%</span></div>';
+      return barRow(d.label,pct+'%',pct,d.c);
     }).join('')+'</div>'
     +'</div>'
 
     /* ── CITES Listing ── */
     +'<div class="chart-card"><div class="chart-title">'+esc(t('citesStatus'))+'</div>'
-    +'<div class="donut-wrap">'
-    +'<svg viewBox="0 0 120 120" width="120" height="120">'
     +function(){
-      var data=[{v:nC1,c:'#7c2d12'},{v:nC2,c:'#1e3a5f'},{v:nNone,c:'#e4e2da'}];
-      var total=(nC1+nC2+nNone)||1;var cx=60,cy=60,r=50,ri=28;
-      var ang=-Math.PI/2;var segs='';
-      data.forEach(function(d){
-        var sweep=2*Math.PI*d.v/total;
-        var x1=cx+r*Math.cos(ang),y1=cy+r*Math.sin(ang);
-        var x2=cx+r*Math.cos(ang+sweep),y2=cy+r*Math.sin(ang+sweep);
-        var xi1=cx+ri*Math.cos(ang),yi1=cy+ri*Math.sin(ang);
-        var xi2=cx+ri*Math.cos(ang+sweep),yi2=cy+ri*Math.sin(ang+sweep);
-        var lg=sweep>Math.PI?1:0;
-        segs+='<path d="M'+x1+','+y1+' A'+r+','+r+' 0 '+lg+',1 '+x2+','+y2
-          +' L'+xi2+','+yi2+' A'+ri+','+ri+' 0 '+lg+',0 '+xi1+','+yi1+' Z" fill="'+d.c+'" opacity=".85"/>';
-        ang+=sweep;
-      });
-      return segs+'<text x="60" y="56" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">'+total+'</text>'
-        +'<text x="60" y="70" text-anchor="middle" font-size="8" fill="#5c5c5c">species</text>';
+      var listed=nC1+nC2, total=SET.length||1;
+      var e1=SET.filter(function(s){return s.cites==='I'&&s.endemic;}).length;
+      var e2=SET.filter(function(s){return s.cites==='II'&&s.endemic;}).length;
+      return '<div class="prop-bar">'
+          +'<div class="prop-seg" style="width:'+(nC1/total*100)+'%;background:var(--c1)" title="App. I — '+nC1+'"></div>'
+          +'<div class="prop-seg" style="width:'+(nC2/total*100)+'%;background:var(--c2)" title="App. II — '+nC2+'"></div>'
+        +'</div>'
+        +'<div style="font-size:var(--t-sm);color:var(--mu);margin-bottom:16px">'
+          +'<b style="color:var(--ink)">'+listed.toLocaleString()+'</b> of '+total.toLocaleString()
+          +' listed &mdash; '+pctOf(listed,total)+'%</div>'
+        +'<div class="prop-figs">'
+          +'<div><div class="prop-fig-n" style="color:var(--c1)">'+nC1+'</div>'
+            +'<div class="prop-fig-l">App. I</div>'
+            +'<div class="prop-fig-s">'+e1+' PHL endemic</div></div>'
+          +'<div><div class="prop-fig-n" style="color:var(--c2)">'+nC2+'</div>'
+            +'<div class="prop-fig-l">App. II</div>'
+            +'<div class="prop-fig-s">'+e2+' PHL endemic</div></div>'
+          +'<div><div class="prop-fig-n" style="color:var(--fa)">'+nNone.toLocaleString()+'</div>'
+            +'<div class="prop-fig-l">Not listed</div></div>'
+        +'</div>';
     }()
-    +'</svg>'
-    +'<div class="donut-legend">'
-    +'<div class="legend-row"><div class="legend-dot" style="background:#7c2d12"></div><span>App. I — '+nC1+'</span></div>'
-    +'<div class="legend-row"><div class="legend-dot" style="background:#1e3a5f"></div><span>App. II — '+nC2+'</span></div>'
-    +'<div class="legend-row"><div class="legend-dot" style="background:#e4e2da;border:1px solid #ccc"></div><span>Not listed — '+nNone+'</span></div>'
-    +'</div></div>'
-    /* endemic vs non endemic CITES */
-    +'<div style="margin-top:14px;border-top:1px solid var(--bd);padding-top:10px;font-size:11px;color:var(--mu)">'
-    +'<div>Of <b>'+nC1+'</b> App. I species: <b>'+SET.filter(function(s){return s.cites==="I"&&s.endemic;}).length+'</b> PHL endemic</div>'
-    +'<div style="margin-top:3px">Of <b>'+nC2+'</b> App. II species: <b>'+SET.filter(function(s){return s.cites==="II"&&s.endemic;}).length+'</b> PHL endemic</div>'
-    +'</div>'
     +'</div>'
 
     /* ── Growth Habit Breakdown ── */
     +'<div class="chart-card wide"><div class="chart-title">'+esc(t('growthHabit'))+'</div>'
     +function(){
+      /* Was five arbitrary hues on a nominal variable with no inherent
+         colour meaning — and two of them, tree #047857 and herb #15803d,
+         were 1.09:1 apart, i.e. the same colour in a legend. Sorting by
+         count carries the comparison that the colours were failing to. */
       var habits=['tree','shrub','herb','vine','liana'];
-      var hColors={tree:'#047857',shrub:'#854d0e',herb:'#15803d',vine:'#86198f',liana:'#9f1239'};
-      var hCounts=habits.map(function(h){return{h:h,n:SET.filter(function(s){return s.habit===h;}).length};});
+      var hCounts=habits.map(function(h){return{h:h,n:SET.filter(function(s){return s.habit===h;}).length};})
+        .sort(function(a,b){return b.n-a.n;});
       var maxH=Math.max.apply(null,hCounts.map(function(d){return d.n;}))||1;
-      return hCounts.map(function(d){
-        var pct=pctOf(d.n,maxH);
-        return '<div class="bar-row"><span class="bar-label" style="text-transform:capitalize">'+d.h+'</span>'
-          +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+hColors[d.h]+'"></div></div>'
-          +'<span class="bar-val">'+d.n+'</span></div>';
-      }).join('');
+      return '<div class="chart-scale">Bars scaled to '+maxH+' &mdash; '+esc(hCounts[0].h)+'</div>'
+        +hCounts.map(function(d){
+          return barRow(d.h.charAt(0).toUpperCase()+d.h.slice(1),d.n,pctOf(d.n,maxH),'var(--g)');
+        }).join('');
     }()
-    +'<div style="margin-top:10px;font-size:9px;color:var(--fa);font-style:italic">'+SET.length.toLocaleString()+' habit assignments shown; assigned by the developer.</div>'
+    +'<div style="margin-top:10px;font-size:var(--t-micro);color:var(--fa);font-style:italic">'+SET.length.toLocaleString()+' habit assignments shown; assigned by the developer.</div>'
     +'</div>'
 
     /* ── Top Islands by Threatened Species ── */
@@ -3366,16 +3672,15 @@ function buildAnalytics(){
         .sort(function(a,b){return b.n-a.n;})
         .slice(0,20);
       var maxN=(counts[0]&&counts[0].n)||1;
-      return counts.map(function(d){
-        var pct=pctOf(d.n,maxN);
-        /* Title case */
-        var label=d.isl.charAt(0)+d.isl.slice(1).toLowerCase();
-        return '<div class="bar-row"><span class="bar-label">'+label+'</span>'
-          +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--gl)"></div></div>'
-          +'<span class="bar-val">'+d.n+'</span></div>';
-      }).join('');
+      if(!counts.length)return '';
+      return '<div class="chart-scale">Bars scaled to '+maxN+' &mdash; '
+          +esc(counts[0].isl.charAt(0)+counts[0].isl.slice(1).toLowerCase())+'</div>'
+        +counts.map(function(d){
+          var label=d.isl.charAt(0)+d.isl.slice(1).toLowerCase();
+          return barRow(label,d.n,pctOf(d.n,maxN),'var(--g)');
+        }).join('');
     }()
-    +'<div style="margin-top:8px;font-size:9px;color:var(--fa);font-style:italic">Based on CDFP distribution records. A species counted once per island regardless of how many localities it occupies there.</div>'
+    +'<div style="margin-top:8px;font-size:var(--t-micro);color:var(--fa);font-style:italic">Based on CDFP distribution records. A species counted once per island regardless of how many localities it occupies there.</div>'
     +'</div>'
 
     +'</div>'; /* close chart-grid */
