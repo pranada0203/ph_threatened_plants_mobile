@@ -1927,8 +1927,10 @@ body.entering .body-wrap{animation:app-in .3s ease}
   font-size:var(--t-2xl);margin-bottom:22px;overflow:hidden}
 .landing-mark img{width:100%;height:100%;object-fit:cover;display:block}
 
+/* text-wrap:balance so a two-line title splits evenly instead of leaving
+   a single orphaned word on the second line. */
 .landing-title{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:var(--t-landing-title);
-  line-height:1.05;color:var(--ink);margin:0 0 14px}
+  line-height:1.05;color:var(--ink);margin:0 0 14px;text-wrap:balance}
 
 .landing-desc{font-size:var(--t-base);line-height:1.65;color:var(--mu);max-width:440px;margin-bottom:36px}
 
@@ -1956,16 +1958,32 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
 .landing-list-sub{font-size:var(--t-xs);color:var(--mu)}
 
+/* Proportion bar — the same stacked-share component the CITES chart uses
+   in the analytics modal, so the cover and the dataset speak one visual
+   language. Sits above the counts: shape first, then figures. Four equal
+   columns of digits cannot show that VU is a third of the whole list. */
+.landing-prop{display:flex;height:6px;border-radius:999px;overflow:hidden;
+  margin-top:16px;background:var(--bd)}
+.landing-prop-seg{height:100%}
+
 /* Category breakdown — same status colors used everywhere else (table
    pills, bottom nav), so this reads as the same fact restated compactly
-   rather than a new visual language. */
+   rather than a new visual language. The rule and its padding moved to
+   the bar above, which now separates this row from the card's copy. */
 .landing-list-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
-  margin-top:14px;padding-top:14px;border-top:1px solid var(--bd-soft)}
+  margin-top:10px}
 .landing-list-cat{display:flex;flex-direction:column;gap:2px}
 .landing-list-cat-code{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
   font-weight:700;letter-spacing:.03em}
+/* tabular-nums, not lining-nums: Cormorant's old-style figures are part
+   of the cover's character, but as a data row these four read better
+   with equal digit widths. Note the label grid is four equal columns
+   while the bar above is proportional — deliberately two encodings of
+   the same fact, so the columns do not line up with the segments and
+   are not meant to. */
 .landing-list-cat-n{font-family:"Cormorant Garamond",serif;font-weight:700;
-  font-size:var(--t-lg);color:var(--ink);line-height:1.1}
+  font-size:var(--t-lg);color:var(--ink);line-height:1.1;
+  font-variant-numeric:tabular-nums}
 .landing-list-cat-CR .landing-list-cat-code{color:var(--cr)}
 .landing-list-cat-EN .landing-list-cat-code{color:var(--en)}
 .landing-list-cat-VU .landing-list-cat-code{color:var(--vu)}
@@ -2002,6 +2020,57 @@ body.entering .body-wrap{animation:app-in .3s ease}
   cursor:pointer;color:var(--fa);font-size:var(--t-xs);font-family:Inter,sans-serif;
   transition:var(--transition)}
 .landing-disclaimer-link:hover{color:var(--g)}
+
+/* ══════════════════════════════════════════════════════════
+   LANDING — desktop (≥769px)
+   The cover used one composition at every width: a 340px card inside a
+   499px column, which is right on a phone and undersized on a 1440px
+   screen, where the page read as a phone layout nobody had scaled.
+
+   Two tiers, because scaling by width alone overflowed the fold on the
+   two commonest laptop sizes — 1280x720 and 1440x800 both scrolled. The
+   base tier fits a 720px-tall viewport; the taller treatment is gated on
+   height, not width, since height is what it actually spends.
+
+   --t-landing-stat has been in the token block since the scale was
+   written and was referenced by no rule; the hero figure rendered at
+   --t-landing-title instead. It is wired up in the tall tier, which is
+   what the token was for.
+
+   The 720px column is sized so "Threatened Philippine Plants" sets on
+   one line at both tiers — at 620px it broke, and a cover title losing a
+   single orphaned word is worse than a slightly wider measure.
+══════════════════════════════════════════════════════════ */
+@media (min-width:769px){
+  .landing{padding:40px 24px}
+  .landing-inner{max-width:720px}
+  .landing-mark{width:64px;height:64px;margin-bottom:18px}
+  .landing-title{font-size:clamp(38px,3.6vw,46px);margin-bottom:12px}
+  .landing-desc{font-size:var(--t-base);line-height:1.6;max-width:56ch;margin-bottom:26px}
+  .landing-list-card{max-width:420px;padding:22px 24px}
+  .landing-list-stat{font-size:58px;margin-bottom:8px}
+  .landing-list-label{font-size:var(--t-base)}
+  .landing-prop{height:7px;margin-top:16px}
+  .landing-list-breakdown{margin-top:10px}
+  .landing-list-go{padding-top:16px;font-size:var(--t-sm)}
+  .landing-refs{max-width:420px;margin-top:12px}
+  .landing-ref-card{padding:12px 15px}
+  .landing-disclaimer-link{margin-top:16px}
+}
+
+/* Taller desktops only — this tier spends vertical room it has verified. */
+@media (min-width:769px) and (min-height:880px){
+  .landing{padding:48px 24px}
+  .landing-mark{width:76px;height:76px;margin-bottom:26px}
+  .landing-title{font-size:clamp(44px,4.2vw,56px);margin-bottom:18px}
+  .landing-desc{font-size:var(--t-md);margin-bottom:38px}
+  .landing-list-card{padding:26px 28px}
+  .landing-list-stat{font-size:var(--t-landing-stat);margin-bottom:10px}
+  .landing-prop{height:8px;margin-top:20px}
+  .landing-list-go{padding-top:18px;font-size:var(--t-base)}
+  .landing-ref-card{padding:14px 16px}
+  .landing-disclaimer-link{margin-top:20px}
+}
 
 @media (max-width:768px){
   /* --vh (real window.innerHeight, from the script in <head>) instead
@@ -2093,6 +2162,17 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <div class="landing-list-stat">1,237</div>
         <div class="landing-list-label" data-i18n="landingStatLabel">Threatened Philippine Vascular Plant Taxa</div>
         <div class="landing-list-sub" data-i18n="landingSubstats">920 Philippine endemic &middot; 219 CITES-listed</div>
+        <!-- Proportion of the list by threat category. The four counts
+             below say how many; this says how much, which four equal
+             columns of digits cannot. Widths are derived from the same
+             static counts as the numbers beneath them — update both
+             together if the list ever changes. -->
+        <div class="landing-prop" aria-hidden="true">
+          <span class="landing-prop-seg" style="width:21.8%;background:var(--cr)"></span>
+          <span class="landing-prop-seg" style="width:24.6%;background:var(--en)"></span>
+          <span class="landing-prop-seg" style="width:35.0%;background:var(--vu)"></span>
+          <span class="landing-prop-seg" style="width:18.6%;background:var(--ots)"></span>
+        </div>
         <div class="landing-list-breakdown">
           <div class="landing-list-cat landing-list-cat-CR"><span class="landing-list-cat-code">CR</span><span class="landing-list-cat-n">270</span></div>
           <div class="landing-list-cat landing-list-cat-EN"><span class="landing-list-cat-code">EN</span><span class="landing-list-cat-n">304</span></div>
