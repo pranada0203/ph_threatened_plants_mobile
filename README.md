@@ -225,9 +225,24 @@ Every faint-text consumer in the zone — authority, nav counter, close icon, se
 
 ### Category tints
 
-Two tokens per category, not one: `--<cat>-bg` tints the small status pill, `--cr-panel` tints the panel's identity zone. They were one token until the CR panel proved indistinguishable from the paper ground at pill strength — separation of **14.3**, effectively invisible. CR's panel tint is now `#fee2e2` (separation 44.3).
+Two tokens per category, not one: `--<cat>-bg` tints the small status pill, `--<cat>-panel` tints the species panel's identity zone. They were one token until the CR panel proved indistinguishable from the paper ground at pill strength.
 
-Keep them separate. Deepening the shared token would also deepen the CR pill in the status column, making CR rows outweigh EN, VU and OTS across 270 rows — the pills are a family and should stay one weight. Only CR has a `-panel` token so far; EN (15.7), VU (23.8) and OTS (29.3) still use pill strength in the panel and are correspondingly flatter.
+Keep them separate. Deepening the shared token would also deepen the pills in the status column, and the four pills are a family that should stay one weight across 1,237 rows.
+
+| Category | Panel tint | Hue | Gap from paper | Sat | Luminance | `--mu` on it |
+|---|---|---|---|---|---|---|
+| CR | `#fee2e2` | 0 | 50° | 11% | 0.810 | 5.47:1 |
+| EN | `#fee4c8` | 31 | 19° | 21% | 0.807 | 5.46:1 |
+| VU | `#fcf4c6` | 51 | 1° | 21% | 0.895 | 6.02:1 |
+| OTS | `#dbeafe` | 214 | 164° | 14% | 0.811 | 5.48:1 |
+
+**Do not regenerate these by stepping every hue the same amount down a colour scale.** The paper ground `--bg` is itself a warm hue 50 at 2% saturation, so how far a tint sits from hue 50 decides how much saturation it needs to register. CR is 50° away and carries at 11%; OTS is 164° away and carries at 14%; EN and VU are almost the paper's own hue and need 21%. An equal step leaves VU looking like faintly tinted paper — and at the saturation that finally makes VU register on its own, it shouts over CR. These were tuned against each other side by side, then measured.
+
+VU is the one that cannot sit at ~0.81 luminance with the others; yellow that dark goes olive, so it separates on saturation instead at 0.895.
+
+Lowest pairwise separation is EN vs VU at 32.3 — both warm, and the closest pair in the set. Acceptable because only one panel is ever on screen, and each carries its accent rule and a pill naming the category. If you shift either, re-check that pair first.
+
+The mobile sheet's drag handle takes `--fa-deco`, not `--bd-strong`: the latter is a border tone against white and falls to 1.35:1 on a category tint, which made the swipe affordance vanish. It is not held to 3:1 — the handle hints at the gesture rather than being the control, and the labelled close button is always beside it.
 
 ### Type scale
 Every `font-size` resolves through these tokens. Six raw px values remain, all deliberate one-offs; the mobile search input is pinned to 16px because iOS Safari zooms the page on focus below that.
