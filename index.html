@@ -2280,7 +2280,19 @@ body.entering .body-wrap{animation:app-in .3s ease}
      Every value below is trimmed and verified (by measuring real
      rendered height at a 393x695 viewport, matching that device) to
      comfortably clear that with room to spare, not just to look denser. */
-  .landing{padding:20px 20px}
+  /* Safe-area insets, which this had been missing entirely.
+     The page declares viewport-fit=cover and apple-mobile-web-app-capable
+     with a black-translucent status bar, so when it is opened from the
+     Home Screen the web view is the WHOLE screen and the status bar and
+     home indicator sit on top of the page rather than beside it. 100svh
+     is therefore the full screen, not the usable part of it, and centring
+     inside it pushed the composition up under the clock. Padding the
+     insets in makes the centring happen inside the area the reader can
+     actually see, in standalone and in the browser alike (env() resolves
+     to 0 where there is no inset). */
+  .landing{padding-left:20px;padding-right:20px;
+    padding-top:calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px))}
   .landing-mark{width:52px;height:52px;font-size:var(--t-xl);margin-bottom:14px}
   .landing-title{font-size:26px;margin-bottom:8px}
   .landing-desc{font-size:var(--t-sm);margin-bottom:14px}
@@ -2302,8 +2314,9 @@ body.entering .body-wrap{animation:app-in .3s ease}
      link and the two overlapped. In flow it simply follows the content,
      and a short viewport scrolls instead of colliding. */
   /* margin-bottom stays auto (see the base rule) so the group still
-     centres; the safe-area clearance becomes padding instead. */
-  .landing-disclaimer-link{margin-top:14px;padding-bottom:calc(4px + env(safe-area-inset-bottom))}
+     centres. The bottom inset lives on .landing now, so adding it here
+     too would count it twice and pull the group upward. */
+  .landing-disclaimer-link{margin-top:14px}
 }
 </style>
 </head>
