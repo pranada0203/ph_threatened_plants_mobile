@@ -41,6 +41,9 @@ var T={
     spPerCat:'Species per Threat Category',divBreakdown:'Division Breakdown',
     citesStatus:'CITES Listing Status',growthHabit:'Growth Habit',
     topIslands:'Top Islands by Threatened Species',
+    mapTitle:'Where the Threatened Taxa Are Recorded',
+    mapScale:'Circle area is proportional to the number of taxa recorded on that island',
+    mapNote:'Positions are island centroids, not outlines — this plots where records fall, not the shape of the country. Counts are of records, so they partly reflect where botanists have collected: Luzon has been worked far longer and harder than Tawi-Tawi or Dinagat. 26 islands are shown, together about 90% of all island records.',
     endemByDiv:'Endemicity by Division',globalOcc:'Worldwide',phOccFull:'Philippines occurrences',photographs:'Photographs',allPhotos:'All photos',matchedTo:'Matched',
     phOcc:'Philippines',match:'Match',confidence:'Confidence',
     acceptedAs:'Accepted as',gbifName:'GBIF name',
@@ -107,6 +110,9 @@ var T={
     spPerCat:'Species bawat Kategorya ng Banta',divBreakdown:'Breakdown ng Dibisyon',
     citesStatus:'Katayuan sa Listahan ng CITES',growthHabit:'Ugali ng Paglaki',
     topIslands:'Nangungunang mga Isla ayon sa Bilang ng Nanganganib na Species',
+    mapTitle:'Saan Naitala ang mga Nanganganib na Taxa',
+    mapScale:'Ang laki ng bilog ay katumbas ng bilang ng taxa sa isla',
+    mapNote:'Sentroid ng isla ang ipinapakita, hindi hugis ng bansa. Bilang ng tala ito, kaya bahagyang sinasalamin nito kung saan nangolekta ang mga botaniko. 26 isla ang ipinapakita, humigit-kumulang 90% ng lahat ng tala.',
     endemByDiv:'Endemisidad ayon sa Dibisyon',globalOcc:'Pandaigdigan',phOccFull:'Okurensya sa Pilipinas',photographs:'Mga Larawan',allPhotos:'Lahat ng larawan',matchedTo:'Itinugma',
     phOcc:'Pilipinas',match:'Tugma',confidence:'Kumpiyansa',
     acceptedAs:'Tinatanggap bilang',gbifName:'Pangalan sa GBIF',
@@ -1079,6 +1085,25 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* Bars are scaled to the largest value in their own chart, not to the
    dataset total — without saying so, a full-width bar reads as "all of
    them" rather than "the most of any one". */
+/* ── Distribution map ─────────────────────────────────────────
+   A proportional-symbol map, not a heat map. A heat map interpolates a
+   surface from point observations; this dataset records presence per
+   island, so the honest form is one symbol per island sized by count.
+   Interpolating between them would invent a density gradient across
+   water that nothing measured. */
+.map-wrap{display:flex;align-items:flex-end;justify-content:center;gap:18px;flex-wrap:wrap}
+.island-map{width:min(300px,62vw);height:auto;overflow:visible}
+.island-map circle{transition:fill-opacity .15s}
+.island-map circle:hover{fill-opacity:.55}
+.island-map-key{width:120px;height:auto;flex-shrink:0}
+.map-note{font-size:var(--t-xs);color:var(--fa);line-height:1.6;margin-top:12px;
+  background:var(--sf);border-radius:var(--r-sm);padding:10px 12px}
+@media (max-width:768px){
+  .map-wrap{gap:10px}
+  .island-map{width:min(260px,72vw)}
+  .island-map-key{width:104px}
+}
+
 .chart-scale{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
   color:var(--fa);margin:-6px 0 10px;letter-spacing:.04em}
 
@@ -2978,6 +3003,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
       <h4>8 &middot; Software and acknowledgements</h4>
       <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Cormorant Garamond, Inter and IBM Plex Mono. Hosted on Vercel.</p>
+      <p>The distribution map plots island positions, not coastlines. Its 26 coordinates were geocoded once against <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> data via Nominatim, checked individually, and written into the page &mdash; no map tiles are fetched and nothing is requested at run time. &copy; OpenStreetMap contributors.</p>
       <p>The interface was written by the author working with <strong>Claude (Anthropic)</strong> as a coding assistant, which also carried out the design review the present layout follows. Claude is a tool, not an author: every taxonomic judgment, habit assignment, correction and editorial decision here is the author&rsquo;s, and responsibility for them rests with the author. Contributors to CDFP and GBIF, and the photographers whose images appear, are gratefully acknowledged &mdash; this tool would show very little without them.</p>
 
       <p class="paper-colophon">Mc Andrew K. Pranada, botanist &middot; Version 1.0, 2026 &middot; Corrections welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a><br>See also the <button type="button" class="paper-inline-link js-open-disclaimer">About notice</button> for rights, terms of use and warranty.</p>
@@ -4206,6 +4232,98 @@ var _origBuildFams=buildFams;
 buildFams=function(){_origBuildFams();};
 
 /* ── ANALYTICS ── */
+/* ── Island positions ────────────────────────────────────────
+   Centroid-ish coordinates for the 26 islands carrying the most records,
+   together about 90% of all island-records in the dataset. Geocoded once
+   against OpenStreetMap (Nominatim) and checked individually rather than
+   written from memory — a naive lookup put Panay in Catanduanes and Bohol
+   in Samar, both real islets that share those names, and resolved Luzon
+   and Palawan to local landmarks rather than the islands. Each entry
+   below was confirmed against its returned place name and region.
+
+   Two are not islands and are labelled for what they are: NCR is a region
+   (its records sit in Metro Manila) and Sulu Archipelago is a group
+   (placed at Jolo, its principal island). Both come out of the CDFP
+   distribution strings as capitalised tokens, so they are mapped rather
+   than silently dropped.  [lat, lon]  */
+var ISLAND_XY={
+  'Luzon':[15.550,120.743],   'Mindanao':[7.690,125.237],  'Palawan':[9.878,118.676],
+  'Mindoro':[12.869,121.134], 'Samar':[11.798,125.169],    'Negros':[10.021,122.977],
+  'Panay':[11.173,122.556],   'Leyte':[10.784,124.892],    'Dinagat':[10.162,125.553],
+  'Sibuyan':[12.386,122.586], 'Basilan':[6.579,122.035],   'Cebu':[10.349,123.782],
+  'Bohol':[9.881,124.206],    'Polillo':[14.843,121.929],  'Catanduanes':[13.833,124.250],
+  'Biliran':[11.467,124.474], 'Ncr':[14.574,121.033],      'Homonhon':[10.756,125.690],
+  'Bucas Grande':[9.660,125.959], 'Camiguin':[9.168,124.714], 'Tawi-Tawi':[5.198,120.034],
+  'Siargao':[9.904,126.051],  'Masbate':[12.371,123.624],  'Balabac':[7.939,117.022],
+  'Sulu Archipelago':[6.053,121.001], 'Camiguin De Babuyanes':[18.833,121.861]
+};
+var ISLAND_LABEL={'Ncr':'NCR','Camiguin De Babuyanes':'Camiguin (Babuyan)','Sulu Archipelago':'Sulu Arch.'};
+
+/* Builds the distribution map for whatever SET the modal is describing,
+   so filtering to CR redraws it as a map of CR taxa. Circle AREA is
+   proportional to the count — radius scales with the square root, because
+   sizing by radius would exaggerate Luzon roughly fourfold against
+   Sibuyan. */
+function buildIslandMap(SET){
+  var counts={};
+  SET.forEach(function(s){(s._dIsl||[]).forEach(function(i){
+    if(ISLAND_XY[i])counts[i]=(counts[i]||0)+1;
+  });});
+  var keys=Object.keys(counts);
+  if(!keys.length)return '';
+  var max=Math.max.apply(null,keys.map(function(k){return counts[k];}));
+
+  /* Equirectangular. The archipelago spans ~4.5-19.5N, where cos(lat)
+     runs 0.94-0.997, so longitude is scaled by cos of the mid-latitude —
+     enough to keep the shape honest without a real projection. */
+  var latMin=4.2,latMax=19.9,lonMin=116.3,lonMax=127.0;
+  var kx=Math.cos(((latMin+latMax)/2)*Math.PI/180);
+  var W=300, H=Math.round(W*((latMax-latMin)/((lonMax-lonMin)*kx)));
+  var px=function(lon){return (lon-lonMin)/(lonMax-lonMin)*W;};
+  var py=function(lat){return (latMax-lat)/(latMax-latMin)*H;};
+  var rOf=function(n){return 3+Math.sqrt(n/max)*24;};
+
+  /* Biggest first so a small island is never buried under a large one. */
+  var ordered=keys.sort(function(a,b){return counts[b]-counts[a];});
+  var circles=ordered.map(function(k){
+    var p=ISLAND_XY[k], n=counts[k], r=rOf(n);
+    var label=ISLAND_LABEL[k]||k;
+    return '<circle cx="'+px(p[1]).toFixed(1)+'" cy="'+py(p[0]).toFixed(1)+'" r="'+r.toFixed(1)+'"'
+      +' fill="var(--g)" fill-opacity="0.30" stroke="var(--g)" stroke-width="1" stroke-opacity="0.65">'
+      +'<title>'+esc(label)+' — '+n.toLocaleString()+'</title></circle>';
+  }).join('');
+
+  /* Only the largest few are named on the map itself; everything else is
+     on hover and in the ranked bars below. */
+  var named=ordered.slice(0,5).map(function(k){
+    var p=ISLAND_XY[k], r=rOf(counts[k]);
+    return '<text x="'+(px(p[1])+r+4).toFixed(1)+'" y="'+(py(p[0])+3).toFixed(1)+'"'
+      +' font-size="9" font-family="Inter,sans-serif" fill="var(--mu)">'+esc(ISLAND_LABEL[k]||k)+'</text>';
+  }).join('');
+
+  /* Size key — three reference circles a reader can measure against. */
+  var keyVals=[max,Math.round(max/4),Math.max(1,Math.round(max/16))];
+  var keyR=keyVals.map(rOf);
+  var keyH=keyR[0]*2+20, keyW=140, baseY=keyH-6;
+  var keyCircles=keyVals.map(function(v,i){
+    return '<circle cx="'+(keyR[0]+2)+'" cy="'+(baseY-keyR[i])+'" r="'+keyR[i].toFixed(1)+'"'
+      +' fill="none" stroke="var(--fa)" stroke-width="1"/>'
+      +'<text x="'+(keyR[0]*2+10)+'" y="'+(baseY-keyR[i]*2+4)+'" font-size="9"'
+      +' font-family="IBM Plex Mono,monospace" fill="var(--fa)">'+v.toLocaleString()+'</text>';
+  }).join('');
+
+  return '<div class="chart-card wide"><div class="chart-title">'+esc(t('mapTitle'))+'</div>'
+    +'<div class="chart-scale">'+esc(t('mapScale'))+'</div>'
+    +'<div class="map-wrap">'
+      +'<svg class="island-map" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t('mapTitle'))+'">'
+        +circles+named
+      +'</svg>'
+      +'<svg class="island-map-key" viewBox="0 0 '+keyW+' '+keyH+'" aria-hidden="true">'+keyCircles+'</svg>'
+    +'</div>'
+    +'<div class="map-note">'+esc(t('mapNote'))+'</div>'
+  +'</div>'
+}
+
 /* One bar-row builder for every bar chart in the modal, so the value
    placement rule (outside the bar, or inside it once the bar is long
    enough that an outside label would overflow) is defined once. */
@@ -4393,6 +4511,9 @@ function buildAnalytics(){
     }()
     +'<div style="margin-top:10px;font-size:var(--t-micro);color:var(--fa);font-style:italic">'+SET.length.toLocaleString()+' habit assignments shown; assigned by the developer.</div>'
     +'</div>'
+
+    /* ── Distribution map ── */
+    +buildIslandMap(SET)
 
     /* ── Top Islands by Threatened Species ── */
     +'<div class="chart-card wide"><div class="chart-title">'+esc(t('topIslands'))+'</div>'

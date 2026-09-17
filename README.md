@@ -121,7 +121,12 @@ Up to three CC-licensed images per species, pulled from GBIF occurrence media (`
 - `https` only, so no mixed content.
 
 ### Analytics Modal
-Charts describe the **current filtered view**, not the whole dataset. Top 15 Families, Threat Category (with a per-category breakdown table), Division donut with Endemicity by Division, CITES Listing Status, Growth Habit, Top Islands by Threatened Species.
+Charts describe the **current filtered view**, not the whole dataset.
+
+**Distribution map** (`buildIslandMap`) — a proportional-symbol map, not a heat map: the data records presence per island, so one circle per island sized by count is the honest form; interpolating a surface between them would invent a density gradient across water that nothing measured. Circle *area* scales with the count (radius by square root), 26 islands are plotted covering ~90% of island records, and it redraws with the filters like every other chart.
+
+`ISLAND_XY` holds the coordinates. They were geocoded **once** against OpenStreetMap via Nominatim and verified individually — do not regenerate them naively: a plain lookup returns real islets named "Panay Island" in Catanduanes and "Bohol Island" in Samar, and resolves Luzon and Palawan to local landmarks. Nothing is fetched at run time and no tiles are loaded. © OpenStreetMap contributors.
+ Top 15 Families, Threat Category (with a per-category breakdown table), Division donut with Endemicity by Division, CITES Listing Status, Growth Habit, Top Islands by Threatened Species.
 
 Chart conventions:
 - Bars are scaled to the largest value **in their own chart**, and each chart says so, because a full-width bar otherwise reads as "all of them" rather than "the most of any one".
