@@ -334,7 +334,6 @@ Cite the sources directly for their own material: DAO 2026-20 for the taxa and t
 - **Growth habit**: not part of DAO 2026-20. Assigned species by species by the developer; professional judgment, not an official determination.
 - **Distribution**: Co's Digital Flora of the Philippines (Pelser, Barcelona & Nickrent, 2011–). Condensed from their records; CDFP is authoritative.
 - **Photographs**: served live from GBIF occurrence records, never hosted or modified here. Open licences only (CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA, Public Domain Mark); All Rights Reserved and unlicensed images are not shown. Copyright stays with each photographer, each image is credited with its licence and links to its source record, and takedown requests are honoured.
-- **IUCN Red List**: not reproduced or redistributed. Their terms permit individual look-up and linking, so IUCN references are link-outs only.
 - **Warranty**: provided as is, without warranty. Not for permitting, enforcement, compliance, commercial or legal use.
 - Built with Claude (Anthropic)
 

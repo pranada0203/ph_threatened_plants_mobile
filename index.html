@@ -2099,13 +2099,10 @@ body.entering .body-wrap{animation:app-in .3s ease}
   color:var(--fa);font-family:"IBM Plex Mono",monospace;letter-spacing:.02em}
 .landing-search-hint b{color:var(--g);font-weight:600}
 
-/* Single entry-point card — DAO 2026-20. IUCN's terms prohibit
-   redistributing their dataset (only individual-lookup/link use is
-   permitted without a written waiver), so there's no second list to
-   pick between here; IUCN reference is handled per-species inside the
-   dossier instead, same pattern as GBIF. Same soft-card language as
-   the dashboard: r-md radius, soft border, shadow-sm at rest, lifts
-   slightly on hover. */
+/* Single entry-point card — DAO 2026-20 is the only list this tool
+   presents, so there is nothing to choose between here. Same soft-card
+   language as the dashboard: r-md radius, soft border, shadow-sm at
+   rest, lifts slightly on hover. */
 .landing-lists{display:flex;justify-content:center;width:100%}
 
 .landing-list-card{width:100%;max-width:var(--landing-w);text-align:left;display:flex;flex-direction:column;
@@ -2758,8 +2755,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <h4>Live data from GBIF</h4>
       <p>Occurrence counts and taxonomic matches are fetched from GBIF at the moment you view a species. They are not independently verified, reflect the state of those databases at that moment, and may differ from official Philippine taxonomic determinations. A GBIF name match is a database match, not a taxonomic opinion.</p>
 
-      <h4>IUCN Red List</h4>
-      <p>IUCN Red List assessments are <strong>not reproduced or redistributed here</strong>. IUCN&rsquo;s terms permit individual look-up and linking, so any IUCN reference is a link out to their own site.</p>
 
       <h4>Accuracy and warranty</h4>
       <p>This tool is provided as a reference only, <strong>as is and without warranty of any kind</strong>, express or implied. Care has been taken in compiling and presenting the information, but no guarantee is made that it is complete, current or free of error, and no liability is accepted for any loss or decision arising from its use. Do not rely on it for permitting, enforcement, compliance, commercial or legal purposes &mdash; consult the official DAO&nbsp;2026-20 text and the DENR directly.</p>
@@ -2804,7 +2799,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
             <tr><td>Locality records</td><td>Co&rsquo;s Digital Flora of the Philippines</td><td class="pt-ext">Pelser et&nbsp;al.</td></tr>
             <tr><td>Occurrence counts, name matching</td><td>GBIF, fetched live</td><td class="pt-ext">GBIF</td></tr>
             <tr><td>Photographs</td><td>GBIF occurrence media</td><td class="pt-ext">Each photographer</td></tr>
-            <tr><td>Red List assessments</td><td>IUCN &mdash; linked, never reproduced</td><td class="pt-ext">IUCN</td></tr>
             <tr><td><strong>Growth habit</strong>, all 1,237 taxa</td><td>Assigned species by species</td><td class="pt-own">Author</td></tr>
             <tr><td><strong>Nomenclatural corrections</strong>, 10</td><td>Verified against CDFP</td><td class="pt-own">Author</td></tr>
             <tr><td><strong>Distribution parsing</strong> and island vocabulary</td><td>Derived from CDFP records</td><td class="pt-own">Author</td></tr>
@@ -2894,7 +2888,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <li>Pelser, P.B., J.F. Barcelona &amp; D.L. Nickrent (eds.). 2011 onwards. <em>Co&rsquo;s Digital Flora of the Philippines</em>. <a href="https://www.philippineplants.org" target="_blank" rel="noopener">philippineplants.org</a></li>
         <li>GBIF Secretariat. 2023. <em>GBIF Backbone Taxonomy</em>. Checklist dataset. <a href="https://doi.org/10.15468/39omei" target="_blank" rel="noopener">doi.org/10.15468/39omei</a>, accessed via GBIF.org.</li>
         <li>Convention on International Trade in Endangered Species of Wild Fauna and Flora. <em>Appendices I, II and III</em>. <a href="https://cites.org/eng/app/appendices.php" target="_blank" rel="noopener">cites.org</a></li>
-        <li>IUCN. <em>The IUCN Red List of Threatened Species</em>. <a href="https://www.iucnredlist.org" target="_blank" rel="noopener">iucnredlist.org</a> &mdash; consulted per species by link; no assessment data is reproduced here.</li>
         <li>International Plant Names Index. <a href="https://www.ipni.org" target="_blank" rel="noopener">ipni.org</a></li>
       </ol>
 
