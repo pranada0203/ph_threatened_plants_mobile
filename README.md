@@ -442,6 +442,21 @@ A **herbarium sheet** — a mounted specimen with its determination label. It wa
 
 **Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a canvas cannot resolve custom properties. `#2d5a3d` must stay in step with `--g` by hand; `#f5f2e9` is the sheet.
 
+The literals are *defaults* inside `var()`, so the mark has parts that can be switched off per placement. Custom properties inherit into a `<use>` shadow tree, which ordinary selectors cannot reach — this is the only way to restyle the mark's internals from outside.
+
+| Token | Controls |
+|---|---|
+| `--mark-plate` | the rounded-square ground |
+| `--mark-sheet` / `--mark-sheet-edge` | the sheet's fill / its outline |
+| `--mark-ink` | stem and leaves |
+| `--mark-label` | the determination label block |
+
+**The landing page uses a reduced variant**: plate, sheet and label set to `transparent`, leaving only the specimen in `--g` on the disc. The full mark is a rounded square, and nesting a rounded square inside a circular container clipped its corners and read as two frames fighting each other. The sheet still carries the identity everywhere it has a ground of its own — header, favicon, home screen — so nothing is lost.
+
+That container is now `border-radius:50%`. It was `var(--r-lg)`, a fixed 24px, against a mark that is 64px, 52px or 48px depending on breakpoint — so it drew a squircle on desktop and a true circle on phones, and the shape changed with the viewport. A percentage cannot drift.
+
+The specimen alone only occupies the middle of the mark's box, so the landing variant carries `transform:scale(1.35)`. That is the last step before the stem crowds the lower edge; it costs nothing on a vector.
+
 Files, and how to regenerate them:
 
 | File | Role |
