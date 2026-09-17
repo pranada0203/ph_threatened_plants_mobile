@@ -326,10 +326,11 @@ The in-app **Methods & Citation** paper and **About** panel are the authoritativ
 
 **Recommended citation** — Pranada, M.A.K. 2026. *Threatened Philippine Plants: an interactive reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20)*. Version 1.0. https://dao202620.vercel.app
 
-Cite the sources directly for their own material: DAO 2026-20 for the list, CDFP for localities, the GBIF Backbone Taxonomy (doi.org/10.15468/39omei) for occurrence data, and each photographer for their image.
+Cite the sources directly for their own material: DAO 2026-20 for the taxa and threat categories, the CITES Appendices for appendix listings, CDFP for localities, the GBIF Backbone Taxonomy (doi.org/10.15468/39omei) for occurrence data, and each photographer for their image.
 
 - Developer: **Mc Andrew Pranada**, Botanist. Independent personal project — **not** a DENR or BMB publication, and carrying no official status. Where this tool and the official DAO 2026-20 text differ, the official text governs.
-- **Species list**: DAO 2026-20, DENR Philippines — an official government issuance. No authorship of the legal instrument or the list is claimed.
+- **Species list and threat categories**: DAO 2026-20, DENR Philippines — an official government issuance. No authorship of the legal instrument or the list is claimed.
+- **CITES appendix listings**: from the CITES Appendices themselves, **not** from DAO 2026-20, which does not carry them. Do not attribute these to the DENR.
 - **Growth habit**: not part of DAO 2026-20. Assigned species by species by the developer; professional judgment, not an official determination.
 - **Distribution**: Co's Digital Flora of the Philippines (Pelser, Barcelona & Nickrent, 2011–). Condensed from their records; CDFP is authoritative.
 - **Photographs**: served live from GBIF occurrence records, never hosted or modified here. Open licences only (CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA, Public Domain Mark); All Rights Reserved and unlicensed images are not shown. Copyright stays with each photographer, each image is credited with its licence and links to its source record, and takedown requests are honoured.
