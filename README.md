@@ -272,6 +272,24 @@ The two status-label failures are the ones that mattered: 12px/600 text under th
 
 *Nav buttons* sit at 2.14:1. The arrow glyph inside carries `--mu` at 5.5:1, so the control is identifiable on its own and the border is affordance rather than identification. Pushing it to `--fa` puts a hard dark box on something small enough to compete with the species name.
 
+### Panel body sweep
+
+The body sits on the paper ground, not a tint, so it was swept separately — across seven species chosen to exercise different body content: CITES I, no common name, nine islands, an infraspecific name, and one of each category. The GBIF blocks are async, so the sweep waits for them; sweeping immediately after opening a panel misses the photographs, the occurrence figures and the match badge entirely.
+
+**Zero text failures.** The only text problem the body ever had was `--vu` at 4.47:1 on paper, fixed with the identity-zone work.
+
+Fourteen borders measure between 1.13:1 and 1.9:1, and all are left alone deliberately:
+
+- The white cards — `.dist-block`, `.ext-link`, `.live-block`, `.similar-item`, `.cdfp-btn` — carry a white fill at 1.10:1 over paper plus a hairline at 1.13:1. Neither number is impressive, but the card reads as a flat area difference and every one of them is identified by its own legible text. This is the "blocks on white, body on paper" inversion working as designed; it is the quietest thing in the app on purpose.
+- `.dist-also` and `.gbif-caption` have no fill, so their border is their only edge, at 1.30:1. They are dividers inside a card, not controls.
+- The rest are badges and pills whose text passes.
+
+**Keyboard focus ring:** `--gl` at 2px with 1px offset, measured on all six grounds it can appear over — 4.86 on white, 4.42 on paper, and 3.97–4.38 on the four tints. Worst case 3.97:1 against a 3:1 requirement.
+
+One trap when re-running any of this: **`element.focus()` does not reliably set `:focus-visible`**, so a programmatic sweep reports no focus ring anywhere and looks like a catastrophic finding. Drive it with a real Tab key press.
+
+Not covered by either sweep: `:hover` and `:active` states. `.copy-cite-btn` was checked by hand because its hover changes the border, and it sets its own background so it is self-contained.
+
 ### Type scale
 Every `font-size` resolves through these tokens. Six raw px values remain, all deliberate one-offs; the mobile search input is pinned to 16px because iOS Safari zooms the page on focus below that.
 
