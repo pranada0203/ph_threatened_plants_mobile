@@ -141,7 +141,9 @@ EN/FIL toggle button in header stat row. Switches all UI chrome to Filipino. Sci
 - Copy citation button
 - Share this tool (Web Share API with clipboard fallback)
 - Send Feedback panel (slide-up, with email + link to About)
-- **Methods & Citation paper** (`#paperOverlay`, opened by `.js-open-paper`, addressable at `#doc=1`) — scope, a provenance table separating what is reproduced from what is the author's, method, limitations, references and the recommended citation. This is the citable document; keep its figures in step with the dataset.
+- **Methods & Citation paper** (`#paperOverlay`, opened by `.js-open-paper`, addressable at `#doc=1`) — scope, a provenance table separating what is reproduced from what is the author's, method, **distribution findings**, limitations, references and the recommended citation. This is the citable document; keep its figures in step with the dataset.
+
+  Section 4 summarises the parsed distribution data. Its headline results: 623 of 1,232 taxa (51%) are recorded from a single island; Critically Endangered taxa are sharply narrower-ranged than the rest (mean 1.77 islands, 70% single-island, against 2.8–3.3 and 42–47% for EN/VU/OTS); Palawan has the highest single-island share of any major island (42% of its 398 taxa, vs Luzon 34% and Mindanao 27%); pteridophytes range wider than angiosperms (mean 3.44 vs 2.72); and CITES listing shows no range signal, which is the expected null. Every figure is derived from `DATA` at the time of writing — **recompute before editing that section**, and keep its collection-effort caveat, which is what makes the rest of it honest.
 - About panel (`#disclaimerOverlay`, opened by `.js-open-disclaimer`) — attribution, source terms, licensing and warranty notice. Maintained in English only; the English text governs.
 - Vercel Analytics (`/_vercel/insights/script.js`)
 

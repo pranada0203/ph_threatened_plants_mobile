@@ -2784,7 +2784,58 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
       <p><strong>Photographs.</strong> Images come from GBIF occurrence media, filtered to open licences only &mdash; CC0, CC&nbsp;BY, CC&nbsp;BY-SA, CC&nbsp;BY-NC, CC&nbsp;BY-NC-SA and the Public Domain Mark. Anything All&nbsp;Rights&nbsp;Reserved or unlabelled is discarded rather than shown. Each image is credited to its photographer with its licence and links to the occurrence record. Roughly two thirds of taxa have at least one such image.</p>
 
-      <h4>4 &middot; Limitations</h4>
+      <h4>4 &middot; What the distribution data shows</h4>
+      <p>Because every taxon now carries a parsed island list, the list can be read as a distribution dataset rather than only as a register of names. The patterns below are descriptive summaries of the 1,232 taxa with a parsed distribution &mdash; they are not analyses of extinction risk, and the caveats at the end of this section limit what any of them can be taken to mean.</p>
+
+      <p><strong>Half the list is known from a single island.</strong> 623 of 1,232 taxa &mdash; 51% &mdash; are recorded from one island only. The mean is 2.85 islands and the widest-ranging taxon is recorded from 27.</p>
+
+      <p><strong>Range size separates Critically Endangered from everything else.</strong> Sorting taxa by category, the CR group is sharply narrower-ranged than the other three, which are barely distinguishable from one another.</p>
+
+      <div class="paper-tablewrap">
+        <table class="paper-table">
+          <thead><tr><th>Category</th><th>Taxa</th><th>Mean islands</th><th>Median</th><th>Single-island</th></tr></thead>
+          <tbody>
+            <tr><td>Critically Endangered</td><td>268</td><td>1.77</td><td>1</td><td class="pt-own">70%</td></tr>
+            <tr><td>Endangered</td><td>302</td><td>2.82</td><td>2</td><td>45%</td></tr>
+            <tr><td>Vulnerable</td><td>432</td><td>3.31</td><td>2</td><td>47%</td></tr>
+            <tr><td>Other Threatened</td><td>230</td><td>3.27</td><td>2</td><td>42%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The step from CR to EN is large; the steps between EN, VU and OTS are not. This is what one would expect if restricted range drove placement in the highest category and other considerations drove the rest, and it is a useful internal consistency check on the order &mdash; but it is a property of the list, not independent evidence about the plants.</p>
+
+      <p><strong>Narrow-range taxa are concentrated on three islands, and Palawan is disproportionate.</strong> Of the taxa recorded from one island only, 202 are on Luzon, 167 on Palawan and 139 on Mindanao. Expressed as a share of each island&rsquo;s own threatened flora, Palawan is the outlier &mdash; consistent with its separate biogeographic history, which is Sundaic rather than Philippine.</p>
+
+      <div class="paper-tablewrap">
+        <table class="paper-table">
+          <thead><tr><th>Island</th><th>Threatened taxa</th><th>Recorded nowhere else</th><th>Share</th></tr></thead>
+          <tbody>
+            <tr><td>Palawan</td><td>398</td><td>167</td><td class="pt-own">42%</td></tr>
+            <tr><td>Luzon</td><td>599</td><td>202</td><td>34%</td></tr>
+            <tr><td>Mindanao</td><td>522</td><td>139</td><td>27%</td></tr>
+            <tr><td>Sibuyan</td><td>75</td><td>13</td><td class="pt-own">17%</td></tr>
+            <tr><td>Tawi-Tawi</td><td>29</td><td>5</td><td class="pt-own">17%</td></tr>
+            <tr><td>Samar</td><td>201</td><td>28</td><td>14%</td></tr>
+            <tr><td>Cebu</td><td>56</td><td>6</td><td>11%</td></tr>
+            <tr><td>Mindoro</td><td>210</td><td>12</td><td>6%</td></tr>
+            <tr><td>Negros</td><td>161</td><td>9</td><td>6%</td></tr>
+            <tr><td>Leyte</td><td>139</td><td>3</td><td>2%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Sibuyan and Tawi-Tawi reach the same 17% on a fraction of the area, which is the more striking result of the two. The 188 single-island Critically Endangered taxa sit mainly on Luzon (60), Mindanao (49) and Palawan (35), with Samar, Sibuyan and Dinagat each holding seven to nine.</p>
+
+      <p><strong>Endemics are narrower-ranged than non-endemics</strong>, as expected: Philippine endemics average 2.18 islands and 58% are single-island, against 4.81 islands and 28% for non-endemics.</p>
+
+      <p><strong>Ferns and conifers range more widely than flowering plants.</strong> Angiosperms average 2.72 islands with 54% single-island; pteridophytes average 3.44 with 33%; gymnosperms average 4.33 with 37%. The pteridophyte result is consistent with wind-dispersed spores crossing water gaps that seeds do not. The gymnosperm figure rests on 27 taxa and should not be leaned on.</p>
+
+      <p><strong>CITES listing shows no range signal at all</strong> &mdash; Appendix&nbsp;I taxa average 2.58 islands, Appendix&nbsp;II 2.80, unlisted 2.86. That is the expected null: CITES responds to trade pressure, not to distribution, and it is recorded here because a negative result is worth as much as a positive one.</p>
+
+      <p class="paper-note"><strong>What these figures cannot tell you.</strong> Every count above is a count of <em>records</em>, not of plants. Three limits matter. <em>Collection effort is uneven</em> &mdash; Luzon has been botanised far longer and harder than Tawi-Tawi or Dinagat, so island totals partly measure where collectors have been; several islands here show no single-island taxa at all, which is more plausibly under-collection than real absence. <em>&ldquo;Single-island&rdquo; means single-island in this dataset</em>, not verified point endemism; a taxon may be recorded once because it has been looked for once. And <em>one record is one record</em> &mdash; an island appears for a taxon whether it is known there from a single 1907 sheet or from a hundred recent collections, so nothing here speaks to abundance, population trend or habitat condition. Read these as a map of what has been recorded, and of where to look next.</p>
+
+      <h4>5 &middot; Limitations</h4>
       <ul class="paper-list">
         <li>Growth habit is interpretive and unofficial. Treat it as a finding aid, not a determination.</li>
         <li>Distribution is a condensed reading of CDFP and may lag revisions there. CDFP is authoritative.</li>
@@ -2793,7 +2844,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <li>Not suitable for permitting, enforcement, compliance or legal use. The official order governs.</li>
       </ul>
 
-      <h4>5 &middot; References</h4>
+      <h4>6 &middot; References</h4>
       <ol class="paper-refs">
         <li>Department of Environment and Natural Resources, Philippines. 2026. <em>DENR Administrative Order No. 2026-20: Updated National List of Threatened Philippine Plants and their Categories</em>. <a href="https://www.bmb.gov.ph/wp-content/uploads/2026/04/dao2026-20.pdf" target="_blank" rel="noopener">bmb.gov.ph</a></li>
         <li>Pelser, P.B., J.F. Barcelona &amp; D.L. Nickrent (eds.). 2011 onwards. <em>Co&rsquo;s Digital Flora of the Philippines</em>. <a href="https://www.philippineplants.org" target="_blank" rel="noopener">philippineplants.org</a></li>
@@ -2803,7 +2854,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <li>International Plant Names Index. <a href="https://www.ipni.org" target="_blank" rel="noopener">ipni.org</a></li>
       </ol>
 
-      <h4>6 &middot; Recommended citation</h4>
+      <h4>7 &middot; Recommended citation</h4>
       <p>For the tool, the habit classification, the corrections or the interface:</p>
       <div class="paper-cite" id="paperCiteText">Pranada, M.A.K. 2026. <em>Threatened Philippine Plants: an interactive reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20)</em>. Version 1.0. https://phthreatenedplantsmobile.vercel.app (accessed <span id="paperCiteDate">&mdash;</span>).</div>
       <button class="copy-cite-btn" id="paperCiteCopy" type="button">
@@ -2811,7 +2862,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
       </button>
       <p class="paper-note">Please <strong>do not cite this tool as the source of the list itself</strong>. For taxa, categories or CITES listings cite reference&nbsp;1; for localities cite reference&nbsp;2; for occurrence data cite reference&nbsp;3; for a photograph cite its photographer and licence as shown beside it.</p>
 
-      <h4>7 &middot; Software and acknowledgements</h4>
+      <h4>8 &middot; Software and acknowledgements</h4>
       <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Cormorant Garamond, Inter and IBM Plex Mono. Hosted on Vercel.</p>
       <p>The interface was written by the author working with <strong>Claude (Anthropic)</strong> as a coding assistant, which also carried out the design review the present layout follows. Claude is a tool, not an author: every taxonomic judgment, habit assignment, correction and editorial decision here is the author&rsquo;s, and responsibility for them rests with the author. Contributors to CDFP and GBIF, and the photographers whose images appear, are gratefully acknowledged &mdash; this tool would show very little without them.</p>
 
