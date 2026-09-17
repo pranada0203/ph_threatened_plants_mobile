@@ -373,10 +373,27 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink);font-siz
 
 /* Keyboard focus — one consistent ring in the brand accent, shown only
    for keyboard navigation (:focus-visible) so mouse/touch interaction
-   is unaffected. The two search inputs keep their own :focus-within
-   treatment on top of this. */
+   is unaffected.
+
+   Search inputs are excluded. Each sits inside a wrapper that already
+   shows focus on its own border, so the ring drew a second green box
+   just inside the first one every time anybody clicked into a search
+   field — two concentric green rectangles around one control. The
+   wrapper's own treatment is the focus indicator for these three. */
 button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visible{
   outline:2px solid var(--gl);outline-offset:1px}
+/* The three search inputs opt out. Deliberately a separate rule rather
+   than :not() chains on the one above: a complex :not() argument is a
+   Selectors-4 feature, and an unsupported selector invalidates the whole
+   comma-separated list, which would silently drop the focus ring from
+   every button and link in the app. These three win on specificity
+   (0,2,0 against 0,1,1) wherever they are placed. */
+.srch:focus-visible,.landing-search-input:focus-visible,.sb-search input:focus-visible{outline:none}
+
+/* The wrappers themselves stop going green too — edited at each of their
+   own definitions below rather than here, since all three are defined
+   later in the file and would win the cascade. A field focused for
+   typing needs to look awake, not accented. */
 
 /* ══════════════════════════════════════════
    HEADER — brand zone with integrated stat navigation
@@ -445,7 +462,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   margin:7px 0 7px 12px;min-width:280px;gap:8px;
   background:var(--bg);border:1px solid var(--bd-soft);border-radius:var(--r-sm);
   transition:var(--transition)}
-.toolbar-search:focus-within{background:var(--sf);border-color:var(--gl);box-shadow:var(--shadow-xs)}
+.toolbar-search:focus-within{background:var(--sf);border-color:var(--bd-strong);box-shadow:var(--shadow-sm)}
 .si{color:var(--fa);font-size:var(--t-sm);flex-shrink:0;transition:var(--transition)}
 .toolbar-search:focus-within .si{color:var(--gl)}
 .srch{flex:1;border:none;outline:none;font-size:var(--t-sm);font-family:Inter,sans-serif;
@@ -522,7 +539,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
   text-transform:uppercase;color:var(--fa);margin-bottom:6px;font-weight:500}
 .sb-search{display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid var(--bd-soft);
   border-radius:10px;background:var(--bg);box-shadow:var(--shadow-xs);transition:var(--transition)}
-.sb-search:focus-within{border-color:var(--gl);background:var(--sf);box-shadow:var(--shadow-sm)}
+.sb-search:focus-within{border-color:var(--bd-strong);background:var(--sf);box-shadow:var(--shadow-sm)}
 .sb-search input{border:none;outline:none;font-size:var(--t-sm);background:transparent;
   color:var(--ink);width:100%;font-family:Inter,sans-serif}
 .sb-search input::placeholder{color:var(--fa)}
@@ -1971,8 +1988,23 @@ thead th{border-bottom-color:var(--bd)}
    hash state bypasses it entirely (see enterCatalogue() in the JS below),
    so shared links still land on the catalogue.
 ══════════════════════════════════════════ */
-.landing{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;
+/* One width for every stacked element on the cover. The search field and
+   the documentation card were capped at 420px while the entry card and
+   the reference row were capped at 340px, so on any viewport between
+   ~380px and 769px the stack had two different edges — visible as
+   misaligned cards on a large phone. One token, read by all four. */
+:root{--landing-w:420px}
+
+/* justify-content:center is not used here. When the content grows past
+   the container a centred flex column overflows equally at BOTH ends and
+   the top becomes unreachable — the cover then reads as pinned to the top
+   with its head cut off. Auto margins centre the group the same way when
+   there is room and collapse to zero when there is not, leaving a normal
+   top-aligned scroll. */
+.landing{display:none;flex:1;flex-direction:column;align-items:center;
   position:relative;background:var(--bg);overflow-y:auto;padding:48px 24px;text-align:center}
+.landing-inner{margin-top:auto}
+.landing-disclaimer-link{margin-bottom:auto}
 body.view-landing .landing{display:flex}
 body.view-landing .hdr-toolbar-wrap,
 body.view-landing .body-wrap,
@@ -2008,11 +2040,11 @@ body.entering .body-wrap{animation:app-in .3s ease}
    reference. The card keeps its own CTA for the browse path.
    Same soft-card language as everything else on the cover: --r-sm
    radius, soft border, shadow on rest, brand border on focus.           */
-.landing-search{display:flex;align-items:center;gap:8px;width:100%;max-width:420px;
+.landing-search{display:flex;align-items:center;gap:8px;width:100%;max-width:var(--landing-w);
   margin:0 auto 6px;padding:0 5px 0 13px;background:var(--sf);
   border:1px solid var(--bd-soft);border-radius:var(--r-sm);
   box-shadow:var(--shadow-sm);transition:var(--transition)}
-.landing-search:focus-within{border-color:var(--gl);box-shadow:var(--shadow-md)}
+.landing-search:focus-within{border-color:var(--bd-strong);box-shadow:var(--shadow-md)}
 .landing-search-ico{color:var(--fa);flex-shrink:0;font-size:var(--t-base);transition:var(--transition)}
 .landing-search:focus-within .landing-search-ico{color:var(--gl)}
 /* 16px floor: iOS Safari zooms the whole page when a focused input is
@@ -2044,7 +2076,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
    slightly on hover. */
 .landing-lists{display:flex;justify-content:center;width:100%}
 
-.landing-list-card{width:100%;max-width:340px;text-align:left;display:flex;flex-direction:column;
+.landing-list-card{width:100%;max-width:var(--landing-w);text-align:left;display:flex;flex-direction:column;
   padding:20px;background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-md);
   box-shadow:var(--shadow-sm);cursor:pointer;font-family:Inter,sans-serif;transition:var(--transition)}
 .landing-list-card:hover{border-color:var(--gl);box-shadow:var(--shadow-md);transform:translateY(-2px)}
@@ -2098,7 +2130,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 /* Documentation card — between the entry-point card and the two link
    cards, and weighted between them too: wider and three lines like the
    card above, quieter type like the cards below. */
-.landing-paper-card{width:100%;max-width:420px;margin:14px auto 0;text-align:left;
+.landing-paper-card{width:100%;max-width:var(--landing-w);margin:14px auto 0;text-align:left;
   display:flex;flex-direction:column;gap:3px;padding:14px 16px;
   background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-sm);
   box-shadow:var(--shadow-xs);cursor:pointer;font-family:Inter,sans-serif;
@@ -2117,7 +2149,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 /* Supporting references — smaller soft cards, same language as the DAO
    card but lower visual weight, so they read as secondary without
    falling back to bare text links. */
-.landing-refs{margin-top:16px;display:flex;gap:12px;width:100%;max-width:340px}
+.landing-refs{margin-top:16px;display:flex;gap:12px;width:100%;max-width:var(--landing-w)}
 .landing-ref-card{flex:1;display:flex;flex-direction:column;gap:4px;
   padding:12px 14px;background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-sm);
   box-shadow:var(--shadow-xs);cursor:pointer;font-family:Inter,sans-serif;
@@ -2162,19 +2194,19 @@ body.entering .body-wrap{animation:app-in .3s ease}
    single orphaned word is worse than a slightly wider measure.
 ══════════════════════════════════════════════════════════ */
 @media (min-width:769px){
-  .landing{padding:24px}
+  .landing{padding:20px 24px}
   .landing-inner{max-width:720px}
-  .landing-mark{width:56px;height:56px;margin-bottom:14px}
+  .landing-mark{width:48px;height:48px;margin-bottom:12px}
   .landing-title{font-size:clamp(38px,3.6vw,46px);margin-bottom:10px}
-  .landing-desc{font-size:var(--t-base);line-height:1.6;max-width:56ch;margin-bottom:20px}
-  .landing-list-card{max-width:420px;padding:18px 24px}
+  .landing-desc{font-size:var(--t-base);line-height:1.6;max-width:56ch;margin-bottom:16px}
+  .landing-list-card{padding:16px 24px}
   .landing-list-stat{font-size:58px;margin-bottom:8px}
   .landing-list-label{font-size:var(--t-base)}
   .landing-prop{height:7px;margin-top:16px}
   .landing-list-breakdown{margin-top:10px}
   .landing-list-go{padding-top:16px;font-size:var(--t-sm)}
-  .landing-refs{max-width:420px;margin-top:8px}
-  .landing-paper-card{margin-top:10px}
+  .landing-refs{margin-top:6px}
+  .landing-paper-card{margin-top:8px}
   /* Short desktop windows drop the card's explanatory sub-line for the
      same reason phones do — the label alone says what it opens. */
   @media (max-height:820px){.landing-paper-sub{display:none}}
@@ -2184,8 +2216,8 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
 /* Taller desktops only — this tier spends vertical room it has verified. */
 @media (min-width:769px) and (min-height:880px){
-  .landing{padding:40px 24px}
-  .landing-mark{width:68px;height:68px;margin-bottom:20px}
+  .landing{padding:34px 24px}
+  .landing-mark{width:64px;height:64px;margin-bottom:18px}
   .landing-title{font-size:clamp(44px,4.2vw,56px);margin-bottom:14px}
   .landing-desc{font-size:var(--t-md);margin-bottom:28px}
   .landing-list-card{padding:22px 28px}
@@ -2237,7 +2269,9 @@ body.entering .body-wrap{animation:app-in .3s ease}
      field and the documentation card, the group grew under the pinned
      link and the two overlapped. In flow it simply follows the content,
      and a short viewport scrolls instead of colliding. */
-  .landing-disclaimer-link{margin:14px 0 calc(4px + env(safe-area-inset-bottom))}
+  /* margin-bottom stays auto (see the base rule) so the group still
+     centres; the safe-area clearance becomes padding instead. */
+  .landing-disclaimer-link{margin-top:14px;padding-bottom:calc(4px + env(safe-area-inset-bottom))}
 }
 </style>
 </head>
