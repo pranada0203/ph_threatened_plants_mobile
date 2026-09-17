@@ -250,6 +250,28 @@ The mobile sheet's drag handle takes `--fa-deco`, not `--bd-strong`: the latter 
 
 Its `:hover` and `.copied` states set a background as well as a border colour, so they are self-contained and unaffected by the tint behind them.
 
+### Identity-zone audit
+
+Every element that paints inside `.panel-toolbar` and `.panel-hdr` was walked in the rendered DOM across all four categories — text against its effective backdrop, all four border sides, own surfaces, and `::before`/`::after` marks. Re-run it after changing anything in that zone; reading the CSS is not enough, because what matters is the field an element actually lands on.
+
+What it found, and what was done:
+
+| Element | Was | Now | Action |
+|---|---|---|---|
+| `.panel-status-label` (EN) | 4.23:1 | 4.84:1 | **AA failure.** `--en` darkened |
+| `.panel-status-label` (VU) | 4.43:1 | 4.79:1 | **AA failure.** `--vu` darkened |
+| `.panel-nav-btn` border | 1.06:1 | 2.14:1 | `--bd` → `--fa-deco` |
+| `.panel-status .pl` border | 1.19:1 | 4.79:1 | takes `--sp` in this zone |
+| `.copy-cite-btn` border | 1.06:1 | 5.46:1 | `--bd` → `--fa`, 1px |
+
+The two status-label failures are the ones that mattered: 12px/600 text under the 4.5:1 floor. `--vu` was additionally failing on the paper ground at 4.47:1, which predates the tints entirely.
+
+**Two things are knowingly left below 3:1.**
+
+*Classification pills* (`.habit-pill`, `.div-pill`, `.endemic-badge`) sit at 1.15–1.44:1 against the tint. They are readable anyway because they clear the field by **hue**, not luminance — 71° to 141° away from it. Their own text passes. The status pill was the single exception at 0–4°, sharing its panel's hue by construction, and that is the one that was fixed. If you add a pill whose hue lands near a category tint, it will need the same treatment.
+
+*Nav buttons* sit at 2.14:1. The arrow glyph inside carries `--mu` at 5.5:1, so the control is identifiable on its own and the border is affordance rather than identification. Pushing it to `--fa` puts a hard dark box on something small enough to compete with the species name.
+
 ### Type scale
 Every `font-size` resolves through these tokens. Six raw px values remain, all deliberate one-offs; the mobile search input is pinned to 16px because iOS Safari zooms the page on focus below that.
 

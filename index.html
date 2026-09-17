@@ -301,10 +301,17 @@ function applyLang(){
      OTS is 164 away and carries at 14%; EN and VU are 19 and 1 degrees
      away and both need 21%. Stepping all four equally does not work in
      either direction — it leaves VU looking like tinted paper, and at the
-     saturation VU needs to register, it shouts over CR. */
+     saturation VU needs to register, it shouts over CR.
+
+     --en and --vu are a notch darker than the Tailwind 700 steps they came
+     from. They are the panel's status label, and on their own deepened
+     tints the originals measured 4.23 and 4.43 against a 4.5 floor. --vu
+     also failed on the paper ground at 4.47, which predates the tints.
+     Both now clear AA on every ground either is used as text: panel tint,
+     pill, paper and white. Do not restore the 700 values. */
   --cr:#b91c1c;--cr-bg:#fef2f2;--cr-bd:#fca5a5;--cr-panel:#fee2e2;
-  --en:#c2410c;--en-bg:#fff7ed;--en-bd:#fdba74;--en-panel:#fee4c8;
-  --vu:#a16207;--vu-bg:#fefce8;--vu-bd:#fde047;--vu-panel:#fcf4c6;
+  --en:#b23c0b;--en-bg:#fff7ed;--en-bd:#fdba74;--en-panel:#fee4c8;
+  --vu:#9a5d06;--vu-bg:#fefce8;--vu-bd:#fde047;--vu-panel:#fcf4c6;
   --ots:#1d4ed8;--ots-bg:#eff6ff;--ots-bd:#93c5fd;--ots-panel:#dbeafe;
   /* Brand */
   --g:#2d5a3d;--gl:#4a7c59;--gbg:#f0fdf4;--g-light:#e8f5ec;
@@ -791,7 +798,12 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 
 /* Panel toolbar — minimal, functional */
 .panel-toolbar{display:flex;align-items:center;padding:10px 14px 0;gap:4px;flex-shrink:0}
-.panel-nav-btn{background:none;border:1.5px solid var(--bd);cursor:pointer;color:var(--mu);
+/* --fa-deco, not --bd: on a category tint --bd measured 1.06:1 and the
+   button box vanished. Not pushed to --fa — the arrow glyph inside carries
+   --mu at 5.5:1, so the control is identifiable on its own and this border
+   is affordance, not identification. A --fa box on something this small
+   would compete with the species name beside it. */
+.panel-nav-btn{background:none;border:1.5px solid var(--fa-deco);cursor:pointer;color:var(--mu);
   font-size:var(--t-xs);line-height:1;padding:4px 8px;border-radius:6px;transition:var(--transition);font-family:Inter,sans-serif}
 .panel-nav-btn:hover:not(:disabled){border-color:var(--gl);color:var(--g);background:var(--gbg)}
 .panel-nav-btn:disabled{opacity:.25;cursor:default}
@@ -855,6 +867,14 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    read as one system of supporting facts under the scientific name. */
 .panel-status{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:12px}
 .panel-status .pl{font-size:var(--t-xs);padding:2px 7px}
+/* This is the one pill that shares its panel's hue, so it is the one that
+   dissolves into the field: the status pill sits 0-4 degrees from the tint
+   behind it, against 48-141 for every classification pill, which is why
+   those still read at the same luminance. Its --*-bd edge measured 1.19:1
+   here, so in this zone it takes the full accent instead and reads 4.79:1.
+   Nothing is lost when it is faint — the category is spelled out beside it
+   — but an outlined chip is what the row is meant to be. */
+.panel-hdr .panel-status .pl{border-color:var(--sp)}
 .panel-status-label{font-size:var(--t-xs);font-weight:600;color:var(--ink)}
 /* Label text takes the same color as the status pill beside it, rather
    than a fixed neutral — status and its name should read as one fact. */
