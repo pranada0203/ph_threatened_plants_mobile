@@ -3,7 +3,8 @@
 ## Project Overview
 A single-file, mobile-first web application serving as an interactive reference tool for the Updated National List of Threatened Philippine Plants under DENR Administrative Order No. 2026-20. The tool lists 1,237 threatened Philippine vascular plant taxa with full filtering, analytics, and species detail.
 
-**Live URL:** https://phthreatenedplantsmobile.vercel.app  
+**Live URL:** https://dao202620.vercel.app — the project's primary domain.  
+`phthreatenedplantsmobile.vercel.app` is an older alias of the same project and redirects here. Keep it alive: published citations and the presentation deck used it before the switch. Cite and share the primary domain only.
 **Repository:** Connected to Vercel via GitHub (GitHub Desktop used for deployment)  
 **Developer:** Mc Andrew Pranada (Plant Taxonomist / Botanist)  
 **Built with:** Claude (Anthropic)
@@ -323,7 +324,7 @@ This exists because the app declares `apple-mobile-web-app-capable`, so it can b
 
 The in-app **Methods & Citation** paper and **About** panel are the authoritative versions of this; keep all three in step when any changes.
 
-**Recommended citation** — Pranada, M.A.K. 2026. *Threatened Philippine Plants: an interactive reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20)*. Version 1.0. https://phthreatenedplantsmobile.vercel.app
+**Recommended citation** — Pranada, M.A.K. 2026. *Threatened Philippine Plants: an interactive reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20)*. Version 1.0. https://dao202620.vercel.app
 
 Cite the sources directly for their own material: DAO 2026-20 for the list, CDFP for localities, the GBIF Backbone Taxonomy (doi.org/10.15468/39omei) for occurrence data, and each photographer for their image.
 
