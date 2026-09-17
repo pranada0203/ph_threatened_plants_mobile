@@ -254,11 +254,13 @@ function applyLang(){
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Threatened PH Plants">
+<!-- SVG first so modern browsers get a mark that stays sharp at any size;
+     the PNGs are the fallback and iOS still needs apple-touch-icon as a
+     raster. All of them are generated from logo.svg. -->
+<link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="logo_16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
-<link rel="apple-touch-icon" sizes="152x152" href="logo_152.png">
-<link rel="apple-touch-icon" sizes="192x192" href="logo_192.png">
 <!-- preconnect starts the DNS/TLS handshake to Google's font servers as
      early as possible, so the actual font files (requested below) have
      less to wait on once the browser gets to them. -->
@@ -448,7 +450,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .hdr-ico{width:40px;height:40px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
   border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:var(--t-md);flex-shrink:0;
   overflow:hidden}
-.hdr-ico img{width:100%;height:100%;object-fit:cover;display:block}
+.hdr-ico .brand-mark{width:100%;height:100%;display:block}
 .hdr-ey{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);letter-spacing:.2em;text-transform:uppercase;
   color:rgba(255,255,255,.45);margin-bottom:2px}
 .hdr-t{font-family:"Cormorant Garamond",serif;font-size:var(--t-md);font-weight:700;line-height:1.2;color:#fff;flex:1;min-width:0}
@@ -1709,7 +1711,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .feedback-dev{display:flex;align-items:center;gap:12px;padding:12px;
   background:var(--bg);border-radius:16px;border:1px solid var(--bd)}
 .feedback-dev-ico{width:40px;height:40px;border-radius:16px;overflow:hidden;flex-shrink:0}
-.feedback-dev-ico img{width:100%;height:100%;object-fit:cover}
+.feedback-dev-ico .brand-mark{width:100%;height:100%;display:block}
 .feedback-dev-name{font-size:var(--t-sm);font-weight:600}
 .feedback-dev-role{font-size:var(--t-xs);color:var(--fa);margin-top:1px}
 .feedback-email-btn{display:flex;align-items:center;justify-content:center;gap:7px;
@@ -2235,7 +2237,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 .landing-mark{width:64px;height:64px;background:var(--gbg);border:1.5px solid var(--g-light);
   border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;
   font-size:var(--t-2xl);margin-bottom:22px;overflow:hidden}
-.landing-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.landing-mark .brand-mark{width:100%;height:100%;display:block}
 
 /* text-wrap:balance so a two-line title splits evenly instead of leaving
    a single orphaned word on the second line. */
@@ -2520,6 +2522,21 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></symbol>
+  <!-- Brand mark: a herbarium sheet, a mounted specimen with its determination
+       label. Colours are literal rather than var() because the same geometry is
+       rasterised into the PNG favicons, and those cannot resolve custom
+       properties; #2d5a3d must stay in step with --g. Regenerate the PNGs from
+       logo.svg if this changes. -->
+  <symbol id="i-logo" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="11" fill="#2d5a3d"/>
+    <rect x="10" y="5" width="28" height="38" rx="3" fill="#f5f2e9"/>
+    <path d="M24 35.5V15.5" stroke="#2d5a3d" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M24 21.6c-3.5 0-6.3-2.4-6.3-5.3 3.5 0 6.3 2.4 6.3 5.3Z" fill="#2d5a3d"/>
+    <path d="M24 21.6c3.5 0 6.3-2.4 6.3-5.3-3.5 0-6.3 2.4-6.3 5.3Z" fill="#2d5a3d"/>
+    <path d="M24 29.8c-3.5 0-6.3-2.4-6.3-5.3 3.5 0 6.3 2.4 6.3 5.3Z" fill="#2d5a3d"/>
+    <path d="M24 29.8c3.5 0 6.3-2.4 6.3-5.3-3.5 0-6.3 2.4-6.3 5.3Z" fill="#2d5a3d"/>
+    <rect x="25.2" y="37.2" width="10.8" height="4" rx="1.3" fill="#2d5a3d" opacity=".5"/>
+  </symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17 1.39.34 2.34.34C15 20 22 16 22 3c-4 1-9 2-14 5"></path><path d="M2 21c0-3.5 2-6 5-8"></path></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></symbol>
   <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></symbol>
@@ -2549,7 +2566,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 <!-- ══ LANDING / COVER ══ -->
 <div class="landing" id="landing">
   <div class="landing-inner">
-    <div class="landing-mark"><img src="logo_192.png" alt=""></div>
+    <div class="landing-mark"><svg class="brand-mark" aria-hidden="true"><use href="#i-logo"/></svg></div>
     <h1 class="landing-title" data-i18n="landingTitle">Threatened Philippine Plants</h1>
     <p class="landing-desc" data-i18n="landingDesc">An independent, searchable reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20).</p>
 
@@ -2626,7 +2643,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 <div class="hdr-toolbar-wrap">
 <header class="hdr">
   <div class="hdr-top">
-    <div class="hdr-ico"><img src="logo_192.png" alt=""></div>
+    <div class="hdr-ico"><svg class="brand-mark" aria-hidden="true"><use href="#i-logo"/></svg></div>
     <div class="hdr-t">
       <span id="hdrTitle" data-i18n="hdrTitle">Threatened Philippine Plants</span>
       <span class="hdr-t-source">DAO 2026-20</span>
@@ -3247,7 +3264,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
     <div class="feedback-body">
       <div class="feedback-dev">
         <div class="feedback-dev-ico">
-          <img src="logo_192.png" alt="Developer">
+          <svg class="brand-mark" aria-hidden="true"><use href="#i-logo"/></svg>
         </div>
         <div>
           <div class="feedback-dev-name">Mc Andrew Pranada</div>

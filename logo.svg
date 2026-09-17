@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Threatened Philippine Plants">
+  <title>Threatened Philippine Plants</title>
+  <desc>A herbarium sheet: a mounted specimen with its determination label. Green matches the brand token in index.html; the sheet is a warm paper cream. Regenerate the PNG favicons from this file, per the README.</desc>
+  <rect width="48" height="48" rx="11" fill="#2d5a3d"/>
+  <rect x="10" y="5" width="28" height="38" rx="3" fill="#f5f2e9"/>
+  <path d="M24 35.5V15.5" stroke="#2d5a3d" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M24 21.6c-3.5 0-6.3-2.4-6.3-5.3 3.5 0 6.3 2.4 6.3 5.3Z" fill="#2d5a3d"/>
+  <path d="M24 21.6c3.5 0 6.3-2.4 6.3-5.3-3.5 0-6.3 2.4-6.3 5.3Z" fill="#2d5a3d"/>
+  <path d="M24 29.8c-3.5 0-6.3-2.4-6.3-5.3 3.5 0 6.3 2.4 6.3 5.3Z" fill="#2d5a3d"/>
+  <path d="M24 29.8c3.5 0 6.3-2.4 6.3-5.3-3.5 0-6.3 2.4-6.3 5.3Z" fill="#2d5a3d"/>
+  <rect x="25.2" y="37.2" width="10.8" height="4" rx="1.3" fill="#2d5a3d" opacity=".5"/>
+</svg>
