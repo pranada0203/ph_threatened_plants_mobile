@@ -141,6 +141,7 @@ EN/FIL toggle button in header stat row. Switches all UI chrome to Filipino. Sci
 - Copy citation button
 - Share this tool (Web Share API with clipboard fallback)
 - Send Feedback panel (slide-up, with email + link to About)
+- **Methods & Citation paper** (`#paperOverlay`, opened by `.js-open-paper`, addressable at `#doc=1`) — scope, a provenance table separating what is reproduced from what is the author's, method, limitations, references and the recommended citation. This is the citable document; keep its figures in step with the dataset.
 - About panel (`#disclaimerOverlay`, opened by `.js-open-disclaimer`) — attribution, source terms, licensing and warranty notice. Maintained in English only; the English text governs.
 - Vercel Analytics (`/_vercel/insights/script.js`)
 
@@ -310,7 +311,11 @@ var activeSpecies=null // Currently open species
 
 ## Attribution & Rights
 
-The in-app **About** panel is the authoritative version of this; keep the two in step when either changes.
+The in-app **Methods & Citation** paper and **About** panel are the authoritative versions of this; keep all three in step when any changes.
+
+**Recommended citation** — Pranada, M.A.K. 2026. *Threatened Philippine Plants: an interactive reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20)*. Version 1.0. https://phthreatenedplantsmobile.vercel.app
+
+Cite the sources directly for their own material: DAO 2026-20 for the list, CDFP for localities, the GBIF Backbone Taxonomy (doi.org/10.15468/39omei) for occurrence data, and each photographer for their image.
 
 - Developer: **Mc Andrew Pranada**, Botanist. Independent personal project — **not** a DENR or BMB publication, and carrying no official status. Where this tool and the official DAO 2026-20 text differ, the official text governs.
 - **Species list**: DAO 2026-20, DENR Philippines — an official government issuance. No authorship of the legal instrument or the list is claimed.

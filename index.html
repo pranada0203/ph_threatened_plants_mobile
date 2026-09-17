@@ -47,11 +47,15 @@ var T={
     hdrTitle:'Threatened Philippine Plants',
     builtWith:'Built with Claude \u00B7 Anthropic',
     landingTitle:'Threatened Philippine Plants',
-    landingDesc:'An independent reference for the Updated National List of Threatened Philippine Plants under DAO 2026-20 \u2014 searchable by taxonomy, conservation status, distribution, and CITES listing.',
+    landingDesc:'An independent, searchable reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20).',
     landingStatLabel:'Threatened Philippine Vascular Plant Taxa',
     landingSubstats:'920 Philippine endemic \u00B7 219 CITES-listed',
     landingCta:'Explore the List',
     landingSearchPh:'Search species or common name',
+    paperLabel:'Methods & Citation',
+    paperEyebrow:'Documentation',
+    paperCardLabel:'Methods, sources & how to cite',
+    paperCardSub:'What is reproduced, what is the author’s, and the references',
     landingSearchGo:'Search',
     landingMatchOne:'1 match — press Enter',
     landingMatchMany:'{n} matches — press Enter',
@@ -104,11 +108,15 @@ var T={
     hdrTitle:'Mga Nanganganib na Halaman ng Pilipinas',
     builtWith:'Ginawa gamit ang Claude \u00B7 Anthropic',
     landingTitle:'Mga Nanganganib na Halaman ng Pilipinas',
-    landingDesc:'Isang independiyenteng sanggunian para sa Updated National List of Threatened Philippine Plants sa ilalim ng DAO 2026-20 \u2014 mahahanap ayon sa taksonomiya, katayuan sa konserbasyon, distribusyon, at listahan ng CITES.',
+    landingDesc:'Isang independiyenteng sanggunian sa Updated National List of Threatened Philippine Plants (DAO 2026-20).',
     landingStatLabel:'Nanganganib na Vascular na Halaman sa Pilipinas',
     landingSubstats:'920 endemiko sa Pilipinas \u2022 219 nakalista sa CITES',
     landingCta:'Tuklasin ang Listahan',
     landingSearchPh:'Espesye o karaniwang pangalan',
+    paperLabel:'Pamamaraan at Pagsipi',
+    paperEyebrow:'Dokumentasyon',
+    paperCardLabel:'Pamamaraan, pinagkunan, at paano sipiin',
+    paperCardSub:'Ano ang hango, ano ang sa may-akda, at ang mga sanggunian',
     landingSearchGo:'Maghanap',
     landingMatchOne:'1 tugma — pindutin ang Enter',
     landingMatchMany:'{n} tugma — pindutin ang Enter',
@@ -908,6 +916,56 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
   padding:4px 8px;border-radius:6px;transition:var(--transition)}
 .modal-close:hover{background:var(--bg);color:var(--ink)}
 .modal-body{overflow-y:auto;padding:20px 24px;flex:1}
+
+/* ── Methods & Citation paper ────────────────────────────────
+   Longer-form than the About notice and meant to be read end to end and
+   quoted from, so it gets a wider measure, numbered headings and a real
+   table. The two-column body of the modal stays the same component. */
+.modal-paper{width:min(760px,95vw)}
+.paper-body{font-size:var(--t-sm);line-height:1.75;color:var(--mu)}
+.paper-body p{margin-bottom:14px}
+.paper-body strong{color:var(--ink);font-weight:600}
+.paper-body em{font-style:italic}
+.paper-body a{color:var(--gl)}
+.paper-lede{font-size:var(--t-base);line-height:1.7;color:var(--ink);
+  border-left:3px solid var(--g);padding-left:14px;margin-bottom:24px}
+.paper-body h4{font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--g);font-weight:600;
+  margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.paper-list,.paper-refs{margin:0 0 14px;padding-left:20px;display:grid;gap:7px}
+.paper-refs{gap:10px}
+.paper-refs li{padding-left:4px}
+.paper-note{background:var(--bg);border-radius:var(--r-sm);padding:12px 14px;
+  font-size:var(--t-xs);line-height:1.65}
+
+/* Provenance table — the point of the document, so it gets the one piece
+   of colour in it: external rows neutral, the author's rows in brand
+   green, readable at a glance without reading the prose around it. */
+.paper-tablewrap{overflow-x:auto;border:1px solid var(--bd);border-radius:var(--r-sm);margin-bottom:14px}
+.paper-table{width:100%;border-collapse:collapse;min-width:440px;font-size:var(--t-xs)}
+.paper-table th{text-align:left;padding:9px 12px;background:var(--bg);
+  font-family:"IBM Plex Mono",monospace;font-size:var(--t-micro);font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--fa);white-space:nowrap}
+.paper-table td{padding:9px 12px;border-top:1px solid var(--bd);vertical-align:top}
+.paper-table tbody tr:nth-child(even){background:rgba(16,24,40,.015)}
+.pt-ext,.pt-own{white-space:nowrap;font-weight:600}
+.pt-ext{color:var(--mu)}
+.pt-own{color:var(--g)}
+
+.paper-cite{background:var(--gbg);border:1px solid var(--g-light);border-radius:var(--r-sm);
+  padding:14px 16px;font-size:var(--t-xs);line-height:1.7;color:var(--ink);
+  margin-bottom:10px;user-select:all}
+.paper-colophon{margin-top:26px;padding-top:14px;border-top:1px solid var(--bd);
+  font-size:var(--t-xs);color:var(--fa);line-height:1.7}
+/* A button that has to sit inside a sentence without looking like a
+   control bolted into it. */
+.paper-inline-link{background:none;border:none;padding:0;font:inherit;
+  color:var(--gl);text-decoration:underline;cursor:pointer}
+
+@media (max-width:768px){
+  .paper-lede{font-size:var(--t-sm);padding-left:11px}
+  .paper-body h4{margin-top:22px}
+}
 
 .disclaimer-body p{font-size:var(--t-sm);line-height:1.7;color:var(--mu);margin-bottom:16px}
 .disclaimer-body p:last-child{margin-bottom:0}
@@ -2037,6 +2095,25 @@ body.entering .body-wrap{animation:app-in .3s ease}
 .landing-list-go span[aria-hidden]{display:inline-block;transition:transform .16s}
 .landing-list-card:hover .landing-list-go span[aria-hidden]{transform:translateX(3px)}
 
+/* Documentation card — between the entry-point card and the two link
+   cards, and weighted between them too: wider and three lines like the
+   card above, quieter type like the cards below. */
+.landing-paper-card{width:100%;max-width:420px;margin:14px auto 0;text-align:left;
+  display:flex;flex-direction:column;gap:3px;padding:14px 16px;
+  background:var(--sf);border:1px solid var(--bd-soft);border-radius:var(--r-sm);
+  box-shadow:var(--shadow-xs);cursor:pointer;font-family:Inter,sans-serif;
+  transition:var(--transition)}
+.landing-paper-card:hover{border-color:var(--gl);box-shadow:var(--shadow-sm)}
+.landing-paper-label{font-size:var(--t-sm);font-weight:600;color:var(--ink);
+  display:flex;align-items:center;gap:6px}
+.landing-paper-label span[aria-hidden]{display:inline-flex;align-items:center;
+  color:var(--fa-deco);transition:transform .16s}
+.landing-paper-card:hover .landing-paper-label span[aria-hidden]{transform:translateX(3px);color:var(--gl)}
+.landing-paper-sub{font-size:var(--t-xs);color:var(--fa);line-height:1.45}
+/* The sub-line is explanatory rather than load-bearing; phone drops it so
+   the card costs two lines instead of three. */
+@media (max-width:768px){.landing-paper-sub{display:none}}
+
 /* Supporting references — smaller soft cards, same language as the DAO
    card but lower visual weight, so they read as secondary without
    falling back to bare text links. */
@@ -2085,7 +2162,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
    single orphaned word is worse than a slightly wider measure.
 ══════════════════════════════════════════════════════════ */
 @media (min-width:769px){
-  .landing{padding:30px 24px}
+  .landing{padding:24px}
   .landing-inner{max-width:720px}
   .landing-mark{width:56px;height:56px;margin-bottom:14px}
   .landing-title{font-size:clamp(38px,3.6vw,46px);margin-bottom:10px}
@@ -2096,7 +2173,11 @@ body.entering .body-wrap{animation:app-in .3s ease}
   .landing-prop{height:7px;margin-top:16px}
   .landing-list-breakdown{margin-top:10px}
   .landing-list-go{padding-top:16px;font-size:var(--t-sm)}
-  .landing-refs{max-width:420px;margin-top:10px}
+  .landing-refs{max-width:420px;margin-top:8px}
+  .landing-paper-card{margin-top:10px}
+  /* Short desktop windows drop the card's explanatory sub-line for the
+     same reason phones do — the label alone says what it opens. */
+  @media (max-height:820px){.landing-paper-sub{display:none}}
   .landing-ref-card{padding:11px 15px}
   .landing-disclaimer-link{margin-top:12px}
 }
@@ -2150,12 +2231,13 @@ body.entering .body-wrap{animation:app-in .3s ease}
      field without shortening any copy. */
   .landing-refs{margin-top:10px;gap:10px}
   .landing-ref-card{padding:10px 14px}
-  /* Out of the centered group and pinned to .landing's own bottom edge
-     (position:relative, set in the base rule) — reads as a page footer
-     rather than just the last line of centered content, and no longer
-     eats into the height budget that group is centered within. */
-  .landing-disclaimer-link{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));
-    transform:translateX(-50%);margin-top:0}
+  /* Back in normal flow. It used to be pinned to .landing's bottom edge,
+     which read as a page footer and cost the centred group nothing — but
+     that only held while the group fit. Once the cover gained a search
+     field and the documentation card, the group grew under the pinned
+     link and the two overlapped. In flow it simply follows the content,
+     and a short viewport scrolls instead of colliding. */
+  .landing-disclaimer-link{margin:14px 0 calc(4px + env(safe-area-inset-bottom))}
 }
 </style>
 </head>
@@ -2202,7 +2284,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
   <div class="landing-inner">
     <div class="landing-mark"><img src="logo_192.png" alt=""></div>
     <h1 class="landing-title" data-i18n="landingTitle">Threatened Philippine Plants</h1>
-    <p class="landing-desc" data-i18n="landingDesc">An independent reference for the Updated National List of Threatened Philippine Plants under DAO 2026-20 &mdash; searchable by taxonomy, conservation status, distribution, and CITES listing.</p>
+    <p class="landing-desc" data-i18n="landingDesc">An independent, searchable reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20).</p>
 
     <!-- Cover search. Hands straight to the catalogue's own search box
          rather than keeping any state of its own, so there is one search
@@ -2247,6 +2329,16 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <div class="landing-list-go"><span data-i18n="landingCta">Explore the List</span> <span aria-hidden="true">&rarr;</span></div>
       </button>
     </div>
+
+    <!-- The write-up. Full width rather than a third small link card:
+         it is a document to read and cite, not a link-out like the two
+         below it, and "Official Document" already crowds a third of the
+         420px row at phone width. -->
+    <button class="landing-paper-card js-open-paper" type="button">
+      <div class="landing-ref-eyebrow" data-i18n="paperEyebrow">Documentation</div>
+      <div class="landing-paper-label"><span data-i18n="paperCardLabel">Methods, sources &amp; how to cite</span> <span aria-hidden="true">&rarr;</span></div>
+      <div class="landing-paper-sub" data-i18n="paperCardSub">What is reproduced, what is the author&rsquo;s, and the references</div>
+    </button>
 
     <div class="landing-refs">
       <a class="landing-ref-card" href="https://www.bmb.gov.ph/wp-content/uploads/2026/04/dao2026-20.pdf" target="_blank" rel="noopener">
@@ -2636,6 +2728,95 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <p>Corrections, taxonomic notes and takedown requests are welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a>, or through Send Feedback in the app.</p>
 
       <p style="font-size:var(--t-xs);color:var(--fa);border-top:1px solid var(--bd);padding-top:14px">Developed by Mc Andrew Pranada, botanist. Built with Claude (Anthropic). This notice is maintained in English; translations elsewhere in the app are provided for convenience and the English text governs.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="paperOverlay">
+  <div class="modal modal-paper">
+    <div class="modal-hdr">
+      <div class="modal-title" data-i18n="paperLabel">Methods &amp; Citation</div>
+      <button class="modal-close" id="paperClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="modal-body paper-body">
+
+      <p class="paper-lede">This note records what this tool contains, where each part of it came from, how the parts that are not simply reproduced were arrived at, and how to cite it. It is written so that the boundary between the official record, other people&rsquo;s scholarship, and the author&rsquo;s own work is unambiguous.</p>
+
+      <h4>1 &middot; Scope</h4>
+      <p>The tool presents the <strong>1,237 vascular plant taxa</strong> of the Updated National List of Threatened Philippine Plants, issued as DENR Administrative Order No.&nbsp;2026-20. They span <strong>399 genera in 120 families</strong> &mdash; 1,044 angiosperms, 166 pteridophytes and 27 gymnosperms, of which 14 are infraspecific taxa (variety, subspecies or form).</p>
+      <p>Threat categories follow the order as issued: Critically Endangered (270), Endangered (304), Vulnerable (433) and Other Threatened Species (230). 920 taxa are Philippine endemics and 219 are listed on a CITES appendix &mdash; 13 on Appendix&nbsp;I, 206 on Appendix&nbsp;II.</p>
+      <p>This is a <strong>reference to an existing legal instrument, not an assessment</strong>. No taxon was added, removed or recategorised, and nothing here revises the order.</p>
+
+      <h4>2 &middot; What is reproduced, and what is the author&rsquo;s work</h4>
+      <p>Every field in the tool is one of three things: reproduced from the official order, compiled from someone else&rsquo;s published scholarship, or produced by the author. They are separated here rather than described collectively.</p>
+
+      <div class="paper-tablewrap">
+        <table class="paper-table">
+          <thead><tr><th>Element</th><th>Origin</th><th>Whose</th></tr></thead>
+          <tbody>
+            <tr><td>Taxa, threat categories, CITES appendix</td><td>DAO 2026-20</td><td class="pt-ext">DENR</td></tr>
+            <tr><td>Family and taxonomic authority</td><td>DAO 2026-20, checked against CDFP and IPNI</td><td class="pt-ext">DENR</td></tr>
+            <tr><td>Endemism</td><td>DAO 2026-20</td><td class="pt-ext">DENR</td></tr>
+            <tr><td>Locality records</td><td>Co&rsquo;s Digital Flora of the Philippines</td><td class="pt-ext">Pelser et&nbsp;al.</td></tr>
+            <tr><td>Occurrence counts, name matching</td><td>GBIF, fetched live</td><td class="pt-ext">GBIF</td></tr>
+            <tr><td>Photographs</td><td>GBIF occurrence media</td><td class="pt-ext">Each photographer</td></tr>
+            <tr><td>Red List assessments</td><td>IUCN &mdash; linked, never reproduced</td><td class="pt-ext">IUCN</td></tr>
+            <tr><td><strong>Growth habit</strong>, all 1,237 taxa</td><td>Assigned species by species</td><td class="pt-own">Author</td></tr>
+            <tr><td><strong>Nomenclatural corrections</strong>, 10</td><td>Verified against CDFP</td><td class="pt-own">Author</td></tr>
+            <tr><td><strong>Distribution parsing</strong> and island vocabulary</td><td>Derived from CDFP records</td><td class="pt-own">Author</td></tr>
+            <tr><td><strong>Filipino interface translation</strong></td><td>&mdash;</td><td class="pt-own">Author</td></tr>
+            <tr><td><strong>Software and interface</strong></td><td>&mdash;</td><td class="pt-own">Author</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="paper-note">Put plainly: the <em>list</em> is the government&rsquo;s, the <em>localities</em> are CDFP&rsquo;s, the <em>photographs</em> belong to the people who took them, and the <em>habit classification, the corrections, the parsing and the tool itself</em> are the author&rsquo;s.</p>
+
+      <h4>3 &middot; Method</h4>
+
+      <p><strong>Growth habit.</strong> DAO 2026-20 does not record growth habit. Each of the 1,237 taxa was assigned one of five classes &mdash; tree (440), herb (440), shrub (166), vine (116), liana (75) &mdash; individually, from protologues, floras and CDFP accounts. Where sources disagreed, the dominant mature habit was taken. This is <strong>professional judgment, not an official determination</strong>, and it is the most interpretive layer in the tool.</p>
+
+      <p><strong>Nomenclatural corrections.</strong> Ten names were corrected against CDFP where the issued text carried orthographic or combination errors: <em>Begonia noraaunoriae</em>, <em>B.&nbsp;normaaguilariae</em>, <em>B.&nbsp;platyphylla</em>, <em>Dendrobium victoriae-reginae</em>, <em>Wurfbainia mindanaensis</em>, <em>W.&nbsp;palawanensis</em>, <em>Sphaerostephanos convergens</em>, <em>Pronephrium camarinense</em>, <em>Entada rheedei</em> and <em>Syzygium siderocola</em>. The corrected name is displayed; the taxon concept is unchanged.</p>
+
+      <p><strong>Distribution.</strong> CDFP records localities as free text in which capitalised runs are islands and mixed-case terms are provinces within them. These were parsed into island and province components, with a controlled island vocabulary so that variants resolve to one entity. 1,232 of 1,237 taxa carry a parsed distribution; the remaining five fall back to their island-group tags. The table shows islands only &mdash; the full province hierarchy sits in each species panel.</p>
+
+      <p><strong>GBIF matching.</strong> Names are resolved live against the GBIF Backbone Taxonomy, with a synonym search as fallback. A match is a database correspondence, not a taxonomic opinion, and occurrence counts are whatever GBIF holds at the moment of viewing.</p>
+
+      <p><strong>Photographs.</strong> Images come from GBIF occurrence media, filtered to open licences only &mdash; CC0, CC&nbsp;BY, CC&nbsp;BY-SA, CC&nbsp;BY-NC, CC&nbsp;BY-NC-SA and the Public Domain Mark. Anything All&nbsp;Rights&nbsp;Reserved or unlabelled is discarded rather than shown. Each image is credited to its photographer with its licence and links to the occurrence record. Roughly two thirds of taxa have at least one such image.</p>
+
+      <h4>4 &middot; Limitations</h4>
+      <ul class="paper-list">
+        <li>Growth habit is interpretive and unofficial. Treat it as a finding aid, not a determination.</li>
+        <li>Distribution is a condensed reading of CDFP and may lag revisions there. CDFP is authoritative.</li>
+        <li>GBIF figures are live and unverified, and may disagree with Philippine taxonomic practice.</li>
+        <li>Filipino translations cover the interface only; scientific names, authorities, category codes and the legal reference stay in their original form.</li>
+        <li>Not suitable for permitting, enforcement, compliance or legal use. The official order governs.</li>
+      </ul>
+
+      <h4>5 &middot; References</h4>
+      <ol class="paper-refs">
+        <li>Department of Environment and Natural Resources, Philippines. 2026. <em>DENR Administrative Order No. 2026-20: Updated National List of Threatened Philippine Plants and their Categories</em>. <a href="https://www.bmb.gov.ph/wp-content/uploads/2026/04/dao2026-20.pdf" target="_blank" rel="noopener">bmb.gov.ph</a></li>
+        <li>Pelser, P.B., J.F. Barcelona &amp; D.L. Nickrent (eds.). 2011 onwards. <em>Co&rsquo;s Digital Flora of the Philippines</em>. <a href="https://www.philippineplants.org" target="_blank" rel="noopener">philippineplants.org</a></li>
+        <li>GBIF Secretariat. 2023. <em>GBIF Backbone Taxonomy</em>. Checklist dataset. <a href="https://doi.org/10.15468/39omei" target="_blank" rel="noopener">doi.org/10.15468/39omei</a>, accessed via GBIF.org.</li>
+        <li>Convention on International Trade in Endangered Species of Wild Fauna and Flora. <em>Appendices I, II and III</em>. <a href="https://cites.org/eng/app/appendices.php" target="_blank" rel="noopener">cites.org</a></li>
+        <li>IUCN. <em>The IUCN Red List of Threatened Species</em>. <a href="https://www.iucnredlist.org" target="_blank" rel="noopener">iucnredlist.org</a> &mdash; consulted per species by link; no assessment data is reproduced here.</li>
+        <li>International Plant Names Index. <a href="https://www.ipni.org" target="_blank" rel="noopener">ipni.org</a></li>
+      </ol>
+
+      <h4>6 &middot; Recommended citation</h4>
+      <p>For the tool, the habit classification, the corrections or the interface:</p>
+      <div class="paper-cite" id="paperCiteText">Pranada, M.A.K. 2026. <em>Threatened Philippine Plants: an interactive reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20)</em>. Version 1.0. https://phthreatenedplantsmobile.vercel.app (accessed <span id="paperCiteDate">&mdash;</span>).</div>
+      <button class="copy-cite-btn" id="paperCiteCopy" type="button">
+        <span><svg class="ic"><use href="#i-clipboard"/></svg></span><span id="paperCiteCopyLabel">Copy citation</span>
+      </button>
+      <p class="paper-note">Please <strong>do not cite this tool as the source of the list itself</strong>. For taxa, categories or CITES listings cite reference&nbsp;1; for localities cite reference&nbsp;2; for occurrence data cite reference&nbsp;3; for a photograph cite its photographer and licence as shown beside it.</p>
+
+      <h4>7 &middot; Software and acknowledgements</h4>
+      <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Cormorant Garamond, Inter and IBM Plex Mono. Hosted on Vercel.</p>
+      <p>The interface was written by the author working with <strong>Claude (Anthropic)</strong> as a coding assistant, which also carried out the design review the present layout follows. Claude is a tool, not an author: every taxonomic judgment, habit assignment, correction and editorial decision here is the author&rsquo;s, and responsibility for them rests with the author. Contributors to CDFP and GBIF, and the photographers whose images appear, are gratefully acknowledged &mdash; this tool would show very little without them.</p>
+
+      <p class="paper-colophon">Mc Andrew K. Pranada, botanist &middot; Version 1.0, 2026 &middot; Corrections welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a><br>See also the <button type="button" class="paper-inline-link js-open-disclaimer">About notice</button> for rights, terms of use and warranty.</p>
+
     </div>
   </div>
 </div>
@@ -4065,7 +4246,59 @@ document.getElementById('disclaimerOverlay').addEventListener('click',function(e
   if(e.target===this)this.classList.remove('open');
 });
 
+/* ── Methods & Citation paper ──
+   Addressable at #doc so it can be linked and cited directly. restoreHash
+   parses key=value pairs and ignores keys it does not know, so this rides
+   alongside filter state without colliding with it. */
+function openPaper(push){
+  var ov=document.getElementById('paperOverlay');
+  if(!ov)return;
+  var d=document.getElementById('paperCiteDate');
+  if(d)d.textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  ov.classList.add('open');
+  ov.querySelector('.modal-body').scrollTop=0;
+  if(push&&location.hash.indexOf('doc=1')<0){
+    history.replaceState(null,'',location.pathname+'#doc=1');
+  }
+}
+function closePaper(){
+  document.getElementById('paperOverlay').classList.remove('open');
+  if(location.hash.indexOf('doc=1')>=0)history.replaceState(null,'',location.pathname+location.search);
+}
+document.querySelectorAll('.js-open-paper').forEach(function(btn){
+  btn.addEventListener('click',function(){openPaper(true);});
+});
+document.getElementById('paperClose').addEventListener('click',closePaper);
+document.getElementById('paperOverlay').addEventListener('click',function(e){
+  if(e.target===this)closePaper();
+});
+
+/* Copy the citation as plain text — the rendered block carries <em> and a
+   date span, and pasting markup into a reference manager is not useful. */
+(function(){
+  var btn=document.getElementById('paperCiteCopy');
+  if(!btn)return;
+  btn.addEventListener('click',function(){
+    var el=document.getElementById('paperCiteText');
+    var txt=el.innerText.replace(/\s+/g,' ').trim();
+    var done=function(){
+      btn.classList.add('copied');
+      var lbl=document.getElementById('paperCiteCopyLabel');
+      var was=lbl?lbl.textContent:'';
+      if(lbl)lbl.textContent=t('copied')||'Copied';
+      setTimeout(function(){btn.classList.remove('copied');if(lbl)lbl.textContent=was;},2000);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done,done);
+    }else{
+      var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
+      ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();done();
+    }
+  });
+})();
+
 document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('paperOverlay').classList.contains('open')){closePaper();return;}
   if(e.key==='Escape'){
     document.getElementById('analyticsOverlay').classList.remove('open');
     document.getElementById('disclaimerOverlay').classList.remove('open');
@@ -4073,13 +4306,21 @@ document.addEventListener('keydown',function(e){
 });
 
 buildFams();
+/* Captured before render(), which is wrapped to call encodeHash() and so
+   rewrites location.hash from filter state — that drops any key encodeHash
+   does not itself emit, doc=1 included. Read it first, act on it after. */
+var bootHash=location.hash;
 restoreHash();
 render();
 applyLang();
 /* A shared/deep link carries filter or search state in the hash — showing
    the cover first would strand that link one extra click from the data
    it was pointing at, so those loads skip straight to the catalogue. */
-if(location.hash&&location.hash.length>1)enterCatalogue();
+if(bootHash&&bootHash.length>1&&!/^#doc=1$/.test(bootHash))enterCatalogue();
+/* #doc=1 opens the paper directly — a citable link should land on the
+   document, not one click away from it. A bare #doc=1 keeps the cover
+   behind it, since the link is to the document, not to the catalogue. */
+if(/(^|[#&])doc=1(&|$)/.test(bootHash))openPaper(true);
 
 /* ══════════════════════════════════════════
    MOBILE JS
