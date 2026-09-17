@@ -2020,6 +2020,23 @@ thead th{border-bottom-color:var(--bd)}
   position:relative;background:var(--bg);overflow-y:auto;padding:48px 24px;text-align:center}
 .landing-inner{margin-top:auto}
 .landing-disclaimer-link{margin-bottom:auto}
+
+/* The cover owns its own height, and is NOT sized by flex while doing it.
+   Relying on flex:1 to inherit body's min-height is the WebKit quirk
+   described at the top of this file: on iOS the item does not stretch
+   into the container's min-height, so .landing collapsed to its content,
+   the auto margins had nothing to centre within, and the cover sat at the
+   top of the screen with the slack below it. Switching body to block for
+   this view removes flex from the sizing path altogether — .landing is
+   then an ordinary block with an ordinary min-height, which every engine
+   honours. It remains a flex column for its own children, so the
+   centring inside it is unchanged.
+
+   svh, not dvh or --vh: the small viewport does not change as Safari's
+   chrome retracts, so the box is sized once and stays put. The --vh line
+   before it is the fallback for engines without the 2023 units. */
+body.view-landing{display:block}
+.landing{min-height:calc(var(--vh, 1dvh) * 100);min-height:100svh}
 body.view-landing .landing{display:flex}
 body.view-landing .hdr-toolbar-wrap,
 body.view-landing .body-wrap,
@@ -2263,11 +2280,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
      Every value below is trimmed and verified (by measuring real
      rendered height at a 393x695 viewport, matching that device) to
      comfortably clear that with room to spare, not just to look denser. */
-  /* No min-height of its own any more. body carries the one height and
-     .landing stretches to it through flex:1 — which also sidesteps the
-     WebKit quirk noted at the top of the file, where a min-height in
-     viewport units is unreliable on an element that flex is already
-     sizing. One element owns the height; the other just fills it. */
   .landing{padding:20px 20px}
   .landing-mark{width:52px;height:52px;font-size:var(--t-xl);margin-bottom:14px}
   .landing-title{font-size:26px;margin-bottom:8px}
