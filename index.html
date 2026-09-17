@@ -1091,7 +1091,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 ══════════════════════════════════════════ */
 @media (max-width:768px){
   /* Body */
-  /* Real device diagnostics (see the ?debug=vh overlay) showed this
+  /* Real device diagnostics showed this
      100dvh resolving to a taller value than the actually-visible
      screen (window.innerHeight/visualViewport.height) on a real
      iPhone — body ended up 40px taller than what's visible, and since
@@ -2261,25 +2261,38 @@ body.entering .body-wrap{animation:app-in .3s ease}
 }
 
 @media (max-width:768px){
-  /* --vh (real window.innerHeight, from the script in <head>) instead
-     of raw dvh is still needed here and on body — dvh measured a
-     taller value than the actually-visible screen on a real iPhone in
-     testing, and since .landing has flex:1 inside body, either one
-     using the wrong unit was enough to throw the other off too.
+  /* Height and centring on this cover have been got wrong several times,
+     so the current arrangement is recorded in full. Three things had to
+     be true together, and each was found on a real iPhone rather than in
+     an emulator:
 
-     But the min-height was never the whole story. The on-screen
-     ?debug=vh diagnostic (still in the markup below) caught the real
-     bug directly on a real iPhone: with Safari's chrome visible, the
-     actually-visible screen was 695px, but this content — logo,
-     title, description, the DAO card, the two reference cards,
-     disclaimer, plus their padding/margins — needed 735px to render
-     without clipping. The centering itself was already correct
-     (confirmed: symmetric 48px gaps top and bottom); the content
-     simply didn't fit on one real screen, so the bottom 40px sat below
-     the fold until a scroll/resize grew the visible area to match.
-     Every value below is trimmed and verified (by measuring real
-     rendered height at a 393x695 viewport, matching that device) to
-     comfortably clear that with room to spare, not just to look denser. */
+     1. The box must not resize mid-gesture. It was sized from
+        window.innerHeight via --vh, which legitimately grows as Safari
+        retracts its chrome, so the composition re-centred under the
+        reader's thumb. It is sized with svh now (see body): the SMALL
+        viewport, which does not move when the chrome hides. --vh remains
+        only as the preceding fallback declaration.
+
+     2. The box must not be sized by flex. Inheriting body's min-height
+        through flex:1 is the WebKit quirk described at the top of this
+        file — on iOS the item does not stretch into the container's
+        min-height, so .landing collapsed to its content and the cover sat
+        at the top of the screen. body is display:block under
+        .view-landing, making .landing an ordinary block with an ordinary
+        min-height.
+
+     3. The insets must come out of the box. The page is
+        apple-mobile-web-app-capable with a black-translucent status bar
+        and viewport-fit=cover, so from the Home Screen the web view is
+        the whole screen and the status bar and home indicator sit on top
+        of the page. Centring inside that pushed everything up under the
+        clock until env(safe-area-inset-*) was padded in below.
+
+     Sizing values below are verified against a 393x695 viewport, which
+     matched the reporting device. Note also that a Home Screen web app
+     caches its HTML far harder than a Safari tab: while diagnosing this,
+     three correct deploys in a row never reached the device at all.
+     Verify changes in Safari, not from the icon. */
   /* Safe-area insets, which this had been missing entirely.
      The page declares viewport-fit=cover and apple-mobile-web-app-capable
      with a black-translucent status bar, so when it is opened from the
@@ -2433,62 +2446,6 @@ body.entering .body-wrap{animation:app-in .3s ease}
   </div>
   <button class="landing-disclaimer-link js-open-disclaimer" type="button" data-i18n="disclaimerLabel">About</button>
 </div>
-
-<!-- Temporary on-screen diagnostic for the landing-centering bug — only
-     runs behind ?debug=vh, never shown to a normal visitor. Two rounds
-     of fixes for this checked out fine in a desktop emulator and still
-     failed on a real iPhone, so guessing at a third fix blind isn't
-     worth it — this reads the real numbers directly off the device
-     that's actually failing, refreshed live so a screenshot taken
-     before vs. after scrolling/dragging can be compared directly.
-     Remove this block once the bug is confirmed fixed. */ -->
-<script>
-(function(){
-  if(!/[?&]debug=vh(&|$)/.test(location.search))return;
-  var el=document.createElement('pre');
-  el.id='vhDebug';
-  el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;'+
-    'background:rgba(0,0,0,.85);color:#0f0;font:10px/1.45 monospace;'+
-    'padding:8px;margin:0;white-space:pre-wrap;pointer-events:none;'+
-    'max-height:55vh;overflow:auto';
-  document.body.appendChild(el);
-  function upd(){
-    var landing=document.getElementById('landing');
-    var inner=document.querySelector('.landing-inner');
-    if(!landing||!inner){el.textContent='landing/.landing-inner not found';return;}
-    var lr=landing.getBoundingClientRect();
-    var ir=inner.getBoundingClientRect();
-    var cs=getComputedStyle(landing);
-    var vv=window.visualViewport;
-    el.textContent=[
-      'UA: '+navigator.userAgent.slice(0,70),
-      'innerW/H: '+window.innerWidth+' x '+window.innerHeight,
-      'visualViewport W/H: '+(vv?vv.width.toFixed(0)+' x '+vv.height.toFixed(0):'n/a'),
-      /* The whole point of the svh switch: body height must NOT move as
-         Safari's chrome retracts. Watch this line while dragging — if it
-         holds steady the cover will stay put; if it tracks innerHeight,
-         svh is not being applied and the --vh fallback is in charge. */
-      'svh supported: '+(window.CSS&&CSS.supports('height','100svh')),
-      'body min-height: '+getComputedStyle(document.body).minHeight,
-      'body height: '+document.body.getBoundingClientRect().height.toFixed(0),
-      'devicePixelRatio: '+window.devicePixelRatio,
-      '--vh custom prop: '+getComputedStyle(document.documentElement).getPropertyValue('--vh'),
-      '.landing rect: top='+lr.top.toFixed(0)+' height='+lr.height.toFixed(0)+' bottom='+lr.bottom.toFixed(0),
-      '.landing computed min-height: '+cs.minHeight,
-      '.landing computed height: '+cs.height,
-      '.landing display/justify-content/align-items: '+cs.display+' / '+cs.justifyContent+' / '+cs.alignItems,
-      '.landing-inner rect: top='+ir.top.toFixed(0)+' height='+ir.height.toFixed(0)+' bottom='+ir.bottom.toFixed(0),
-      'body scrollHeight/clientHeight: '+document.body.scrollHeight+' / '+document.body.clientHeight,
-      'html scrollHeight/clientHeight: '+document.documentElement.scrollHeight+' / '+document.documentElement.clientHeight,
-      'window.scrollY: '+window.scrollY,
-      'body class: '+document.body.className,
-      'updated: '+new Date().toLocaleTimeString()
-    ].join('\n');
-  }
-  upd();
-  setInterval(upd,300);
-})();
-</script>
 
 <!-- ══ HEADER ══ -->
 <div class="hdr-toolbar-wrap">

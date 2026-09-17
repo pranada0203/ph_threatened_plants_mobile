@@ -293,7 +293,15 @@ var activeSpecies=null // Currently open species
 - **Method**: push to `main` → auto-deploy (GitHub Desktop or `git push`)
 - **Files needed in repo root**:
   - `index.html`
+  - `vercel.json`
   - `logo_512.png`, `logo_192.png`, `logo_180.png`, `logo_152.png`, `logo_32.png`, `logo_16.png`
+
+### Caching — read this before debugging anything on a phone
+`vercel.json` sets `Cache-Control: public, max-age=0, must-revalidate` on `/` and `/index.html`, so the HTML is revalidated on every load. The logos keep a week-long cache; they never change.
+
+This exists because the app declares `apple-mobile-web-app-capable`, so it can be added to the iOS Home Screen and run standalone — and a standalone web app caches its HTML far more stubbornly than a Safari tab. While diagnosing a layout bug, **three correct deploys in a row never reached the device at all**; the only fix was deleting and re-adding the Home Screen icon.
+
+**Verify changes in Safari, not from the Home Screen icon.** If the icon shows something stale, delete and re-add it.
 - **Enable Vercel Analytics** in project dashboard after deploy
 
 ---
