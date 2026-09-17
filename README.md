@@ -244,6 +244,12 @@ Lowest pairwise separation is EN vs VU at 32.3 — both warm, and the closest pa
 
 The mobile sheet's drag handle takes `--fa-deco`, not `--bd-strong`: the latter is a border tone against white and falls to 1.35:1 on a category tint, which made the swipe affordance vanish. It is not held to 3:1 — the handle hints at the gesture rather than being the control, and the labelled close button is always beside it.
 
+**`--bd` and `--bd-strong` are tones for white and paper. Do not put either on a category tint.** Both fall under 1.6:1 there. Anything that has to stay visible across grounds takes `--fa` or darker.
+
+`.copy-cite-btn` is the worked example. Its dashed frame is the entire affordance and the button renders on six different grounds — four tints in the panel, white in the Methods modal. On `--bd` it measured 1.06:1 on the CR tint and **1.30:1 on white**, so it had never been visible anywhere; the tints only made it obvious. It is now `1px dashed var(--fa)`, which clears 3:1 on all six, and inside the panel's identity zone that token resolves to `--mu` — so the frame comes out a step stronger exactly where the ground is busiest, with no second rule. 1px rather than the old 1.5px: at this tone the heavier stroke reads as a box.
+
+Its `:hover` and `.copied` states set a background as well as a border colour, so they are self-contained and unaffected by the tint behind them.
+
 ### Type scale
 Every `font-size` resolves through these tokens. Six raw px values remain, all deliberate one-offs; the mobile search input is pinned to 16px because iOS Safari zooms the page on focus below that.
 
