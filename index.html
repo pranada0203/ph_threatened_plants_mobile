@@ -1585,7 +1585,14 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .feedback-inner{position:relative;background:var(--sf);border-radius:24px 24px 0 0;
   padding:0 0 env(safe-area-inset-bottom);
   box-shadow:0 -8px 40px rgba(0,0,0,.2);
-  animation:sheet-in .24s cubic-bezier(.4,0,.2,1)}
+  animation:sheet-in .24s cubic-bezier(.4,0,.2,1);
+  /* Springs back when a drag is released short of the threshold. The
+     gesture handler clears this to none while a finger is down so the
+     sheet tracks it exactly, and restores it on release. */
+  transition:transform .22s cubic-bezier(.4,0,.2,1)}
+/* The drag target, so make it look like one. */
+.feedback-handle{touch-action:none;cursor:grab}
+.feedback-hdr{touch-action:none}
 .feedback-handle{width:36px;height:4px;background:var(--bd-strong);
   border-radius:4px;margin:12px auto 0}
 .feedback-hdr{padding:16px 22px 10px;border-bottom:1px solid var(--bd)}
@@ -4503,6 +4510,13 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     document.getElementById('analyticsOverlay').classList.remove('open');
     document.getElementById('disclaimerOverlay').classList.remove('open');
+    /* The feedback sheet had no keyboard dismissal at all — on desktop,
+       where it is a centred modal with no handle, a backdrop click was
+       the only way out. */
+    var fb=document.getElementById('feedbackPanel');
+    if(fb){fb.classList.remove('open');
+      var fi=fb.querySelector('.feedback-inner');
+      if(fi)fi.style.transform='';}
   }
 });
 
@@ -4786,9 +4800,53 @@ function syncDesktopChips(){
       panel.classList.add('open');
     });
   }
+  var inner=panel?panel.querySelector('.feedback-inner'):null;
+  function closeFeedback(){
+    if(!panel)return;
+    panel.classList.remove('open');
+    if(inner)inner.style.transform='';
+  }
   if(backdrop&&panel){
-    backdrop.addEventListener('click',function(){
-      panel.classList.remove('open');
+    backdrop.addEventListener('click',closeFeedback);
+  }
+
+  /* Swipe-to-close. The sheet has carried a drag handle since it was
+     built, but nothing was ever listening to it — the affordance promised
+     a gesture the panel did not implement, so the only way out was a tap
+     on the backdrop. Mirrors the species panel's gesture, with the grab
+     area widened to the header as well: a 36x4px handle is a small target
+     and the whole top of a sheet is conventionally draggable.
+     Mobile only, matching .feedback-handle{display:none} above 769px,
+     where this is a centred modal rather than a sheet. */
+  if(inner){
+    var startY=0,dragging=false;
+    var grip=[inner.querySelector('.feedback-handle'),inner.querySelector('.feedback-hdr')].filter(Boolean);
+    grip.forEach(function(el){
+      el.addEventListener('touchstart',function(e){
+        if(window.innerWidth>=769)return;
+        startY=e.touches[0].clientY;dragging=true;
+        inner.style.transition='none';
+      },{passive:true});
+      el.addEventListener('touchmove',function(e){
+        if(!dragging||window.innerWidth>=769)return;
+        var dy=e.touches[0].clientY-startY;
+        if(dy>0)inner.style.transform='translateY('+dy+'px)';
+      },{passive:true});
+      el.addEventListener('touchend',function(e){
+        if(!dragging||window.innerWidth>=769)return;
+        dragging=false;
+        inner.style.transition='';
+        var dy=e.changedTouches[0].clientY-startY;
+        /* Same 60px threshold the species panel uses, so the two sheets
+           feel identical to dismiss. */
+        if(dy>60)closeFeedback();
+        else inner.style.transform='';
+      },{passive:true});
+      /* A cancelled touch (an incoming call, a system gesture) must not
+         leave the sheet stuck mid-drag. */
+      el.addEventListener('touchcancel',function(){
+        dragging=false;inner.style.transition='';inner.style.transform='';
+      },{passive:true});
     });
   }
   if(shareBtn){
