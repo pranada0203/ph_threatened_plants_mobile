@@ -1100,7 +1100,22 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
      .landing directly via --vh. Using the same --vh here keeps body
      and .landing agreeing on one real, JS-measured number instead of
      two different height sources that can drift apart. */
-  body{overflow:auto;height:auto;min-height:calc(var(--vh, 1dvh) * 100);font-size:var(--t-sm)}
+  /* Two declarations, deliberately. The first is the JS-measured
+     fallback described above, for engines without the 2023 viewport
+     units. The second wins wherever it parses.
+
+     svh, not dvh and not --vh. Both of those track the viewport as
+     Safari's chrome retracts, so the box changed height mid-gesture and
+     the cover re-centred under the reader's thumb — open the app and
+     drag, and the whole composition jumped. svh is the SMALL viewport:
+     the height with the chrome shown, and it does not change when the
+     chrome hides. The cover is sized once, to the height that is always
+     visible, and then stays put. The cost is some empty space below the
+     fold once the chrome retracts, which is the right trade against a
+     layout that moves while you look at it. */
+  body{overflow:auto;height:auto;font-size:var(--t-sm);
+    min-height:calc(var(--vh, 1dvh) * 100);
+    min-height:100svh}
 
   /* ── STICKY HEADER + TOOLBAR GROUP ── */
   .hdr-toolbar-wrap{position:sticky;top:0;z-index:21}
@@ -2248,7 +2263,12 @@ body.entering .body-wrap{animation:app-in .3s ease}
      Every value below is trimmed and verified (by measuring real
      rendered height at a 393x695 viewport, matching that device) to
      comfortably clear that with room to spare, not just to look denser. */
-  .landing{padding:20px 20px;min-height:calc(var(--vh, 1dvh) * 100)}
+  /* No min-height of its own any more. body carries the one height and
+     .landing stretches to it through flex:1 — which also sidesteps the
+     WebKit quirk noted at the top of the file, where a min-height in
+     viewport units is unreliable on an element that flex is already
+     sizing. One element owns the height; the other just fills it. */
+  .landing{padding:20px 20px}
   .landing-mark{width:52px;height:52px;font-size:var(--t-xl);margin-bottom:14px}
   .landing-title{font-size:26px;margin-bottom:8px}
   .landing-desc{font-size:var(--t-sm);margin-bottom:14px}
@@ -2419,6 +2439,13 @@ body.entering .body-wrap{animation:app-in .3s ease}
       'UA: '+navigator.userAgent.slice(0,70),
       'innerW/H: '+window.innerWidth+' x '+window.innerHeight,
       'visualViewport W/H: '+(vv?vv.width.toFixed(0)+' x '+vv.height.toFixed(0):'n/a'),
+      /* The whole point of the svh switch: body height must NOT move as
+         Safari's chrome retracts. Watch this line while dragging — if it
+         holds steady the cover will stay put; if it tracks innerHeight,
+         svh is not being applied and the --vh fallback is in charge. */
+      'svh supported: '+(window.CSS&&CSS.supports('height','100svh')),
+      'body min-height: '+getComputedStyle(document.body).minHeight,
+      'body height: '+document.body.getBoundingClientRect().height.toFixed(0),
       'devicePixelRatio: '+window.devicePixelRatio,
       '--vh custom prop: '+getComputedStyle(document.documentElement).getPropertyValue('--vh'),
       '.landing rect: top='+lr.top.toFixed(0)+' height='+lr.height.toFixed(0)+' bottom='+lr.bottom.toFixed(0),
