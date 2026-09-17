@@ -215,6 +215,20 @@ Charts are the one place colour encodes a dimension freely — but growth habit 
 
 `--fa` must clear 4.5:1 against **both** grounds, not just white — `.kbd`, `.ext-link-sub`, `.similar-common`, `.live-status` and the search placeholders sit on `--bg`. `#6f6f6f` measures 5.02:1 on `--sf` and 4.56:1 on `--bg`. If it is read, it takes `--fa`; `--fa-deco` never carries text.
 
+**There is a third ground.** The species panel's identity zone (`.panel-toolbar` + `.panel-hdr`) is a category tint, not white and not paper, and `--fa` was never tuned for it. That zone therefore redefines `--fa` to `--mu` locally:
+
+```css
+.panel-toolbar,.panel-hdr{--fa:var(--mu)}
+```
+
+Every faint-text consumer in the zone — authority, nav counter, close icon, section eyebrows — resolves `var(--fa)`, so one declaration lifts all four. Without it the deepened CR tint puts them at **4.11:1** and fails AA; with it they read 5.47:1, and 5.84–6.47:1 on the other three tints. **Deepen a panel tint and you must re-check this**, because `--mu` is the last step before the text stops being faint at all.
+
+### Category tints
+
+Two tokens per category, not one: `--<cat>-bg` tints the small status pill, `--cr-panel` tints the panel's identity zone. They were one token until the CR panel proved indistinguishable from the paper ground at pill strength — separation of **14.3**, effectively invisible. CR's panel tint is now `#fee2e2` (separation 44.3).
+
+Keep them separate. Deepening the shared token would also deepen the CR pill in the status column, making CR rows outweigh EN, VU and OTS across 270 rows — the pills are a family and should stay one weight. Only CR has a `-panel` token so far; EN (15.7), VU (23.8) and OTS (29.3) still use pill strength in the panel and are correspondingly flatter.
+
 ### Type scale
 Every `font-size` resolves through these tokens. Six raw px values remain, all deliberate one-offs; the mobile search input is pinned to 16px because iOS Safari zooms the page on focus below that.
 

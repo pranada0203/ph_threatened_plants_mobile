@@ -283,7 +283,12 @@ function applyLang(){
 ══════════════════════════════════════════ */
 :root {
   /* Status */
-  --cr:#b91c1c;--cr-bg:#fef2f2;--cr-bd:#fca5a5;
+  /* --cr-bg tints the CR pill; --cr-panel tints the species panel's identity
+     zone, which needs to carry the red across a much larger field and was
+     indistinguishable from the paper ground at pill strength. Separate
+     tokens so deepening the panel does not make CR pills outweigh EN/VU/OTS
+     in the status column. */
+  --cr:#b91c1c;--cr-bg:#fef2f2;--cr-bd:#fca5a5;--cr-panel:#fee2e2;
   --en:#c2410c;--en-bg:#fff7ed;--en-bd:#fdba74;
   --vu:#a16207;--vu-bg:#fefce8;--vu-bd:#fde047;
   --ots:#1d4ed8;--ots-bg:#eff6ff;--ots-bd:#93c5fd;
@@ -802,7 +807,7 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    does not contradict it. That rule was about 1,237 rows repeating the
    same hue. Here one species is on screen at a time and there is nothing
    to repeat. */
-.panel[data-cat=CR]{--sp:var(--cr);--sp-bg:var(--cr-bg);--sp-bd:var(--cr-bd)}
+.panel[data-cat=CR]{--sp:var(--cr);--sp-bg:var(--cr-panel);--sp-bd:var(--cr-bd)}
 .panel[data-cat=EN]{--sp:var(--en);--sp-bg:var(--en-bg);--sp-bd:var(--en-bd)}
 .panel[data-cat=VU]{--sp:var(--vu);--sp-bg:var(--vu-bg);--sp-bd:var(--vu-bd)}
 .panel[data-cat=OTS]{--sp:var(--ots);--sp-bg:var(--ots-bg);--sp-bd:var(--ots-bd)}
@@ -813,6 +818,12 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* Identity zone — toolbar and header share one tinted field, closed by a
    rule in the full-strength accent so the status reads before the name
    does. */
+/* --fa was tuned for white and for the paper ground, and a deeper tint puts
+   it under 4.5:1 — on the CR panel it lands at 4.11. The whole zone's faint
+   text (authority, nav counter, close icon, section eyebrows) reads
+   var(--fa), so redefining the token here lifts all four at once instead of
+   restyling each. --mu clears AA on every category tint. */
+.panel-toolbar,.panel-hdr{--fa:var(--mu)}
 .panel-toolbar{background:var(--sp-bg)}
 .panel-hdr{padding:12px 16px 14px;border-bottom:2px solid var(--sp);
   background:var(--sp-bg);flex-shrink:0}
