@@ -4404,6 +4404,40 @@ function buildAnalytics(){
     +'</div>'
     +'<div class="chart-grid">'
 
+    /* ── Distribution map ── */
+    +buildIslandMap(SET)
+
+    /* ── Top Islands by Threatened Species ── */
+    +'<div class="chart-card wide"><div class="chart-title">'+esc(t('topIslands'))+'</div>'
+    +function(){
+      /* Count species per island keyword */
+      var ISLANDS=[
+        'LUZON','MINDANAO','PALAWAN','PANAY','NEGROS','CEBU','LEYTE','SAMAR',
+        'MINDORO','BOHOL','MASBATE','BASILAN','SIBUYAN','CAMIGUIN','CATANDUANES',
+        'BILIRAN','DINAGAT','BATANES','TABLAS','SIARGAO','MARINDUQUE','HOMONHON',
+        'POLILLO','SULU','TAWI-TAWI','BALABAC','BORACAY','CORON','BUSUANGA',
+        'SIQUIJOR','GUIMARAS','BANTAYAN'
+      ];
+      var counts=ISLANDS.map(function(isl){
+        var n=SET.filter(function(s){
+          return islandMatches(s.dist,isl);
+        }).length;
+        return{isl:isl,n:n};
+      }).filter(function(d){return d.n>0;})
+        .sort(function(a,b){return b.n-a.n;})
+        .slice(0,20);
+      var maxN=(counts[0]&&counts[0].n)||1;
+      if(!counts.length)return '';
+      return '<div class="chart-scale">Bars scaled to '+maxN+' &mdash; '
+          +esc(counts[0].isl.charAt(0)+counts[0].isl.slice(1).toLowerCase())+'</div>'
+        +counts.map(function(d){
+          var label=d.isl.charAt(0)+d.isl.slice(1).toLowerCase();
+          return barRow(label,d.n,pctOf(d.n,maxN),'var(--g)');
+        }).join('');
+    }()
+    +'<div style="margin-top:8px;font-size:var(--t-micro);color:var(--fa);font-style:italic">Based on CDFP distribution records. A species counted once per island regardless of how many localities it occupies there.</div>'
+    +'</div>'
+
     /* ── Top 15 Families ── */
     +'<div class="chart-card wide"><div class="chart-title">'+esc(t('top15'))+'</div>'
     +'<div class="chart-scale">Bars scaled to '+maxFam+' &mdash; '+esc(famArr[0].f)+'</div>'
@@ -4510,40 +4544,6 @@ function buildAnalytics(){
         }).join('');
     }()
     +'<div style="margin-top:10px;font-size:var(--t-micro);color:var(--fa);font-style:italic">'+SET.length.toLocaleString()+' habit assignments shown; assigned by the developer.</div>'
-    +'</div>'
-
-    /* ── Distribution map ── */
-    +buildIslandMap(SET)
-
-    /* ── Top Islands by Threatened Species ── */
-    +'<div class="chart-card wide"><div class="chart-title">'+esc(t('topIslands'))+'</div>'
-    +function(){
-      /* Count species per island keyword */
-      var ISLANDS=[
-        'LUZON','MINDANAO','PALAWAN','PANAY','NEGROS','CEBU','LEYTE','SAMAR',
-        'MINDORO','BOHOL','MASBATE','BASILAN','SIBUYAN','CAMIGUIN','CATANDUANES',
-        'BILIRAN','DINAGAT','BATANES','TABLAS','SIARGAO','MARINDUQUE','HOMONHON',
-        'POLILLO','SULU','TAWI-TAWI','BALABAC','BORACAY','CORON','BUSUANGA',
-        'SIQUIJOR','GUIMARAS','BANTAYAN'
-      ];
-      var counts=ISLANDS.map(function(isl){
-        var n=SET.filter(function(s){
-          return islandMatches(s.dist,isl);
-        }).length;
-        return{isl:isl,n:n};
-      }).filter(function(d){return d.n>0;})
-        .sort(function(a,b){return b.n-a.n;})
-        .slice(0,20);
-      var maxN=(counts[0]&&counts[0].n)||1;
-      if(!counts.length)return '';
-      return '<div class="chart-scale">Bars scaled to '+maxN+' &mdash; '
-          +esc(counts[0].isl.charAt(0)+counts[0].isl.slice(1).toLowerCase())+'</div>'
-        +counts.map(function(d){
-          var label=d.isl.charAt(0)+d.isl.slice(1).toLowerCase();
-          return barRow(label,d.n,pctOf(d.n,maxN),'var(--g)');
-        }).join('');
-    }()
-    +'<div style="margin-top:8px;font-size:var(--t-micro);color:var(--fa);font-style:italic">Based on CDFP distribution records. A species counted once per island regardless of how many localities it occupies there.</div>'
     +'</div>'
 
     +'</div>'; /* close chart-grid */
