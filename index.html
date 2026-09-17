@@ -53,6 +53,11 @@ var T={
     landingCta:'Explore the List',
     landingSearchPh:'Search species or common name',
     paperLabel:'Methods & Citation',
+    photoLoading:'Looking for photographs…',
+    photoNone:'No openly-licensed photographs of this taxon in GBIF.',
+    photoInexact:'Photographs are shown only where GBIF matches this exact species. This name resolved no further than a higher rank, so any images would be of other species.',
+    photoErr:'Photographs could not be loaded.',
+    occInexact:'No species-level match — occurrence counts withheld, as they would be for a higher rank.',
     paperEyebrow:'Documentation',
     paperCardLabel:'Methods, sources & how to cite',
     paperCardSub:'What is reproduced, what is the author’s, and the references',
@@ -114,6 +119,11 @@ var T={
     landingCta:'Tuklasin ang Listahan',
     landingSearchPh:'Espesye o karaniwang pangalan',
     paperLabel:'Pamamaraan at Pagsipi',
+    photoLoading:'Naghahanap ng mga larawan…',
+    photoNone:'Walang bukas na lisensyadong larawan ng taxon na ito sa GBIF.',
+    photoInexact:'Ipinapakita lamang ang mga larawan kung eksaktong tugma ang species sa GBIF. Hindi umabot sa antas ng species ang pangalang ito, kaya ibang species ang lalabas.',
+    photoErr:'Hindi ma-load ang mga larawan.',
+    occInexact:'Walang tugma sa antas ng species — hindi ipinapakita ang bilang ng okurensya.',
     paperEyebrow:'Dokumentasyon',
     paperCardLabel:'Pamamaraan, pinagkunan, at paano sipiin',
     paperCardSub:'Ano ang hango, ano ang sa may-akda, at ang mga sanggunian',
@@ -892,6 +902,21 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 /* Marks the one image that could not load, so a dead host leaves a quiet
    tile rather than a broken-image glyph. JS removes it outright. */
 .sp-media-item.failed{display:none}
+/* Placeholder tiles, the same size and rhythm as the photographs that
+   replace them, so nothing moves when they arrive. */
+.sp-media-skel{aspect-ratio:1;border-radius:10px;background:var(--bd);
+  animation:sp-media-pulse 1.4s ease-in-out infinite}
+.sp-media-skel:nth-child(2){animation-delay:.18s}
+.sp-media-skel:nth-child(3){animation-delay:.36s}
+@keyframes sp-media-pulse{0%,100%{opacity:.45}50%{opacity:.85}}
+@media (prefers-reduced-motion:reduce){
+  .sp-media-skel{animation:none;opacity:.55}
+}
+.sp-media-wait{font-style:italic}
+/* The resolved-but-empty state. Quiet, because it is the answer to a
+   question the reader only just started asking. */
+.sp-media-none{font-size:var(--t-xs);color:var(--fa);line-height:1.55;
+  background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
 .sp-media-credit{font-size:var(--t-micro);color:var(--fa);line-height:1.5;margin-top:7px}
 .sp-media-credit a{color:var(--gl);text-decoration:none}
 .sp-media-credit a:hover{text-decoration:underline}
@@ -2860,6 +2885,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <p><strong>GBIF matching.</strong> Names are resolved live against the GBIF Backbone Taxonomy, with a synonym search as fallback. A match is a database correspondence, not a taxonomic opinion, and occurrence counts are whatever GBIF holds at the moment of viewing.</p>
 
       <p><strong>Photographs.</strong> Images come from GBIF occurrence media, filtered to open licences only &mdash; CC0, CC&nbsp;BY, CC&nbsp;BY-SA, CC&nbsp;BY-NC, CC&nbsp;BY-NC-SA and the Public Domain Mark. Anything All&nbsp;Rights&nbsp;Reserved or unlabelled is discarded rather than shown. Each image is credited to its photographer with its licence and links to the occurrence record. Roughly two thirds of taxa have at least one such image.</p>
+      <p>Photographs are shown <strong>only where GBIF matches the exact species</strong>. Where a name cannot be placed, GBIF answers with the nearest higher rank instead &mdash; <em>Begonia noraaunoriae</em> resolves no further than the genus <em>Begonia</em> &mdash; and a media query against that key returns pictures of other species in the genus, which the panel would otherwise display under this species' name. Occurrence counts are withheld on the same matches for the same reason: a genus-level count presented beneath a species heading reads as that species' count. Both are suppressed and the reason is stated in place.</p>
 
       <h4>4 &middot; What the distribution data shows</h4>
       <p>Because every taxon now carries a parsed island list, the list can be read as a distribution dataset rather than only as a register of names. The patterns below are descriptive summaries of the 1,232 taxa with a parsed distribution &mdash; they are not analyses of extinction risk, and the caveats at the end of this section limit what any of them can be taken to mean.</p>
@@ -3566,8 +3592,7 @@ function openPanel(s,fromNav){
   document.getElementById('gbifBlock').innerHTML='<div class="live-status loading-dots">Fetching from GBIF</div>';
   /* Photographs stay hidden until images actually resolve for THIS species —
      never carry the previous species' plate across a panel navigation. */
-  var mediaSec=document.getElementById('mediaSection');
-  if(mediaSec){mediaSec.style.display='none';document.getElementById('mediaBlock').innerHTML='';}
+  showMediaSkeleton();
 
   /* Sync table row highlight and scroll into view when navigating */
   document.querySelectorAll('.active-row').forEach(function(r){r.classList.remove('active-row');});
@@ -3632,6 +3657,27 @@ function mediaThumbUrl(u){
   return u;
 }
 
+/* The section is always present once a panel opens, and always resolves —
+   to photographs, or to a line saying why there are none. It used to stay
+   hidden until images arrived, which meant a reader had no idea whether
+   photographs were coming, and the panel jumped when they did. */
+function showMediaSkeleton(){
+  var sec=document.getElementById('mediaSection');
+  var block=document.getElementById('mediaBlock');
+  if(!sec||!block)return;
+  block.innerHTML='<div class="sp-media-grid">'
+    +'<div class="sp-media-skel"></div><div class="sp-media-skel"></div><div class="sp-media-skel"></div>'
+    +'</div><div class="sp-media-credit sp-media-wait">'+esc(t('photoLoading'))+'</div>';
+  sec.style.display='';
+}
+function setMediaMessage(token,msg){
+  var gbifBlock=document.getElementById('gbifBlock');
+  if(gbifBlock&&gbifBlock._gbifToken!==token)return;
+  var block=document.getElementById('mediaBlock');
+  if(!block)return;
+  block.innerHTML='<div class="sp-media-none">'+esc(msg)+'</div>';
+}
+
 function fetchGBIFMedia(token,key){
   var sec=document.getElementById('mediaSection');
   var block=document.getElementById('mediaBlock');
@@ -3660,7 +3706,7 @@ function fetchGBIFMedia(token,key){
             occ:o.key});
         });
       });
-      if(!picks.length)return;                               /* stays hidden */
+      if(!picks.length){setMediaMessage(token,t('photoNone'));return;}
 
       block.innerHTML='<div class="sp-media-grid">'
         +picks.map(function(p){
@@ -3694,11 +3740,11 @@ function fetchGBIFMedia(token,key){
         img.addEventListener('error',function(){
           var a=img.closest('.sp-media-item');
           if(a)a.classList.add('failed');
-          if(!block.querySelector('.sp-media-item:not(.failed)'))sec.style.display='none';
+          if(!block.querySelector('.sp-media-item:not(.failed)'))setMediaMessage(token,t('photoErr'));
         });
       });
     })
-    .catch(function(){ /* photographs are a bonus; silence is the right failure */ });
+    .catch(function(){setMediaMessage(token,t('photoErr'));});
 }
 
 /* Monotonic, NOT Date.now(). Two openPanel calls inside the same
@@ -3743,6 +3789,8 @@ function fetchGBIF(s){
               };
               renderGBIFResult(block,token,synMatch,fallbackUrl);
               fetchGBIFOccurrences(block,token,acceptedKey);
+              /* A synonym resolves to the accepted taxon — same plant under
+                 an older name — so its photographs are this species'. */
               fetchGBIFMedia(token,acceptedKey);
             } else {
               renderGBIFNoMatch(block,token,s,fallbackUrl);
@@ -3751,10 +3799,33 @@ function fetchGBIF(s){
       }
       var key=match.usageKey||match.speciesKey;
       renderGBIFResult(block,token,match,fallbackUrl);
-      if(key){fetchGBIFOccurrences(block,token,key);fetchGBIFMedia(token,key);}
+      /* Photographs only for an exact taxonomic correspondence.
+         GBIF answers HIGHERRANK when it cannot place the name and falls
+         back to the genus or family — measured on this dataset,
+         Begonia noraaunoriae resolves to the genus Begonia and
+         Dendrophyllanthus glochidioides to Dendrophyllanthus. The media
+         query then returns pictures of ANY species in that genus, which
+         the panel would present under this species' name. A reader has no
+         way to tell, so they are not shown at all. FUZZY is excluded for
+         the same reason: a near-miss on a name is a different plant. */
+      var exact=match.matchType==='EXACT';
+      if(key&&exact){
+        fetchGBIFOccurrences(block,token,key);
+        fetchGBIFMedia(token,key);
+      }else if(key){
+        /* Counts have the same defect — a genus-level match reports the
+           whole genus' occurrences under a species heading — so they are
+           withheld rather than shown as if they were species-level. */
+        setMediaMessage(token,t('photoInexact'));
+        var slot=block.querySelector('.gbif-occ-slot');
+        if(slot)slot.innerHTML='<div class="live-status">'+esc(t('occInexact'))+'</div>';
+      }else{
+        setMediaMessage(token,t('photoInexact'));
+      }
     })
     .catch(function(){
       if(stale())return;
+      setMediaMessage(token,t('photoErr'));
       block.innerHTML='<div class="live-err">Could not reach GBIF. Check your connection.</div>'
         +'<div style="margin-top:6px"><a href="'+fallbackUrl+'" target="_blank" rel="noopener" class="gbif-link">Search in GBIF <svg class="ic"><use href="#i-external"/></svg></a></div>';
     });
@@ -3796,6 +3867,7 @@ function renderGBIFResult(block,token,match,fallbackUrl){
 
 function renderGBIFNoMatch(block,token,s,fallbackUrl){
   if(block._gbifToken!==token)return;
+  setMediaMessage(token,t('photoInexact'));
   var genus=s.name.split(' ')[0];
   fetch('https://api.gbif.org/v1/species/match?name='+encodeURIComponent(genus)+'&kingdom=Plantae&rank=GENUS&verbose=false')
     .then(function(r){return r.json();})
