@@ -43,7 +43,7 @@ var T={
     topIslands:'Top Islands by Threatened Species',
     mapTitle:'Where the Threatened Taxa Are Recorded',
     mapScale:'Circle area is proportional to the number of taxa recorded on that island',
-    mapNote:'Positions are island centroids, not outlines — this plots where records fall, not the shape of the country. Counts are of records, so they partly reflect where botanists have collected: Luzon has been worked far longer and harder than Tawi-Tawi or Dinagat. 26 islands are shown, together about 90% of all island records.',
+    mapNote:'Each circle sits at an island’s centre, so it marks which island a taxon was recorded on, not where on that island. Counts are of records, so they partly reflect where botanists have collected: Luzon has been worked far longer and harder than Tawi-Tawi or Dinagat. 26 islands carry circles, together about 90% of all island records. Coastline from Natural Earth 1:10m, drawn from data held in this page — no map tiles are requested.',
     endemByDiv:'Endemicity by Division',globalOcc:'Worldwide',phOccFull:'Philippines occurrences',photographs:'Photographs',allPhotos:'All photos',matchedTo:'Matched',
     phOcc:'Philippines',match:'Match',confidence:'Confidence',
     acceptedAs:'Accepted as',gbifName:'GBIF name',
@@ -112,7 +112,7 @@ var T={
     topIslands:'Nangungunang mga Isla ayon sa Bilang ng Nanganganib na Species',
     mapTitle:'Saan Naitala ang mga Nanganganib na Taxa',
     mapScale:'Ang laki ng bilog ay katumbas ng bilang ng taxa sa isla',
-    mapNote:'Sentroid ng isla ang ipinapakita, hindi hugis ng bansa. Bilang ng tala ito, kaya bahagyang sinasalamin nito kung saan nangolekta ang mga botaniko. 26 isla ang ipinapakita, humigit-kumulang 90% ng lahat ng tala.',
+    mapNote:'Nasa gitna ng isla ang bawat bilog, kaya ipinapakita nito kung saang isla naitala ang taxa, hindi kung saang bahagi ng isla. Bilang ng tala ito, kaya bahagyang sinasalamin nito kung saan nangolekta ang mga botaniko. 26 isla ang may bilog, humigit-kumulang 90% ng lahat ng tala. Ang baybayin ay mula sa Natural Earth 1:10m, nakapaloob na sa pahinang ito — walang hinihinging map tiles.',
     endemByDiv:'Endemisidad ayon sa Dibisyon',globalOcc:'Pandaigdigan',phOccFull:'Okurensya sa Pilipinas',photographs:'Mga Larawan',allPhotos:'Lahat ng larawan',matchedTo:'Itinugma',
     phOcc:'Pilipinas',match:'Tugma',confidence:'Kumpiyansa',
     acceptedAs:'Tinatanggap bilang',gbifName:'Pangalan sa GBIF',
@@ -1093,6 +1093,15 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
    water that nothing measured. */
 .map-wrap{display:flex;align-items:flex-end;justify-content:center;gap:18px;flex-wrap:wrap}
 .island-map{width:min(300px,62vw);height:auto;overflow:visible}
+/* Land is the white figure on the card's paper ground, so the archipelago
+   reads as shape before any circle is drawn on it. No new hue — the map
+   stays inside the colour contract, and the green symbols keep their
+   meaning as the only saturated thing here. */
+.island-map .coast path{fill:var(--sf);stroke:var(--bd-strong);stroke-width:.6;
+  stroke-linejoin:round;vector-effect:non-scaling-stroke}
+/* Labels now cross land, sea and circles, so they carry a halo of the card
+   ground rather than relying on whatever happens to be behind them. */
+.island-map text{paint-order:stroke;stroke:var(--bg);stroke-width:2.5px;stroke-linejoin:round}
 .island-map circle{transition:fill-opacity .15s}
 .island-map circle:hover{fill-opacity:.55}
 .island-map-key{width:120px;height:auto;flex-shrink:0}
@@ -2849,6 +2858,9 @@ body.entering .body-wrap{animation:app-in .3s ease}
       <h4>Distribution</h4>
       <p>Local distribution is compiled from <a href="https://www.philippineplants.org" target="_blank" rel="noopener">Co&rsquo;s Digital Flora of the Philippines</a> (CDFP), Pelser, Barcelona &amp; Nickrent, 2011 onward. Credit for that work belongs to CDFP and its contributors. Distribution shown here is a condensed reading of their records and may lag revisions on their site; CDFP should be consulted directly for authoritative distribution.</p>
 
+      <h4>The map</h4>
+      <p>The coastline on the distribution map is <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a> 1:10m data, which is in the <strong>public domain</strong> and carries no attribution requirement; it is credited here because that is good practice, not because it is owed. It was simplified for drawing at this size, so it is a schematic outline and <strong>not a survey boundary</strong>: nothing on this map should be read as a statement about territory, maritime limits or any disputed area. Island positions come from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> via Nominatim, &copy; OpenStreetMap contributors, used under the Open Database Licence. Both sit inside this page; no tile server is contacted.</p>
+
       <h4>Photographs</h4>
       <p>Photographs are served live from <a href="https://www.gbif.org" target="_blank" rel="noopener">GBIF</a> occurrence records and are <strong>not hosted or modified by this tool</strong>. Only images published under Creative Commons terms &mdash; CC0, CC&nbsp;BY, CC&nbsp;BY-SA, CC&nbsp;BY-NC, CC&nbsp;BY-NC-SA, or the Public Domain Mark &mdash; are displayed. Images marked All Rights Reserved, or carrying no usable licence, are not shown.</p>
       <p>Each photograph is credited to its photographer with its licence, and links back to the GBIF occurrence record holding the full provenance. <strong>Copyright in every photograph remains with its creator.</strong> If you are a rights holder and want an image removed, please get in touch and it will be taken down. Anyone reusing an image should take it from the source record under that image&rsquo;s own licence, not from this page.</p>
@@ -2898,6 +2910,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
             <tr><td>Endemism</td><td>DAO 2026-20</td><td class="pt-ext">DENR</td></tr>
             <tr><td>CITES appendix (I / II)</td><td>The CITES Appendices</td><td class="pt-ext">CITES</td></tr>
             <tr><td>Locality records</td><td>Co&rsquo;s Digital Flora of the Philippines</td><td class="pt-ext">Pelser et&nbsp;al.</td></tr>
+            <tr><td>Map coastline</td><td>Natural Earth 1:10m, public domain</td><td class="pt-ext">Natural Earth</td></tr>
             <tr><td>Occurrence counts, name matching</td><td>GBIF, fetched live</td><td class="pt-ext">GBIF</td></tr>
             <tr><td>Photographs</td><td>GBIF occurrence media</td><td class="pt-ext">Each photographer</td></tr>
             <tr><td><strong>Growth habit</strong>, all 1,237 taxa</td><td>Assigned species by species</td><td class="pt-own">Author</td></tr>
@@ -2991,6 +3004,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
         <li>GBIF Secretariat. 2023. <em>GBIF Backbone Taxonomy</em>. Checklist dataset. <a href="https://doi.org/10.15468/39omei" target="_blank" rel="noopener">doi.org/10.15468/39omei</a>, accessed via GBIF.org.</li>
         <li>Convention on International Trade in Endangered Species of Wild Fauna and Flora. <em>Appendices I, II and III</em>. <a href="https://cites.org/eng/app/appendices.php" target="_blank" rel="noopener">cites.org</a></li>
         <li>International Plant Names Index. <a href="https://www.ipni.org" target="_blank" rel="noopener">ipni.org</a></li>
+        <li>Natural Earth. <em>1:10m Admin 0 &ndash; Countries</em>. Public domain. <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">naturalearthdata.com</a> &mdash; source of the map coastline.</li>
       </ol>
 
       <h4>7 &middot; Recommended citation</h4>
@@ -3003,7 +3017,7 @@ body.entering .body-wrap{animation:app-in .3s ease}
 
       <h4>8 &middot; Software and acknowledgements</h4>
       <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Cormorant Garamond, Inter and IBM Plex Mono. Hosted on Vercel.</p>
-      <p>The distribution map plots island positions, not coastlines. Its 26 coordinates were geocoded once against <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> data via Nominatim, checked individually, and written into the page &mdash; no map tiles are fetched and nothing is requested at run time. &copy; OpenStreetMap contributors.</p>
+      <p>The distribution map is drawn from two sets of coordinates held in the page itself, so <strong>no map tiles are fetched and nothing is requested at run time</strong>. The coastline is <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a> 1:10m Admin&nbsp;0 (public domain), reduced offline to 82 islands and about 1,460 points. The 26 island positions carrying the circles were geocoded once against <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> data via Nominatim and checked individually; 24 of the 26 fall inside a Natural Earth coastline polygon and the other two within a kilometre of one, which is inside that dataset&rsquo;s own generalisation at this scale. &copy; OpenStreetMap contributors.</p>
       <p>The interface was written by the author working with <strong>Claude (Anthropic)</strong> as a coding assistant, which also carried out the design review the present layout follows. Claude is a tool, not an author: every taxonomic judgment, habit assignment, correction and editorial decision here is the author&rsquo;s, and responsibility for them rests with the author. Contributors to CDFP and GBIF, and the photographers whose images appear, are gratefully acknowledged &mdash; this tool would show very little without them.</p>
 
       <p class="paper-colophon">Mc Andrew K. Pranada, botanist &middot; Version 1.0, 2026 &middot; Corrections welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a><br>See also the <button type="button" class="paper-inline-link js-open-disclaimer">About notice</button> for rights, terms of use and warranty.</p>
@@ -4232,6 +4246,43 @@ var _origBuildFams=buildFams;
 buildFams=function(){_origBuildFams();};
 
 /* ── ANALYTICS ── */
+/* ── Coastline ───────────────────────────────────────────────
+   The Philippine landmass, baked in so the map has a basemap without
+   fetching tiles from anyone at run time. 82 islands, 1,460 points.
+
+   Source: Natural Earth 1:10m Admin 0 Countries (public domain), feature
+   608, taken from the world-atlas TopoJSON build. Reduced offline by
+   Douglas-Peucker at 0.02 deg and quantised to 1/100 deg — about 1.1 km,
+   which is 0.28 px at the size this map draws, so nothing visible is lost.
+   Islands under ~1.6 px of area are dropped because they cannot render
+   legibly; that is a drawing decision and does not affect any count.
+   Regenerate with tools/derive-coastline.mjs rather than by hand.
+
+   Encoding: rings separated by "|". Within a ring, the first two fields
+   are the starting lon,lat in hundredths of a degree, then each point is
+   a "dlon.dlat" delta. All numbers base36. This is 7.3 KB where raw
+   coordinates would be about 24 KB.  */
+var PH_COAST='9fq,1f4,2.-6,-1.-9,-e.-f,1.-c,-4.-o,b.-12,c.-1,4.-3,3.-5,-3.0,1.-c,3.-4,5.3,3.-5,-b.-t,-l.-10,1.-5,1.3,-4.-a,1.-3,3.3,-2.-8,-l.-l,e.n,-5.-1,-4.-7,-u.-a,-i.-g,-2.-9,3.-6,6.-3,-5.-7,4.-1,-d.-d,-7.-g,-4.1,0.-b,9.-9,3.-c,a.-j,-2.-1,e.-d,-a.-3,-2.-7,5.-l,7.-7,3.-a,-3.-6,l.-j,t.-9,-5.8,c.-2,1.5,-a.7,-5.8,2.-2,8.a,4.-g,5.4,-2.7,3.-1,6.d,5.3,5.-3,-2.3,3.0,b.-7,5.1,-1.6,j.-8,h.-h,-1.-8,5.-3,1.-9,-4.-4,0.-8,6.-6,b.1,8.6,-2.c,6.7,-5.-5,-7.6,3.2,0.6,6.-2,-1.2,4.0,-1.3,2.-8,4.2,3.-d,2.5,5.-4,j.-4,3.5,5.-7,h.-7,4.-7,-b.2,-6.-5,-n.3,-4.-b,1.-5,2.1,c.-a,6.-d,c.-b,-9.-1,-2.-g,5.-1,8.a,k.-e,4.7,7.-2,-7.-e,1.-o,-4.-5,1.-7,-4.-2,-8.1,-5.7,-5.2,-4.g,-5.3,7.4,5.-3,9.4,3.8,-e.2,-5.-9,-c.-4,1.4,-4.0,1.-3,-2.2,2.5,-8.-4,-i.f,-e.-2,-2.a,2.c,-b.c,-2.9,-v.g,-5.4,5.4,-b.c,-a.2,0.3,-b.a,-3.-3,-a.2,a.-d,-1.-h,e.-b,-7.2,a.-i,2.-f,-a.-6,-9.7,0.d,-d.i,-i.7,-d.i,-1.-2,-6.3,-q.g,-4.-4,-k.-8,-6.-5,0.-a,3.-1,-i.-9,-c.4,-b.-1,0.9,-6.6,-a.-9,4.9,-2.a,-3.3,-i.2,2.-7,-6.0,1.-7,-2.-1,-5.j,4.2,-2.b,-5.7,3.1,3.9,8.3,h.g,a.6,-4.f,-a.9,-k.3,-2.8,-3.-5,2.7,-2.1,-2.-6,-2.0,-1.-e,4.-5,1.-i,-c.-5,-7.4,-3.g,-8.3,-5.8,5.a,-8.5,-4.-c,-9.4,2.3,-4.6,-5.12,-c.g,1.5,4.0,2.4,-6.9,2.8,-5.5,2.2,-1.g,-5.4,-6.-4,-1.2,2.k,-2.8,3.c,d.4,-2.-d,j.-9,5.-b,f.1,1.-4,7.5,-4.0,7.a,-1.8,-5.4,-6.w,3.0,1.l,c.j,-4.l,4.h,-4.d,-7.4,2.c,6.3,-2.7,9.m,-1.9,b.n,-1.i,4.4,g.2,4.8,4.0,6.-7,k.7,1c.-q,6.-7,-1.6,l.-8,c.0,e.a,4.d,8.0,2.-8,5.-4|9rl,ka,5.-2,-f.-l,-2.-9,-a.2,-4.-5,-1.-6,5.-4,0.-6,-4.1,-7.c,-5.1,0.-5,-2.2,9.-g,-6.-1a,-a.l,-2.z,-9.8,0.9,-9.9,-6.p,-h.-9,-3.-h,-d.-8,-3.-a,-8.-a,-2.-e,3.-8,2.0,0.3,b.-b,5.-1,c.-z,-1.-b,-3.-9,-n.-x,-7.-5,-6.1,-2.d,-b.9,a.i,-3.b,-9.2,-9.-p,-b.0,-z.d,-16.p,-f.p,0.v,-4.-1,-3.4,6.s,g.c,6.h,-8.2,-a.i,-g.a,-c.1,-9.a,-b.3,-f.-4,6.-9,-1.-5,-e.-9,a.-c,-2.-8,-9.5,-6.a,-a.-4,-4.3,-1.6,5.2,1.4,-5.3,-2.8,-7.-9,-4.-i,-6.2,-3.6,-4.-7,-7.-1,-2.5,4.3,-3.c,1.7,-a.5,-9.-2,-i.-g,-1.-3,6.0,-2.-6,-3.-2,0.4,-8.-7,1.-a,-9.-7,-4.-k,-9.-h,-3.-3,-8.2,-8.4,-6.a,4.g,b.9,-2.3,4.h,8.8,-3.1,-2.h,f.l,j.9,g.2,8.7,5.-4,m.4,7.7,-6.8,4.3,4.f,g.5,c.-1,5.a,7.2,-4.7,b.-2,1.-8,6.-4,4.9,e.-6,8.-g,4.-t,-b.-a,-9.-2,0.-8,t.l,q.4,5.7,-2.5,6.i,8.a,7.1,1.-4,a.-6,8.-1,-2.-8,2.5,9.2,2.c,-2.5,4.6,-1.m,3.6,b.-2,k.-g,7.5,-1.e,3.7,a.-a,d.-1,8.4,2.h,-e.1d,6.e,d.-6,5.-f,l.-7,a.-9,2.3,-6.-8,8.0,1.-8,6.-7,8.1,6.5,3.-2,-5.-k,d.-d,4.-b,-5.-8,-7.-4,3.-5,-6.1,-9.-8,5.-8,7.-1,-1.3,f.-1,4.-5,0.-2,-4.-1,1.-6,-5.-5,6.-6,-5.-8,2.-2,a.4,1.-d,-4.-6,2.-6,-7.-9,b.-e,9.-3,-1.-9,4.-g,-5.-4,3.-4,-2.-9|9j9,u3,-8.-s,-d.-g,-7.-u,-d.-m,1.-h,-4.-8,5.-3,-5.-4,6.-2,d.-j,0.-8,-9.-f,-7.-5,-h.-1,-6.7,-6.k,-r.b,-a.d,-4.a,-4.0,1.5,-3.-1,0.e,8.d,n.2,g.b,0.p,-6.h,a.8,6.c,-2.b,4.8,r.8,8.-4,6.0,0.-3,5.2,7.-2,5.-9|9p7,uz,7.-a,-2.-3,-4.3,-1.7,-6.3,-5.-3,-4.4,-2.-1,-1.-6,-5.4,-6.-4,-a.6,-7.-6,-8.i,-h.2,1.e,-a.7,-2.-3,-6.4,7.4,-1.2,9.2,2.9,3.5,3.-2,-1.5,-g.0,-a.a,3.5,-7.0,2.1,-9.b,-j.7,-a.c,-b.z,14.-5,j.1,2.2,-1.4,h.-6,5.5,7.0,a.-8,8.-a,-4.-3,1.-7,4.2,-1.-3,4.1,6.-3,9.-9,-6.-1,3.-2,-5.-4,4.-1,2.-4,-7.-b,1.-b,4.-5,-5.-2,5.-7,-3.-9,6.-c,-1.-3,c.-9,-8.-g,4.-2,3.1,0.4,8.-9|9i5,vw,-6.-l,2.-9,-2.-3,-7.1,-1.-5,-8.-7,-1.2,-1.-3,-7.0,-7.-5,1.-b,-4.-6,-d.-4,-4.-7,-10.-6,-d.-7,-9.-c,-6.-2,-2.8,6.e,-5.e,b.n,-1.s,7.10,-2.6,-o.5,5.c,6.4,d.-a,u.-a,n.-m,4.6,5.-3,1.7,b.-1,b.-8,-7.-5,3.-3,j.9,7.7,0.-6,-4.-4,5.-2|98f,tb,5.-3,-e.-e,-c.0,-h.-c,-9.-k,-17.-d,-2.-4,3.-g,-8.5,2.-9,4.-2,-r.-10,-e.-d,-l.-5,-d.-o,-p.-k,-k.-3,-5.-f,-h.-4,-f.-d,7.r,a.c,7.4,m.t,b.2,2.7,c.b,9.1,1.-4,d.b,0.4,k.k,3.8,h.b,e.k,-1.3,6.4,5.9,1.-7,5.2,-1.b,b.2,2.7,8.3,0.4,-5.1,2.4,7.-1,5.a,1.-a,f.c,-3.5,6.1,4.f,-d.d,4.4,-3.6,6.-2,-1.-6,3.1,2.-6,e.-9,-2.b,-a.4,1.5,-4.1,0.8,4.-2,-4.9,9.-3,2.6,-4.7,2.1,2.b,7.b,2.-8,5.-4,-5.-i,5.-a,-5.-1,-2.-c,3.-7,7.0,-1.-f,6.1,2.-3,-4.0,4.-a|9dk,za,3.-9,-b.-9,-3.-b,3.-5,-6.1,2.-8,-6.3,-a.-b,-d.4,-1.8,4.-2,-4.4,-3.-2,-9.9,-6.9,0.b,-6.a,-6.1,-4.r,-a.g,-e.7,-7.j,-8.-4,-4.2,-1.9,8.4,z.-6,n.6,-2.-3,7.-8,8.0,1.-5,8.7,i.-j,5.-3,0.-7,c.-2,0.-4,-7.-8,1.-o,3.-7|9nz,so,-1.-6,-c.2,1.-9,-6.4,-5.e,-5.1,4.-10,-f.c,-a.1,1.i,-5.9,6.q,-2.e,-g.i,-7.-2,1.-5,-4.-6,-c.6,2.7,-3.7,3.6,-2.h,-5.3,2.4,-3.2,-4.f,4.1,e.-h,1.7,4.-3,4.-7,6.-5,b.3,b.a,d.-4,-1.-b,5.-5,2.2,2.-o,-5.-p,b.-6,7.-a,1.-h,6.-5,1.-6|9kl,u3,-3.-8,4.-g,-4.-m,-4.1,-1.-5,-i.-a,-d.-g,-3.-i,-f.-y,-f.-e,-2.a,a.15,-2.5,c.f,a.l,b.g,1.8,c.i,8.m,1.d,3.-2,-1.a,8.a,3.-1,0.-4,-7.-f,6.-2,1.-i,-2.-5|9m1,rf,5.-7,-2.-6,-8.0,-2.3,-7.-6,-2.-5,-c.-5,-z.1,-7.3,-1.8,-6.3,9.f,g.7,2.7,f.a,b.1,2.-5,5.4,2.-4,g.-8,-1.-g|9km,ws,0.-7,-k.i,-c.2,-3.2,4.3,-2.3,-7.3,1.3,-5.1,-7.b,-6.3,-8.-3,-5.-8,-k.-j,6.l,6.4,-2.2,4.3,-8.1,5.j,-3.4,-1.d,d.-4,-4.-b,8.8,5.-1,a.-5,6.-7,-2.-4,5.2,6.-4,9.-e,1.6,5.-5,4.1,g.-o,-5.4,6.-e,0.-7|9lm,12j,-3.-2,3.-5,-3.-1,2.-c,-6.-1,-1.-a,-5.4,-4.0,-6.-8,-e.9,-2.6,6.5,4.a,1.q,8.1,9.-i,2.2,9.-6|9fq,if,3.-3,-a.-3,-4.-c,-n.-4,-8.9,-1.7,-6.5,3.5,b.1,c.6,n.-b|9ab,xf,-2.-4,-9.0,-a.4,-3.-6,-3.3,-6.0,-8.9,-3.b,-6.-3,2.8,5.3,-4.-1,1.5,m.-d,-1.-2,a.-6,3.2,0.9,3.-9,8.-5,-2.-6,3.1|9f6,11a,2.-6,-d.-g,-i.f,1.c,5.a,4.-5,a.2,3.-5,8.-2,-2.-5|9d6,gp,4.-2,0.-4,-d.-9,-6.8,-f.-5,-7.3,-8.-3,-6.7,4.6,d.8,c.-3,6.-7,5.3,b.-2|9p8,rj,0.-3,-4.0,-2.6,-5.3,1.2,-4.2,4.5,-2.3,-8.-3,-2.4,1.b,3.-1,-2.c,4.1,0.5,5.-1,4.9,4.-6,-5.-f,2.-7,3.-1,2.-a,-3.-b,4.-5|9f8,z7,3.-4,-2.0,-3.-o,-6.-i,2.-4,-4.-1,-1.-6,-5.8,0.5,3.-3,1.4,-8.6,0.4,7.a,1.f,c.8|9a1,en,-3.-f,-3.2,-1.6,-3.-2,-3.4,-2.-6,-7.0,-8.-9,-d.-1,-1.6,g.a,c.4,6.6,6.3,1.-8,3.0|9ex,15p,5.-3,-1.-2,-4.3,0.-6,-4.-3,6.-i,-3.-5,-6.-3,-3.3,3.a,-6.c,-6.6,1.6,2.4,5.-3,3.3,7.-1,1.-3|9gv,tt,3.-9,-5.-d,-6.-7,-4.-1,0.3,-6.-4,-5.8,7.5,-1.6,d.f,4.-3|9m4,w4,2.-3,-1.-4,-e.-1,-c.k,h.1,8.-d|9gt,yg,-2.-8,-6.-4,-a.a,-8.3,-1.5,6.3,f.-1,6.-8|9qh,rb,1.-4,-6.-3,-8.2,1.-2,-8.9,4.2,-2.3,8.g,7.-g,-3.-4,6.-3|9ig,zq,1.-4,9.-d,-w.u,-b.5,-1.7,8.3,e.-k,c.-8|99e,x1,6.-3,-4.-4,4.-3,-3.-8,-8.-5,-2.7,3.-2,3.7,-8.0,-8.h,4.-1,3.4,4.-5,7.0,-3.-2,2.-2|997,tg,6.-3,-3.-4,-4.-1,-3.4,1.-8,-d.-2,-1.8,-3.0,9.a,b.-4|9jm,pg,2.-1,-2.-3,-7.-2,-g.8,h.b,6.-6,0.-7|919,me,0.-j,-8.-7,-5.c,0.e,2.-3,3.3,8.0|9jv,ye,0.-4,-l.s,3.7,c.-a,6.-l|9mm,pk,2.-9,-3.-3,-a.5,-3.5,7.7,7.-5|9pf,jb,-1.-6,-6.g,-5.3,5.c,6.-7,1.-i|9dk,1ho,3.-4,-5.-2,-a.4,-5.7,5.3,c.-1,0.-7|9o1,rp,1.-4,-3.-1,-c.f,-1.a,9.-5,6.-f|9a2,123,3.-2,-3.-2,-f.b,-3.8,g.-6,2.-9|9f6,136,7.-5,1.-4,-m.d,-3.8,3.1,e.-d|9hl,ki,-3.1,1.-3,-b.-7,-4.3,0.a,3.1,4.-3,6.3,4.-5|9et,1gr,2.-4,-c.-d,-4.1,6.h,6.1,2.-2|9pz,qx,0.-a,-4.-2,-3.4,1.f,4.0,2.-7|91x,n4,3.-2,0.-8,-7.-3,-1.c,5.1|9jw,v2,1.-3,-7.0,-3.9,4.5,5.-b|9mq,wb,3.-3,-2.-6,-9.b,-1.7,9.-9|98z,vz,-4.-d,0.5,-6.-2,-5.5,5.-2,2.5,4.-3,0.5,4.0|9d7,1gi,9.-2,-7.-3,-d.1,b.4|9az,hq,2.-3,-3.-a,-8.0,9.d|9ek,1lp,-5.-7,-4.0,7.e,2.-7|97w,dh,2.-9,-4.-a,-2.o,4.-5|9li,tp,1.-5,-9.-5,2.a,6.0|9pi,tt,1.-2,-6.-1,-9.5,1.6,4.0,3.-7,6.-1|9k0,qs,3.-2,-3.-3,-9.-4,-2.4,b.5|9kp,10u,-6.-4,-9.2,-3.5,i.-3|9lr,tr,4.-2,0.-5,-a.1,0.3,6.3|99d,197,-2.-4,-6.8,5.4,3.-8|9ex,1kx,2.-3,-6.-5,0.-4,-5.-2,0.4,9.a|95a,jh,-4.-4,-6.2,-1.3,8.3,3.-4|9k5,10v,1.-2,-3.-2,-3.c,8.-2,-3.-6|9cp,1ha,3.-g,-5.7,2.9|9fj,154,1.-6,-e.a,b.0,-2.-3,4.-1|9fo,z1,3.-7,-3.-7,-4.a,4.4|9a5,x5,-2.-b,-7.d,7.2,2.-4|9eu,1ie,0.-8,-8.4,8.4|9kv,10m,-8.3,7.2,7.-3,-6.-2|9bq,fh,5.-3,-1.-4,-8.3,4.4|9cf,xw,2.-4,-8.6,1.6,5.-8|9oe,f3,0.-6,-9.2,5.4,4.0|9ce,ua,-1.-8,-7.1,8.7|9em,gr,4.2,-8.-5,-8.8,c.-5|9d9,xi,0.-5,-3.-1,-2.b,5.-5|9cq,g6,1.-2,-7.-1,-2.2,2.4,6.-3|98b,ur,2.-5,-4.-1,-3.9,5.-3|9g1,14x,-1.-4,-8.-1,9.5|9m5,s6,-1.-5,-7.-2,0.5,8.2|91o,n4,3.-1,-3.-3,-5.-2,0.4,5.4,0.-2|98s,e2,-5.-2,5.8,0.-6|9df,wz,5.-2,-b.-1,6.3|9eg,1kj,5.-4,-3.-4,-2.8|9dv,ii,-2.-a,-3.7,5.3|913,mf,-3.3,5.4,2.-5,-4.-2|98w,di,-4.2,0.5,4.-3,0.-4|9bq,fu,2.-1,-8.-2,1.3,5.0|989,v4,2.-3,-6.-2,4.5|9l1,xk,2.-2,-8.-2,6.4';
+
+/* Decoded once on first use, not on every redraw — the modal rebuilds the
+   map whenever the filter changes. */
+var _coastRings=null;
+function coastRings(){
+  if(_coastRings)return _coastRings;
+  _coastRings=PH_COAST.split('|').map(function(part){
+    var a=part.split(','), x=parseInt(a[0],36), y=parseInt(a[1],36);
+    var pts=[[x/100,y/100]];
+    for(var i=2;i<a.length;i++){
+      var d=a[i].split('.');
+      x+=parseInt(d[0],36); y+=parseInt(d[1],36);
+      pts.push([x/100,y/100]);
+    }
+    return pts;
+  });
+  return _coastRings;
+}
+
+
 /* ── Island positions ────────────────────────────────────────
    Centroid-ish coordinates for the 26 islands carrying the most records,
    together about 90% of all island-records in the dataset. Geocoded once
@@ -4273,15 +4324,29 @@ function buildIslandMap(SET){
   if(!keys.length)return '';
   var max=Math.max.apply(null,keys.map(function(k){return counts[k];}));
 
-  /* Equirectangular. The archipelago spans ~4.5-19.5N, where cos(lat)
-     runs 0.94-0.997, so longitude is scaled by cos of the mid-latitude —
-     enough to keep the shape honest without a real projection. */
-  var latMin=4.2,latMax=19.9,lonMin=116.3,lonMax=127.0;
+  /* Equirectangular. The archipelago spans ~4.7-20.8N, where cos(lat)
+     runs 0.93-0.997, so longitude is scaled by cos of the mid-latitude —
+     enough to keep the shape honest without a real projection.
+
+     The window is the land's own extent with a small margin, measured from
+     PH_COAST rather than guessed: an earlier window stopped at 19.9N and
+     drew Batanes off the top of the card. */
+  var latMin=4.4,latMax=21.1,lonMin=116.6,lonMax=127.0;
   var kx=Math.cos(((latMin+latMax)/2)*Math.PI/180);
   var W=300, H=Math.round(W*((latMax-latMin)/((lonMax-lonMin)*kx)));
   var px=function(lon){return (lon-lonMin)/(lonMax-lonMin)*W;};
   var py=function(lat){return (latMax-lat)/(latMax-latMin)*H;};
   var rOf=function(n){return 3+Math.sqrt(n/max)*24;};
+
+  /* The land itself, drawn once underneath everything. Coordinates are
+     rounded to one decimal — the projection puts about 28 px on a degree,
+     so a tenth of a pixel is already past what any screen resolves, and
+     it keeps the path string short. */
+  var coast=coastRings().map(function(r){
+    var d='M'+r.map(function(p){return px(p[0]).toFixed(1)+' '+py(p[1]).toFixed(1);}).join('L')+'Z';
+    return '<path d="'+d+'"/>';
+  }).join('');
+  coast='<g class="coast">'+coast+'</g>';
 
   /* Biggest first so a small island is never buried under a large one. */
   var ordered=keys.sort(function(a,b){return counts[b]-counts[a];});
@@ -4296,9 +4361,16 @@ function buildIslandMap(SET){
   /* Only the largest few are named on the map itself; everything else is
      on hover and in the ranked bars below. */
   var named=ordered.slice(0,5).map(function(k){
-    var p=ISLAND_XY[k], r=rOf(counts[k]);
-    return '<text x="'+(px(p[1])+r+4).toFixed(1)+'" y="'+(py(p[0])+3).toFixed(1)+'"'
-      +' font-size="9" font-family="Inter,sans-serif" fill="var(--mu)">'+esc(ISLAND_LABEL[k]||k)+'</text>';
+    var p=ISLAND_XY[k], r=rOf(counts[k]), label=ISLAND_LABEL[k]||k;
+    /* Labels sit to the right of their circle, but flip to the left when
+       that would run them off the frame — Mindanao otherwise overhangs into
+       the size key. 9px Inter averages a little over half an em per
+       character, which is close enough to decide a side. */
+    var x=px(p[1]), wGuess=label.length*5;
+    var right=x+r+4+wGuess<=W;
+    return '<text x="'+(right?(x+r+4):(x-r-4)).toFixed(1)+'" y="'+(py(p[0])+3).toFixed(1)+'"'
+      +(right?'':' text-anchor="end"')
+      +' font-size="9" font-family="Inter,sans-serif" fill="var(--mu)">'+esc(label)+'</text>';
   }).join('');
 
   /* Size key — three reference circles a reader can measure against. */
@@ -4316,7 +4388,7 @@ function buildIslandMap(SET){
     +'<div class="chart-scale">'+esc(t('mapScale'))+'</div>'
     +'<div class="map-wrap">'
       +'<svg class="island-map" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t('mapTitle'))+'">'
-        +circles+named
+        +coast+circles+named
       +'</svg>'
       +'<svg class="island-map-key" viewBox="0 0 '+keyW+' '+keyH+'" aria-hidden="true">'+keyCircles+'</svg>'
     +'</div>'

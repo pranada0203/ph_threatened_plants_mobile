@@ -126,6 +126,15 @@ Charts describe the **current filtered view**, not the whole dataset.
 **Distribution map** (`buildIslandMap`) — a proportional-symbol map, not a heat map: the data records presence per island, so one circle per island sized by count is the honest form; interpolating a surface between them would invent a density gradient across water that nothing measured. Circle *area* scales with the count (radius by square root), 26 islands are plotted covering ~90% of island records, and it redraws with the filters like every other chart.
 
 `ISLAND_XY` holds the coordinates. They were geocoded **once** against OpenStreetMap via Nominatim and verified individually — do not regenerate them naively: a plain lookup returns real islets named "Panay Island" in Catanduanes and "Bohol Island" in Samar, and resolves Luzon and Palawan to local landmarks. Nothing is fetched at run time and no tiles are loaded. © OpenStreetMap contributors.
+
+`PH_COAST` is the basemap: the Philippine landmass baked into the page so the circles sit on a country instead of on blank paper. Natural Earth 1:10m Admin 0 (public domain), feature 608, reduced offline to **82 islands / ~1,460 points / 7.3 KB** — Douglas-Peucker at 0.02°, islands under ~1.6 px² dropped, coordinates quantised to 1/100° (~1.1 km, about 0.28 px at the size this draws). Rings are `|`-separated; within a ring the first two fields are the starting lon,lat in hundredths of a degree and every later point is a `dlon.dlat` delta, all base36. `coastRings()` decodes it once and memoises, because the modal rebuilds the map on every filter change.
+
+**Regenerate with `tools/derive-coastline.mjs`, never by hand.** Two things to know if you touch it:
+
+- The projection window is the land's own extent (lat 4.4–21.1, lon 116.6–127.0), measured from `PH_COAST`. The earlier window stopped at 19.9°N and drew Batanes off the top of the card. If you change the simplification, re-measure the extent.
+- 24 of the 26 `ISLAND_XY` points fall strictly inside a coastline polygon, and Biliran and Masbate land 0.8 km and 0.4 km offshore — inside Natural Earth's own generalisation at 1:10m, and ~0.02 px here. That point-in-polygon check is a free cross-validation of the geocoding; re-run it after editing either dataset.
+
+Land is drawn as `--sf` (white) on the card's `--bg` paper ground with a `--bd-strong` coast stroke. **No new hue** — the map stays inside the three-tier colour contract and the green symbols remain the only saturated thing in the card.
  Top 15 Families, Threat Category (with a per-category breakdown table), Division donut with Endemicity by Division, CITES Listing Status, Growth Habit, Top Islands by Threatened Species.
 
 Chart conventions:
@@ -338,6 +347,7 @@ Cite the sources directly for their own material: DAO 2026-20 for the taxa and t
 - **CITES appendix listings**: from the CITES Appendices themselves, **not** from DAO 2026-20, which does not carry them. Do not attribute these to the DENR.
 - **Growth habit**: not part of DAO 2026-20. Assigned species by species by the developer; professional judgment, not an official determination.
 - **Distribution**: Co's Digital Flora of the Philippines (Pelser, Barcelona & Nickrent, 2011–). Condensed from their records; CDFP is authoritative.
+- **Map coastline**: Natural Earth 1:10m Admin 0 — **public domain**, no attribution required; credited anyway as good practice. Simplified for drawing, so it is a schematic outline and **not a survey boundary**: nothing on the map states anything about territory, maritime limits or disputed areas. Island positions from OpenStreetMap via Nominatim, © OpenStreetMap contributors, under the ODbL. Both are baked into the page; no tile server is contacted.
 - **Photographs**: served live from GBIF occurrence records, never hosted or modified here. Open licences only (CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA, Public Domain Mark); All Rights Reserved and unlicensed images are not shown. Copyright stays with each photographer, each image is credited with its licence and links to its source record, and takedown requests are honoured.
 - **Warranty**: provided as is, without warranty. Not for permitting, enforcement, compliance, commercial or legal use.
 - Built with Claude (Anthropic)
