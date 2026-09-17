@@ -288,7 +288,32 @@ Fourteen borders measure between 1.13:1 and 1.9:1, and all are left alone delibe
 
 One trap when re-running any of this: **`element.focus()` does not reliably set `:focus-visible`**, so a programmatic sweep reports no focus ring anywhere and looks like a catastrophic finding. Drive it with a real Tab key press.
 
-Not covered by either sweep: `:hover` and `:active` states. `.copy-cite-btn` was checked by hand because its hover changes the border, and it sets its own background so it is self-contained.
+### Hover and active sweep
+
+`:hover` cannot be read from computed style, so the sweep mirrors every `:hover`/`:active` rule in the stylesheet onto `.__hov`/`.__act` and toggles the class. A pseudo-class and a class have **identical specificity**, so the real cascade decides the winner and the measured values are the ones the browser would actually paint.
+
+Two traps, both of which produced confidently wrong answers first time:
+
+- **Transitions.** `.ext-link` transitions `border-color` and `background`, so reading `getComputedStyle` straight after the state applies returns the *start* value. The first run concluded the hover rules were dead — they were mid-animation. The sweep now injects `*{transition:none!important;animation:none!important}` first. Confirm the mirror works before trusting a run: hover `.ext-link` and check its border reads `rgb(74, 124, 89)`.
+- **Nesting.** Every `CSSStyleRule` exposes an empty `cssRules` list now that nesting is supported, so a rule-walker that does `if (r.cssRules) { recurse; continue; }` skips every style rule and finds nothing. Test `selectorText` first, and only recurse when `cssRules.length` is non-zero.
+
+This sweep found two **pre-existing AA failures at rest** that the body sweep had masked:
+
+| | Was | Now |
+|---|---|---|
+| `.sp-media-lic` (`CC BY`, 11px) | **2.37:1** | 4.56:1 |
+| `.sp-media-credit a` (`All photos`, 11px) | **4.42:1** | 7.22:1 |
+
+The licence one was a straight violation of the `--fa-deco` rule above — it carried text. It matters more than its size suggests: somebody deciding whether they may reuse a photograph has to be able to read which licence it carries.
+
+They were masked because the body sweep skipped any element with an image *ancestor*, to avoid measuring text over a photo. The media credits sit below the photo grid but inside the same block, so the whole credit line was silently skipped. The guard now only skips an element whose own `background-image` is set.
+
+**Left as they are, knowingly:**
+
+- `:active` dips four labels to 3.64–3.99:1 — `.cdfp-btn-credit`, `.cdfp-btn-hint`, `.ext-link-sub` and the copy-citation label. The cause is `opacity:.85` on press compositing the whole element over the paper ground. **Only `opacity:1` clears it**; 0.94 still measures 4.45. The state lasts as long as the pointer is held, and the `transform` carries the press feedback on its own, so the fix is available if the dip ever matters more than the affordance.
+- The disabled nav button measures 1.41:1 at `opacity:.25`. Disabled controls are exempt.
+
+**Still open, outside the panel:** `.ds-more` — the `+N` island counter in the Distribution column — uses `--fa-deco` for real text at 2.37:1. Same violation as the licence text. Not changed here because it is deliberately quieter than the island names beside it, which are `--fa`; darkening it to `--fa` clears AA but flattens that hierarchy. It needs a decision, not a find-and-replace.
 
 ### Type scale
 Every `font-size` resolves through these tokens. Six raw px values remain, all deliberate one-offs; the mobile search input is pinned to 16px because iOS Safari zooms the page on focus below that.

@@ -980,9 +980,15 @@ mark{background:#fef08a;color:inherit;border-radius:4px;padding:0 1px}
 .sp-media-none{font-size:var(--t-xs);color:var(--fa);line-height:1.55;
   background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
 .sp-media-credit{font-size:var(--t-micro);color:var(--fa);line-height:1.5;margin-top:7px}
-.sp-media-credit a{color:var(--gl);text-decoration:none}
+/* --gl is 4.42:1 on paper at this size, just under the floor. --g is the
+   link tone used elsewhere in the panel and measures 7.22:1. */
+.sp-media-credit a{color:var(--g);text-decoration:none}
 .sp-media-credit a:hover{text-decoration:underline}
-.sp-media-lic{font-family:"IBM Plex Mono",monospace;color:var(--fa-deco)}
+/* The licence is read, not decoration, so it cannot take --fa-deco:
+   #a0a0a0 measures 2.37:1 on the paper ground at 11px. Reuse matters
+   here — somebody deciding whether they may reuse a photograph has to
+   be able to read which licence it carries. */
+.sp-media-lic{font-family:"IBM Plex Mono",monospace;color:var(--fa)}
 
 /* ── GBIF record figures ─────────────────────────────────────
    The occurrence counts are the two numbers anyone actually reads here,
