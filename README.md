@@ -66,7 +66,7 @@ Two fields are computed once at load and cached on each record, so `render()` ne
 - `_dFull`: those names joined, used as the Distribution cell's hover title
 
 ### Known Data Corrections Applied
-10 species name corrections from CDFP verification:
+12 species name corrections from CDFP verification:
 - Begonia noraaunoriae, normaaguilariae, platyphylla
 - Dendrobium victoriae-reginae
 - Wurfbainia mindanaensis, palawanensis
@@ -74,6 +74,8 @@ Two fields are computed once at load and cached on each record, so `render()` ne
 - Pronephrium camarinense
 - Entada rheedei
 - Syzygium siderocola
+- Oceaniopteris egregia (was "Oceanopteris egregia")
+- Phaeanthus villosus (was "Phaenthus villosus")
 
 ---
 
