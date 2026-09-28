@@ -149,6 +149,8 @@ Chart conventions:
 ### Language Toggle
 EN/FIL flag button, on the cover and in the catalogue header (both carry `.js-lang-toggle`; `applyLang()` updates every one). Switches all UI chrome to Filipino. Scientific names, authorities, DAO references, CITES codes, island names and the four category names all stay in English/Latin. Translation object stored in `var T={en:{...}, fil:{...}}`. English interface labels are sentence case.
 
+The flags (`#i-flag-ph`, `#i-flag-us` in the sprite) are drawn **for a circle** on a 32×32 canvas, not cropped from 4:3 flags: cropping cut the Philippine sun and two of its three stars, and the US stars never rendered at all (they were an SVG `<marker>`, which does not draw through `<use>`). Every star and sun ray is placed inside the circle; the US stars are round dots, since a star at 26px is under a pixel wide. Official colours: PH `#0038a8` / `#ce1126` / `#fcd116`, US `#b22234` / `#3c3b6e`.
+
 ### Theme
 Light and dark, following the system by default. The sun/moon button (`.js-theme-toggle`, cover and header) records an explicit choice as `data-theme` on `<html>` and in `localStorage['dao-theme']`; a script at the very top of `<head>` re-applies it before the stylesheet parses, so a dark-mode visitor never sees an ivory frame. The button always offers the opposite of what is on screen, and relabels itself when the system theme changes. `#metaTheme` (the browser-chrome colour) follows.
 

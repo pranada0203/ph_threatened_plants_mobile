@@ -535,15 +535,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 :root[data-theme="dark"] .js-theme-toggle .ic-sun{display:inline-block}
 :root[data-theme="dark"] .js-theme-toggle .ic-moon{display:none}
 
-/* ── Language toggle — the flag of the language you would switch TO,
-   zoomed to fill a circle rather than floating inside it as a 4:3
-   rectangle. The flag is sized by height and cropped by the circle. ── */
-.lang-btn{width:26px;height:26px;padding:0;border-radius:50%;overflow:hidden;flex-shrink:0;
-  border:none;background:var(--bg-2);display:inline-flex;align-items:center;justify-content:center;
-  box-shadow:0 0 0 1px var(--bd-strong);transition:var(--transition);margin:0 3px}
-.lang-btn:hover{box-shadow:0 0 0 1px var(--fa-deco),0 0 0 4px var(--hover)}
+/* ── Language toggle — the flag of the language you would switch TO.
+   The flags are drawn for a circle (see the sprite), so they fill it
+   edge to edge with nothing cropped. The edge is a hairline drawn OVER
+   the flag by ::after — a ring outside it read as a beige halo, and an
+   inset shadow on the button itself is painted underneath the flag. ── */
+.lang-btn{position:relative;width:26px;height:26px;padding:0;border:none;border-radius:50%;
+  overflow:hidden;flex-shrink:0;background:var(--bg-2);display:inline-flex;margin:0 3px;
+  transition:var(--transition)}
+.lang-btn::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(20,20,19,.1)}
+.lang-btn:hover{box-shadow:0 0 0 3px var(--hover)}
 .lang-btn:active{transform:scale(.94)}
-.lang-btn-flag{height:100%;width:auto;aspect-ratio:4/3;flex-shrink:0}
+.lang-btn-flag{width:100%;height:100%;display:block}
 
 /* ══════════════════════════════════════════
    HEADER
@@ -1147,7 +1151,12 @@ mark{background:var(--mark-bg);color:inherit;border-radius:3px;padding:0 1px}
 .disclaimer-body strong{font-weight:600}
 .disclaimer-colophon{font-family:var(--font-sans);font-size:var(--t-xs)!important;color:var(--fa)!important;
   border-top:1px solid var(--bd);padding-top:14px;margin-top:22px;line-height:1.65}
-.modal-overlay:not(#analyticsOverlay) .modal:not(.modal-paper){width:min(720px,95vw)}
+/* About is narrower than Analytics — on desktop only. The :not(#id) makes
+   this selector outrank the phone rule .modal{width:100%}, which is what
+   left About at 95vw, pinned left, with a gap down the right on phones. */
+@media screen and (min-width:769px){
+  #disclaimerOverlay .modal{width:min(720px,95vw)}
+}
 
 /* ══════════════════════════════════════════
    ANALYTICS
@@ -1923,26 +1932,16 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
   <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></symbol>
   <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></symbol>
   <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></symbol>
-  <!-- Language toggle flags — sourced from flagicons.lipis.dev (flag-icons
-       by lipis), embedded inline as symbols rather than the usual CDN
-       stylesheet+background-image approach that library ships, so the
-       language button stays a self-contained icon like every other one
-       in this sprite (no extra network request, no external CSS file). -->
-  <symbol id="i-flag-ph" viewBox="0 0 640 480">
-    <path fill="#0038a8" d="M0 0h640v240H0z"/>
-    <path fill="#ce1126" d="M0 240h640v240H0z"/>
-    <path fill="#fff" d="M415.7 240 0 480V0"/>
-    <path fill="#fcd116" d="M26.7 42.4 41 55l16.6-9.2-7.4 17.5 14 13-19-1.6-8.1 17.2-4.3-18.5L14 71l16.3-10zm323.8 172.3.4 19 18 6.3-18 6.2-.4 19-11.5-15.1-18.2 5.5 10.8-15.6-10.8-15.6 18.2 5.5zM37.2 388.1l8 17.2 19-1.6-13.9 13 7.4 17.5-16.6-9.1-14.4 12.4 3.6-18.7L14 409l18.9-2.4zm114.2-249-6.2 6.2 3.1 47-3 .3-5.7-42.9-5.1 5 7.6 38.4a48 48 0 0 0-17.2 7.1l-21.7-32.4H96l26.4 34.3-2.4 2-31.1-35.5h-8.8v8.8l35.4 31-2 2.5-34.3-26.3v7.1l32.5 21.7q-5.2 7.8-7.1 17.2L66.3 223l-5.1 5 42.9 5.7q-.3 1.6-.3 3.1l-47-3-6.2 6.2 6.2 6.2 47-3.1.3 3.1-42.9 5.7 5 5 38.4-7.6a48 48 0 0 0 7.1 17.2l-32.5 21.7v7.2l34.3-26.3 2 2.4-35.4 31v8.8H89l31-35.4 2.5 2L96 312.2h7.2l21.7-32.5q7.8 5.2 17.2 7.1l-7.6 38.4 5 5 5.7-42.9q1.5.3 3.1.3l-3 47 6.1 6.2 6.3-6.2-3.1-47 3-.3 5.7 43 5.1-5.1-7.6-38.4a48 48 0 0 0 17.2-7.1l21.7 32.5h7.2l-26.4-34.3 2.4-2 31.1 35.4h8.8v-8.8l-35.4-31 2-2.4 34.3 26.3v-7.2l-32.5-21.7q5.2-7.8 7.1-17.2l38.3 7.6 5.1-5-42.9-5.7q.3-1.5.3-3.1l47 3 6.2-6.1-6.2-6.2-47 3-.3-3 42.9-5.7-5-5-38.4 7.5a48 48 0 0 0-7.1-17.2l32.5-21.7v-7.1l-34.3 26.3-2-2.4 35.4-31v-8.9H214l-31 35.5-2.5-2 26.4-34.3h-7.2L178 200.2q-7.8-5.2-17.2-7.1l7.6-38.3-5-5-5.7 42.8-3.1-.3 3-47z"/>
-  </symbol>
-  <symbol id="i-flag-us" viewBox="0 0 640 480">
-    <path fill="#bd3d44" d="M0 0h640v480H0"/>
-    <path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
-    <path fill="#192f5d" d="M0 0h364.8v258.5H0"/>
-    <marker id="us-a" markerHeight="30" markerWidth="30">
-      <path fill="#fff" d="m14 0 9 27L0 10h28L5 27z"/>
-    </marker>
-    <path fill="none" marker-mid="url(#us-a)" d="m0 0 16 11h61 61 61 61 60L47 37h61 61 60 61L16 63h61 61 61 61 60L47 89h61 61 60 61L16 115h61 61 61 61 60L47 141h61 61 60 61L16 166h61 61 61 61 60L47 192h61 61 60 61L16 218h61 61 61 61 60z"/>
-  </symbol>
+  <!-- Language toggle flags. Drawn for a circle on a square 32x32 canvas,
+       not cropped from a 4:3 flag: cropping cut the Philippine sun and two
+       of its stars, and the US canton lost its stars entirely (they were an
+       SVG marker, which does not render through <use>). Geometry is
+       generated so every star and sun ray sits wholly inside the circle.
+       Official colours: PH #0038a8 / #ce1126 / #fcd116, US #b22234 /
+       #3c3b6e. At 26px a star is under a pixel wide, so the US stars are
+       round dots (zero-length strokes). -->
+  <symbol id="i-flag-ph" viewBox="0 0 32 32"><path fill="#0038a8" d="M0 0h32v16H0z"/><path fill="#ce1126" d="M0 16h32v16H0z"/><path fill="#fff" d="M0 0l22 16L0 32z"/><g fill="#fcd116"><circle cx="8.2" cy="16" r="2.3"/><path d="M5.60 6.20L5.89 7.10L6.84 7.10L6.07 7.65L6.36 8.55L5.60 8.00L4.84 8.55L5.13 7.65L4.36 7.10L5.31 7.10ZM5.60 23.20L5.89 24.10L6.84 24.10L6.07 24.65L6.36 25.55L5.60 25.00L4.84 25.55L5.13 24.65L4.36 24.10L5.31 24.10ZM16.60 14.70L16.89 15.60L17.84 15.60L17.07 16.15L17.36 17.05L16.60 16.50L15.84 17.05L16.13 16.15L15.36 15.60L16.31 15.60Z"/></g><path d="M11.50 16.00L13.20 16.00M10.53 18.33L11.74 19.54M8.20 19.30L8.20 21.00M5.87 18.33L4.66 19.54M4.90 16.00L3.20 16.00M5.87 13.67L4.66 12.46M8.20 12.70L8.20 11.00M10.53 13.67L11.74 12.46" stroke="#fcd116" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-flag-us" viewBox="0 0 32 32"><path fill="#fff" d="M0 0h32v32H0z"/><path fill="#b22234" d="M0 0.000h32v2.462H0zM0 4.923h32v2.462H0zM0 9.846h32v2.462H0zM0 14.769h32v2.462H0zM0 19.692h32v2.462H0zM0 24.615h32v2.462H0zM0 29.538h32v2.462H0z"/><path fill="#3c3b6e" d="M0 0h16.4v17.231H0z"/><path d="M11.1 2.5h0M14 2.5h0M6.75 5.2h0M9.65 5.2h0M12.55 5.2h0M5.3 7.9h0M8.2 7.9h0M11.1 7.9h0M14 7.9h0M3.85 10.6h0M6.75 10.6h0M9.65 10.6h0M12.55 10.6h0M2.4 13.3h0M5.3 13.3h0M8.2 13.3h0M11.1 13.3h0M14 13.3h0" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></symbol>
 </svg>
 
 <!-- ══ LANDING / COVER ══ -->
