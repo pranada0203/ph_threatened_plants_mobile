@@ -4227,12 +4227,15 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-buildFams();
 /* Captured before render(), which is wrapped to call encodeHash() and so
    rewrites location.hash from filter state — that drops any key encodeHash
    does not itself emit, doc=1 included. Read it first, act on it after. */
 var bootHash=location.hash;
 restoreHash();
+/* After restoreHash, not before: the family counts come from cat/div/cites,
+   which restoreHash sets. Built first, a deep link like #cat=CR showed
+   whole-list counts ("All Families 1237") beside a 270-row table. */
+buildFams();
 render();
 applyLang();
 /* A shared/deep link carries filter or search state in the hash — showing
