@@ -832,10 +832,15 @@ mark{background:var(--mark-bg);color:inherit;border-radius:3px;padding:0 1px}
 
 /* ── Empty state ── */
 .empty{padding:88px 24px;text-align:center;color:var(--fa);font-size:var(--t-sm)}
-.empty-i{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;background:var(--bg-2);
-  display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--g)}
-.empty-h{font-family:var(--font-serif);font-size:var(--t-xl);font-weight:400;color:var(--ink);
-  margin-bottom:6px;letter-spacing:-.01em}
+.empty-art{display:block;width:176px;height:139px;margin:0 auto 18px;overflow:visible}
+.empty-h{font-family:var(--font-serif);font-size:var(--t-2xl);font-weight:400;color:var(--ink);
+  margin-bottom:6px;letter-spacing:-.015em}
+.empty > div:last-child{max-width:34ch;margin:0 auto;line-height:1.55}
+@media screen and (max-width:768px){
+  .empty{padding:56px 24px 72px}
+  .empty-art{width:148px;height:117px}
+  .empty-h{font-size:var(--t-xl)}
+}
 
 /* Non-endemic highlight — a quiet wash on the rows that lack the dot. */
 .show-nonendem tbody tr.sp-row:not([data-endemic="1"]){background:var(--accent-tint)}
@@ -1928,7 +1933,11 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
   <symbol id="i-chev-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V19a1 1 0 0 0 1 1H10v-5.5h4V20h3.5a1 1 0 0 0 1-1V9.5"/></symbol>
   <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
-  <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17 1.39.34 2.34.34C15 20 22 16 22 3c-4 1-9 2-14 5"></path><path d="M2 21c0-3.5 2-6 5-8"></path></symbol>
+  <!-- Empty state: the cover's herbarium sheet with nothing mounted — a
+       dotted ghost of the specimen, blank label, a lens held over it. Colours
+       are var() attributes (the brand-mark technique): custom properties
+       inherit into a <use> clone where class rules do not reliably reach. -->
+  <symbol id="i-empty" viewBox="0 0 132 104"><circle cx="72" cy="50" r="40" fill="var(--art-disc,#f1e4d6)"/><rect x="38" y="12" width="56" height="74" rx="3" transform="rotate(5 66 49)" fill="var(--art-paper-2,#f3f1ea)" stroke="var(--art-line,#141413)" stroke-width="2"/><g transform="rotate(-4 62 48)"><rect x="34" y="10" width="56" height="76" rx="3" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="2"/><path fill="none" stroke="var(--fa-deco,#b0aea5)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0.1 3.6" d="M60.5 72C59.5 60 63 50 61.5 40S61 30 63 24M61.0 62.0Q58.7 49.8 47.0 54.0Q49.3 66.2 61.0 62.0ZM61.5 56.0Q73.8 59.6 76.0 47.0Q63.7 43.4 61.5 56.0ZM61.5 44.0Q60.7 33.2 50.0 35.0Q50.8 45.8 61.5 44.0ZM62.0 39.0Q71.8 39.9 72.0 30.0Q62.2 29.1 62.0 39.0Z"/><path fill="var(--art-tape,#e8d9b5)" d="M53 59.5l14-2.4.8 4.4-14 2.4zM54.5 72.5l11.5-1.2.5 4.2-11.5 1.2z"/><rect x="67" y="73" width="18" height="9" rx="1.2" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="1.5"/><path stroke="var(--fa-deco,#b0aea5)" stroke-width="1.3" stroke-linecap="round" d="M70.5 76.4h11M70.5 79h6.5"/></g><circle cx="98.6" cy="62.2" r="13" fill="var(--art-bloom,#d97757)" fill-opacity=".45"/><circle cx="96" cy="60" r="13" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="2.4"/><path fill="none" stroke="var(--art-line,#141413)" stroke-width="1.6" stroke-linecap="round" d="M88.8 56.2a8 8 0 0 1 5.4-4.5"/><path fill="none" stroke="var(--art-line,#141413)" stroke-width="5" stroke-linecap="round" d="M105.4 69.6l10.4 10.6"/></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></symbol>
   <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></symbol>
   <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></symbol>
@@ -2207,7 +2216,7 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
           <tbody id="tbody"></tbody>
         </table>
         <div class="empty" id="empty" style="display:none">
-          <div class="empty-i"><svg class="ic"><use href="#i-leaf"/></svg></div>
+          <svg class="empty-art" aria-hidden="true"><use href="#i-empty"/></svg>
           <div class="empty-h" id="emptyH" data-i18n="noSpecies">No species found</div>
           <div id="emptySub" data-i18n="trySearch">Try a different search or adjust your filters.</div>
         </div>
@@ -3936,7 +3945,7 @@ function buildAnalytics(){
   /* Empty view — every chart below divides by a max or a total */
   if(!SET.length){
     body.innerHTML='<div class="empty" style="padding:48px 24px">'
-      +'<div class="empty-i"><svg class="ic"><use href="#i-leaf"/></svg></div>'
+      +'<svg class="empty-art" aria-hidden="true"><use href="#i-empty"/></svg>'
       +'<div class="empty-h">'+esc(t('noSpecies'))+'</div>'
       +'<div>'+esc(t('trySearch'))+'</div></div>';
     return;
