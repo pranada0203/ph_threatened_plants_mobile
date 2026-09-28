@@ -19,11 +19,13 @@ A single unified HTML file serving phone, tablet and desktop via CSS breakpoints
 ### Breakpoints
 | Range | What changes |
 |---|---|
-| ≤768px | Phone. Two columns (Status, Species); family, habit and authority fold into the meta line under the binomial. Detail panel is a full-screen sheet. |
-| 769–1000px | Narrow tablet / small window. Common name and Distribution drop; common name stacks under the binomial. |
-| 769–1260px | Tablet. Narrower sidebar, tighter cell padding. |
-| 769–1600px | Detail panel floats over the table rather than pushing it — seven of the eight old columns were fixed-width, so the panel used to take its 400px entirely out of the Scientific Name column. |
-| ≥1261px | Full desktop column set and sidebar width. |
+| ≤768px | Phone. Two columns (Status, Species); family, habit and authority fold into the meta line under the binomial, common name beneath. The list runs edge to edge. Detail panel, modals and filters are bottom sheets. Category filter is the docked segmented bar. |
+| 769–1000px | Narrow tablet / small window. Common name and Distribution drop; common name stacks under the binomial. The header gives up its DAO pill and the Home label. |
+| 769–1260px | Tablet. Narrower sidebar (188px), tighter cell padding, keyboard hints hidden. |
+| 769–1600px | Detail panel **floats** over the table and slides in, rather than docking — docking took its width out of the one flexible column. |
+| ≥1601px | Detail panel docks inline beside the table. |
+
+The phone and desktop blocks are scoped to `screen`. A printed A4 page is ~680px wide, and without that scope it fell into the phone block and printed the fixed bottom bar on every page. Print has its own block: the table in ink on white, Distribution dropped.
 
 Local preview: `.claude/serve.ps1` serves the repo root on `http://localhost:8642` (it derives its root from its own location, so it works on any checkout).
 
@@ -82,7 +84,7 @@ Two fields are computed once at load and cached on each record, so `render()` ne
 ## Features
 
 ### Filtering
-- **Status tabs**: ALL / CR / EN / VU / OTS (header stat row on desktop, bottom nav on mobile)
+- **Status tabs**: All / CR / EN / VU / OTS — a segmented control in the header on desktop, the docked bottom bar on phone. Both are `<button>`s (they were click-only `<div>`s, unreachable by keyboard) and stay in sync. The cover’s four category figures are entry points into the same filter.
 - **Division**: Angiosperm, Gymnosperm, Pteridophyte
 - **CITES**: App. I, App. II
 - **Habit**: Tree, Shrub, Herb, Vine, Liana
@@ -136,7 +138,7 @@ Charts describe the **current filtered view**, not the whole dataset.
 - The projection window is the land's own extent (lat 4.4–21.1, lon 116.6–127.0), measured from `PH_COAST`. The earlier window stopped at 19.9°N and drew Batanes off the top of the card. If you change the simplification, re-measure the extent.
 - 24 of the 26 `ISLAND_XY` points fall strictly inside a coastline polygon, and Biliran and Masbate land 0.8 km and 0.4 km offshore — inside Natural Earth's own generalisation at 1:10m, and ~0.02 px here. That point-in-polygon check is a free cross-validation of the geocoding; re-run it after editing either dataset.
 
-Land is drawn as `--sf` (white) on the card's `--bg` paper ground with a `--bd-strong` coast stroke. **No new hue** — the map stays inside the three-tier colour contract and the green symbols remain the only saturated thing in the card.
+Land is drawn in `--land` (a quiet warm grey, lighter than the card in dark mode so islands never read as holes) with a `--bd-strong` coast stroke, on the white chart card. **No new hue** — the olive data symbols (`--g`) remain the only saturated thing in the card. Labels carry a halo of the card colour (`--sf`), and their font comes from CSS (`.island-map text`), which overrides the SVG presentation attribute.
  Top 15 Families, Threat Category (with a per-category breakdown table), Division donut with Endemicity by Division, CITES Listing Status, Growth Habit, Top Islands by Threatened Species.
 
 Chart conventions:
@@ -145,7 +147,10 @@ Chart conventions:
 - CITES is a proportion bar plus figures, not a donut — 1,018 of 1,237 taxa are unlisted, so a donut spent 82% of its area drawing an absence and left App. I (13 taxa) as a hairline.
 
 ### Language Toggle
-EN/FIL toggle button in header stat row. Switches all UI chrome to Filipino. Scientific names, authorities, DAO references, CITES codes, island names all stay in English/Latin. Translation object stored in `var T={en:{...}, fil:{...}}`.
+EN/FIL flag button, on the cover and in the catalogue header (both carry `.js-lang-toggle`; `applyLang()` updates every one). Switches all UI chrome to Filipino. Scientific names, authorities, DAO references, CITES codes, island names and the four category names all stay in English/Latin. Translation object stored in `var T={en:{...}, fil:{...}}`. English interface labels are sentence case.
+
+### Theme
+Light and dark, following the system by default. The sun/moon button (`.js-theme-toggle`, cover and header) records an explicit choice as `data-theme` on `<html>` and in `localStorage['dao-theme']`; a script at the very top of `<head>` re-applies it before the stylesheet parses, so a dark-mode visitor never sees an ivory frame. The button always offers the opposite of what is on screen, and relabels itself when the system theme changes. `#metaTheme` (the browser-chrome colour) follows.
 
 ### Other Features
 - Column sort (click headers)
@@ -168,170 +173,130 @@ EN/FIL toggle button in header stat row. Switches all UI chrome to Filipino. Sci
 
 ## Layout Architecture
 
-### Mobile (≤768px)
-- Sticky toolbar: search + Filters button + Analytics + Export icons
-- Full-screen slide-up panel (touchstart on toolbar handle to swipe-close)
-- Bottom navigation bar: All/CR/EN/VU/OTS + Feedback icons
-- "Developed by Mc Andrew Pranada" right-aligned in bottom nav bar
-- Filter bottom sheet (expandable island group tabs)
-- Table: Status + Species only. Family, habit and authority run together on one meta line beneath the binomial, in that order — only the authority is allowed to truncate, so the two short fields always survive. Common name stacks below.
-- Header lockup: `DAO 2026-20` as a mono eyebrow above the title (same lockup as the landing page), not a pill beneath it
-- Language toggle: flag button in the header row
+### Cover
+- A greeting: the herbarium-sheet illustration, the serif title, one search field (the "composer") with a clay send button, and a live match count beneath it.
+- The list as one card: 1,237 in display serif, the category proportion bar, and four **category buttons** — each opens the catalogue already filtered (`.js-enter-cat`, which clicks the matching `.sc` tab so there is one filter path). "Explore the list" resets the category to All; other filters are left as they were.
+- Supporting documents as a quiet row: Methods & citation, the official PDF, Analytics.
+- Theme and language controls top right; About and the author in the footer.
+- Verified to fit without scrolling at 1280×720, 1440×800, 1440×900, 393×695, 375×667 and 430×932 — **in fallback fonts**, which is what a first visit renders under `display=optional`.
 
-### Desktop/iPad (≥769px) — `@media (min-width:769px)`
-- Full sidebar with family list + search
-- Full toolbar with all filter chips
-- Detail panel floats above the table below 1600px, docks inline above it
-- Five columns: Status, Scientific Name & Authority, Family, Common Name, Distribution
-- Bottom nav hidden, footer shown
-- Footer contains: "DAO 2026-20 • 1,237 species" + Send Feedback button + legend badges + "Developed by Mc Andrew Pranada"
-- Feedback panel opens as centered modal (not bottom sheet)
+### Mobile (≤768px)
+- Sticky, translucent header + toolbar: `DAO 2026-20` as a mono eyebrow above the title; theme, language and home as icon buttons; search, Filters (with a count badge), Analytics, Export.
+- The title may wrap (balanced) rather than truncate: English fits one line in Newsreader, Filipino never does.
+- List edge to edge. Status + Species only; family, habit and authority on one meta line under the binomial, in that order — only the authority truncates. Common name beneath.
+- Docked bottom bar: a segmented control, All · CR · EN · VU · OTS with counts, the active segment a raised white thumb with its code in the category colour.
+- Feedback: an ink round button above the bar.
+- Detail panel, analytics, filters and feedback are bottom sheets. Panel and sheets swipe to close (`enableSheetSwipe`); the panel's open/closed transforms carry no `!important`, so the inline transform the gesture writes wins and the sheet follows the finger.
+
+### Desktop/iPad (≥769px)
+- Header row: mark, serif title, DAO pill, the category segmented control, theme, language, Return home.
+- Toolbar: search (with result count), Filters, Compact, Analytics, Export, Print, keyboard hints.
+- Family sidebar flat on the paper; the table is the single white card.
+- Five columns: Status, Scientific name & authority, Family, Common name, Distribution.
+- Footer: count, Send feedback, and a legend of exactly what the table draws.
+- Filters and feedback open as centred dialogs.
+- A closed panel is `visibility:hidden` once its slide finishes, so its links leave the tab order.
 
 ---
 
 ## Design System
 
-The stylesheet is token-driven; component rules should read tokens rather than literals.
+The design language is Anthropic's: warm ivory paper, near-black ink, one clay accent, an editorial serif for anything read as a name or a title, a quiet grotesque for the interface, hairlines and soft light instead of boxes. The stylesheet is token-driven; component rules read tokens, never literals, and the dark theme is a second set of values for the same names — no component knows which theme it is in.
 
-### Colour contract — three tiers
-Colour means *exception*, not *attribute*. An attribute shared by most of the dataset carries no colour at all.
+### Colour contract
+
+**Clay is the interface, never the data.** `--accent` marks the interface's own state — the send button, the focus ring, the open row's leading rule, the filter-count badge, the brand plate, links. It encodes nothing about a plant, so it can never be mistaken for a threat category, even though CR and EN are warm hues too.
+
+Data colour keeps the three-tier rule — colour means *exception*, not *attribute*:
 
 | Tier | What | Treatment |
 |---|---|---|
-| 1 — Status | CR / EN / VU / OTS | The only saturated fill in the table. Full pills. |
-| 2 — Exception marks | CITES, non-Angiosperm division, infraspecific rank | One neutral outlined chip (`.mk`), meaning carried by a 6px dot (`.mk-dot`). Rendered **only** for the exception. |
-| 3 — Taxonomy & habit | Family, division, habit | No colour. Plain text in `--fa`. |
+| 1 — Status | CR / EN / VU / OTS | The only saturated fill in a row: a tinted pill with a dot. |
+| 2 — Exception marks | CITES, non-Angiosperm division, infraspecific rank | One neutral chip (`.mk`), meaning carried by a 6px dot. Rendered **only** for the exception. |
+| 3 — Taxonomy & habit | Family, division, habit | No colour. |
 
-Because 1,044 of 1,237 taxa are Angiosperms and 1,018 are unlisted by CITES, those two values render nothing — the marks only appear on the 27 Gymnosperms, 166 Pteridophytes, 219 CITES-listed and 14 infraspecific taxa. Endemism stays visible on all 920 endemics but as a bare dot (`.mk-endemic`), not a badge. The footer legend lists exactly what the table draws, which is why Angiosperm is absent from it.
+1,044 of 1,237 taxa are Angiosperms and 1,018 are unlisted by CITES, so those render nothing; the marks appear only on the 27 Gymnosperms, 166 Pteridophytes, 219 CITES-listed and 14 infraspecific taxa. Endemism stays on all 920 endemics as a bare olive dot. **Every selected filter chip is solid ink**, whatever it filters — "on" is a state, and hue stays with the data.
 
-Charts are the one place colour encodes a dimension freely — but growth habit is single-hue and sorted by count, because it is nominal with no inherent colour meaning.
+Charts use one olive data hue, `--g`, for every single-series chart and the map, and the category colours for the category chart. The JS builders reference `--g` by name, which is why it keeps the old token.
 
 ### Neutrals
-| Token | Value | Use |
-|---|---|---|
-| `--ink` | `#1a1a1a` | Primary text |
-| `--mu` | `#5c5c5c` | Secondary text |
-| `--fa` | `#6f6f6f` | Anything **read**: authority, captions, chart values, counts |
-| `--fa-deco` | `#a0a0a0` | Decoration **only**: rules, dashes, disabled glyphs, scrollbar thumb |
-| `--bg` / `--sf` | `#f5f4ef` / `#ffffff` | Paper ground / card surface |
 
-`--fa` must clear 4.5:1 against **both** grounds, not just white — `.kbd`, `.ext-link-sub`, `.similar-common`, `.live-status` and the search placeholders sit on `--bg`. `#6f6f6f` measures 5.02:1 on `--sf` and 4.56:1 on `--bg`. If it is read, it takes `--fa`; `--fa-deco` never carries text.
+`--fa` is for anything **read** at small sizes; it must clear 4.5:1 on all three grounds. `--fa-deco` is decoration only — rules, `aria-hidden` separators, disabled glyphs — and never carries text. The "—" placeholder for a missing common name or distribution is read — it says "none recorded" — so it takes `--fa`.
 
-**There is a third ground.** The species panel's identity zone (`.panel-toolbar` + `.panel-hdr`) is a category tint, not white and not paper, and `--fa` was never tuned for it. That zone therefore redefines `--fa` to `--mu` locally:
+| Token | Light | on `--bg` / `--bg-2` / `--sf` | Dark | on `--bg` / `--bg-2` / `--sf` |
+|---|---|---|---|---|
+| `--ink` | `#141413` | 17.5 / 16.3 / 18.4 | `#faf9f5` | 14.4 / 15.8 / 12.6 |
+| `--mu` | `#57564f` | 7.00 / 6.52 / 7.37 | `#c2c0b6` | 8.31 / 9.12 / 7.25 |
+| `--fa` | `#6b6a64` | 5.15 / 4.80 / 5.43 | `#a3a198` | 5.85 / 6.43 / 5.11 |
+| `--fa-deco` | `#b0aea5` | decoration | `#6b6a64` | decoration |
+| `--accent-ink` | `#a8492a` | 5.46 / 5.09 / 5.75 | `#e0896b` | 5.75 / 6.31 / 5.01 |
+
+Grounds: `--bg` ivory `#faf9f5` (the page), `--bg-2` `#f3f1ea` (tracks, wells, selected rows), `--sf` `#ffffff` (cards, table, sheets). Dark: `#262624` / `#1f1e1d` / `#30302e`. `--accent` itself (`#d97757`) is 2.96:1 on ivory, so it is a fill and mark colour only.
+
+`--bd` and `--bd-strong` are hairlines for the neutral grounds. Anything that must stay visible on a **category tint** takes `--bd-tint`, an alpha of ink that darkens whatever it sits on (the panel's nav buttons, its chips, the copy-citation button).
+
+### Category colours
+
+Four tokens per category: ink, pill tint, pill edge, panel tint. Hues follow the IUCN convention (red, orange, yellow; blue for the non-IUCN "other threatened"), pulled toward the warm paper so the four sit in one family. EN and VU inks were deepened until they cleared 5:1 on their own panel tints.
+
+| | Ink (light) | on `--bg` | on pill | on panel | `--mu` on panel | Ink (dark) | on pill | on panel |
+|---|---|---|---|---|---|---|---|---|
+| CR | `#a8352a` | 6.21 | 5.42 | 5.02 | 5.66 | `#f08a78` | 5.76 | 5.64 |
+| EN | `#98480f` | 6.10 | 5.39 | 5.02 | 5.76 | `#eb9b5b` | 6.11 | 5.98 |
+| VU | `#765b06` | 6.10 | 5.53 | 5.13 | 5.89 | `#d9b75a` | 6.84 | 6.74 |
+| OTS | `#375f90` | 6.23 | 5.60 | 5.18 | 5.83 | `#8fb4de` | 6.39 | 6.31 |
+
+**The panel's identity zone redefines `--fa`.** `--fa` measures 4.16–4.33 on the four light panel tints, so the zone sets
 
 ```css
 .panel-toolbar,.panel-hdr{--fa:var(--mu)}
 ```
 
-Every faint-text consumer in the zone — authority, nav counter, close icon, section eyebrows — resolves `var(--fa)`, so one declaration lifts all four. Without it the deepened CR tint puts them at **4.11:1** and fails AA; with it they read 5.47:1, and 5.84–6.47:1 on the other three tints. **Deepen a panel tint and you must re-check this**, because `--mu` is the last step before the text stops being faint at all.
+and every faint-text consumer inside it — authority, counter, close icon, section labels — lifts at once. Deepen a tint and this is the first thing to re-measure.
 
-### Category tints
+**Chart fills carry their own labels.** `barRow()` moves a value *inside* its bar past 86%, so every chart fill must carry white text (light) or `#1f1e1d` (dark) at AA: `--g` 5.29, CR 6.55, EN 6.42, VU 6.42, OTS 6.56, `--gym` 5.68, `--pte` 5.34, `--c1` 6.94, `--c2` 5.95 in light; 5.1–8.6 in dark. Lighten a chart hue and its inside label fails.
 
-Two tokens per category, not one: `--<cat>-bg` tints the small status pill, `--<cat>-panel` tints the species panel's identity zone. They were one token until the CR panel proved indistinguishable from the paper ground at pill strength.
+**Focus ring:** 2px `--focus`, 2px offset — `#b8552f` in light (≥3.68:1 on every ground, the four tints included), `#e0896b` in dark (≥4.93:1).
 
-Keep them separate. Deepening the shared token would also deepen the pills in the status column, and the four pills are a family that should stay one weight across 1,237 rows.
+### Type
 
-| Category | Panel tint | Hue | Gap from paper | Sat | Luminance | `--mu` on it |
-|---|---|---|---|---|---|---|
-| CR | `#fee2e2` | 0 | 50° | 11% | 0.810 | 5.47:1 |
-| EN | `#fee4c8` | 31 | 19° | 21% | 0.807 | 5.46:1 |
-| VU | `#fcf4c6` | 51 | 1° | 21% | 0.895 | 6.02:1 |
-| OTS | `#dbeafe` | 214 | 164° | 14% | 0.811 | 5.48:1 |
+| Family | Role |
+|---|---|
+| **Newsreader** | Display, binomials, figures, and long-form reading (the Methods paper and About are set in it). Variable with an optical-size axis, so the 56px cover title and the 17px table italic are each drawn for their size. |
+| **Hanken Grotesk** | Interface text. |
+| **JetBrains Mono** | Codes and figures: CR, CITES II, counts, licence codes. |
 
-**Do not regenerate these by stepping every hue the same amount down a colour scale.** The paper ground `--bg` is itself a warm hue 50 at 2% saturation, so how far a tint sits from hue 50 decides how much saturation it needs to register. CR is 50° away and carries at 11%; OTS is 164° away and carries at 14%; EN and VU are almost the paper's own hue and need 21%. An equal step leaves VU looking like faintly tinted paper — and at the saturation that finally makes VU register on its own, it shouts over CR. These were tuned against each other side by side, then measured.
-
-VU is the one that cannot sit at ~0.81 luminance with the others; yellow that dark goes olive, so it separates on saturation instead at 0.895.
-
-Lowest pairwise separation is EN vs VU at 32.3 — both warm, and the closest pair in the set. Acceptable because only one panel is ever on screen, and each carries its accent rule and a pill naming the category. If you shift either, re-check that pair first.
-
-The mobile sheet's drag handle takes `--fa-deco`, not `--bd-strong`: the latter is a border tone against white and falls to 1.35:1 on a category tint, which made the swipe affordance vanish. It is not held to 3:1 — the handle hints at the gesture rather than being the control, and the labelled close button is always beside it.
-
-**`--bd` and `--bd-strong` are tones for white and paper. Do not put either on a category tint.** Both fall under 1.6:1 there. Anything that has to stay visible across grounds takes `--fa` or darker.
-
-`.copy-cite-btn` is the worked example. Its dashed frame is the entire affordance and the button renders on six different grounds — four tints in the panel, white in the Methods modal. On `--bd` it measured 1.06:1 on the CR tint and **1.30:1 on white**, so it had never been visible anywhere; the tints only made it obvious. It is now `1px dashed var(--fa)`, which clears 3:1 on all six, and inside the panel's identity zone that token resolves to `--mu` — so the frame comes out a step stronger exactly where the ground is busiest, with no second rule. 1px rather than the old 1.5px: at this tone the heavier stroke reads as a box.
-
-Its `:hover` and `.copied` states set a background as well as a border colour, so they are self-contained and unaffected by the tint behind them.
-
-### Identity-zone audit
-
-Every element that paints inside `.panel-toolbar` and `.panel-hdr` was walked in the rendered DOM across all four categories — text against its effective backdrop, all four border sides, own surfaces, and `::before`/`::after` marks. Re-run it after changing anything in that zone; reading the CSS is not enough, because what matters is the field an element actually lands on.
-
-What it found, and what was done:
-
-| Element | Was | Now | Action |
-|---|---|---|---|
-| `.panel-status-label` (EN) | 4.23:1 | 4.84:1 | **AA failure.** `--en` darkened |
-| `.panel-status-label` (VU) | 4.43:1 | 4.79:1 | **AA failure.** `--vu` darkened |
-| `.panel-nav-btn` border | 1.06:1 | 2.14:1 | `--bd` → `--fa-deco` |
-| `.panel-status .pl` border | 1.19:1 | 4.79:1 | takes `--sp` in this zone |
-| `.copy-cite-btn` border | 1.06:1 | 5.46:1 | `--bd` → `--fa`, 1px |
-
-The two status-label failures are the ones that mattered: 12px/600 text under the 4.5:1 floor. `--vu` was additionally failing on the paper ground at 4.47:1, which predates the tints entirely.
-
-**Two things are knowingly left below 3:1.**
-
-*Classification pills* (`.habit-pill`, `.div-pill`, `.endemic-badge`) sit at 1.15–1.44:1 against the tint. They are readable anyway because they clear the field by **hue**, not luminance — 71° to 141° away from it. Their own text passes. The status pill was the single exception at 0–4°, sharing its panel's hue by construction, and that is the one that was fixed. If you add a pill whose hue lands near a category tint, it will need the same treatment.
-
-*Nav buttons* sit at 2.14:1. The arrow glyph inside carries `--mu` at 5.5:1, so the control is identifiable on its own and the border is affordance rather than identification. Pushing it to `--fa` puts a hard dark box on something small enough to compete with the species name.
-
-### Panel body sweep
-
-The body sits on the paper ground, not a tint, so it was swept separately — across seven species chosen to exercise different body content: CITES I, no common name, nine islands, an infraspecific name, and one of each category. The GBIF blocks are async, so the sweep waits for them; sweeping immediately after opening a panel misses the photographs, the occurrence figures and the match badge entirely.
-
-**Zero text failures.** The only text problem the body ever had was `--vu` at 4.47:1 on paper, fixed with the identity-zone work.
-
-Fourteen borders measure between 1.13:1 and 1.9:1, and all are left alone deliberately:
-
-- The white cards — `.dist-block`, `.ext-link`, `.live-block`, `.similar-item`, `.cdfp-btn` — carry a white fill at 1.10:1 over paper plus a hairline at 1.13:1. Neither number is impressive, but the card reads as a flat area difference and every one of them is identified by its own legible text. This is the "blocks on white, body on paper" inversion working as designed; it is the quietest thing in the app on purpose.
-- `.dist-also` and `.gbif-caption` have no fill, so their border is their only edge, at 1.30:1. They are dividers inside a card, not controls.
-- The rest are badges and pills whose text passes.
-
-**Keyboard focus ring:** `--gl` at 2px with 1px offset, measured on all six grounds it can appear over — 4.86 on white, 4.42 on paper, and 3.97–4.38 on the four tints. Worst case 3.97:1 against a 3:1 requirement.
-
-One trap when re-running any of this: **`element.focus()` does not reliably set `:focus-visible`**, so a programmatic sweep reports no focus ring anywhere and looks like a catastrophic finding. Drive it with a real Tab key press.
-
-### Hover and active sweep
-
-`:hover` cannot be read from computed style, so the sweep mirrors every `:hover`/`:active` rule in the stylesheet onto `.__hov`/`.__act` and toggles the class. A pseudo-class and a class have **identical specificity**, so the real cascade decides the winner and the measured values are the ones the browser would actually paint.
-
-Two traps, both of which produced confidently wrong answers first time:
-
-- **Transitions.** `.ext-link` transitions `border-color` and `background`, so reading `getComputedStyle` straight after the state applies returns the *start* value. The first run concluded the hover rules were dead — they were mid-animation. The sweep now injects `*{transition:none!important;animation:none!important}` first. Confirm the mirror works before trusting a run: hover `.ext-link` and check its border reads `rgb(74, 124, 89)`.
-- **Nesting.** Every `CSSStyleRule` exposes an empty `cssRules` list now that nesting is supported, so a rule-walker that does `if (r.cssRules) { recurse; continue; }` skips every style rule and finds nothing. Test `selectorText` first, and only recurse when `cssRules.length` is non-zero.
-
-This sweep found two **pre-existing AA failures at rest** that the body sweep had masked:
-
-| | Was | Now |
-|---|---|---|
-| `.sp-media-lic` (`CC BY`, 11px) | **2.37:1** | 4.56:1 |
-| `.sp-media-credit a` (`All photos`, 11px) | **4.42:1** | 7.22:1 |
-
-The licence one was a straight violation of the `--fa-deco` rule above — it carried text. It matters more than its size suggests: somebody deciding whether they may reuse a photograph has to be able to read which licence it carries.
-
-They were masked because the body sweep skipped any element with an image *ancestor*, to avoid measuring text over a photo. The media credits sit below the photo grid but inside the same block, so the whole credit line was silently skipped. The guard now only skips an element whose own `background-image` is set.
-
-**Left as they are, knowingly:**
-
-- `:active` dips four labels to 3.64–3.99:1 — `.cdfp-btn-credit`, `.cdfp-btn-hint`, `.ext-link-sub` and the copy-citation label. The cause is `opacity:.85` on press compositing the whole element over the paper ground. **Only `opacity:1` clears it**; 0.94 still measures 4.45. The state lasts as long as the pointer is held, and the `transform` carries the press feedback on its own, so the fix is available if the dip ever matters more than the affordance.
-- The disabled nav button measures 1.41:1 at `opacity:.25`. Disabled controls are exempt.
-
-**Still open, outside the panel:** `.ds-more` — the `+N` island counter in the Distribution column — uses `--fa-deco` for real text at 2.37:1. Same violation as the licence text. Not changed here because it is deliberately quieter than the island names beside it, which are `--fa`; darkening it to `--fa` clears AA but flattens that hierarchy. It needs a decision, not a find-and-replace.
-
-### Type scale
-Every `font-size` resolves through these tokens. Six raw px values remain, all deliberate one-offs; the mobile search input is pinned to 16px because iOS Safari zooms the page on focus below that.
+Loaded with `display=optional` (see the comment on the `<link>`), so a first visit renders in the fallbacks — Georgia and `system-ui` — and the layout is checked in those too.
 
 | Token | Value | Role |
 |---|---|---|
-| `--t-micro` | 11px | Mono eyebrows, pill and mark codes |
+| `--t-micro` | 11px | Codes, pills, mono figures |
 | `--t-xs` | 12px | Captions, authority, secondary meta |
 | `--t-sm` | 13px | Table cells, chips, list items |
-| `--t-base` | 14px | Base body, inputs |
-| `--t-md` | 16px | Binomials in the table |
-| `--t-lg` | 18px | Panel titles |
-| `--t-xl` | 22px | Modal titles, stat figures |
-| `--t-2xl` | 28px | Empty-state glyph |
+| `--t-base` | 14px | Body, inputs |
+| `--t-md` | 16px | Binomials (the table sets them at 17px) |
+| `--t-lg` | 18px | Sheet titles, chart titles |
+| `--t-xl` | 22px | Figures, modal titles on phone |
+| `--t-2xl` | 28px | Panel binomial, modal titles |
 
-Landing-page display sizes (`--t-landing-title`, `--t-landing-stat`) sit outside this scale deliberately.
+The phone search inputs are pinned to 16px; iOS Safari zooms the page on focus below that.
+
+### Shape, elevation, motion
+
+Radii `--r-2xs` 4 · `--r-xs` 6 · `--r-sm` 8 (buttons) · `--r-md` 12 (inputs, cards) · `--r-lg` 16 (table, charts) · `--r-xl` 20 (composer, sheets, modals). Surfaces separate by a single figure/ground step and soft shadow rather than borders; card edges are `inset` box-shadows so they never change a box's size. Motion is short and eased (`--ease`, `--ease-sheet`); `prefers-reduced-motion` removes it.
+
+### Contrast audit
+
+Every visible text element is measured against the ground it **actually lands on**: ancestor backgrounds composited, alpha included, from the root down. Swept in light and dark, at 1440×900 and 393×695, across 20 states — the cover and its live hint; the catalogue; a panel of each category, header and body, with GBIF results (mocked) rendered; search highlights; the non-endemic wash; analytics top and bottom; the filter sheet with a chip selected and a group expanded; feedback; the Methods paper top and bottom; About. **Result: zero text failures in every combination.**
+
+What the sweep needs to be trusted — each of these has produced a confidently wrong answer before:
+
+- **Disable transitions first** (`*{transition:none!important;animation:none!important}`). Reading computed style mid-transition returns the start value.
+- **Wait for the GBIF blocks.** They are async; sweeping straight after opening a panel misses the photographs, the figures and the match badge.
+- **Bar values inside a bar sit on a sibling**, not an ancestor: measure them against `.bar-fill`, or they read as white on the track.
+- **Skip `aria-hidden` subtrees** — they are decoration by declaration, which is the `--fa-deco` rule.
+- **`element.focus()` does not reliably set `:focus-visible`.** Drive focus with a real Tab key press, or the sweep reports no focus ring anywhere.
+- **Hover cannot be read from computed style.** Mirror `:hover`/`:active` rules onto classes (a pseudo-class and a class have identical specificity, so the real cascade decides). When walking rules, test `selectorText` before recursing: every `CSSStyleRule` now exposes an empty `cssRules` list.
 
 ### Column classes
 Responsive show/hide keys off these classes, never `:nth-child` — positional selectors silently retarget when the column order changes, which has already happened once.
@@ -397,7 +362,7 @@ var activeSpecies=null // Currently open species
 ---
 
 ## External Dependencies
-- Google Fonts: Cormorant Garamond, IBM Plex Mono, Inter
+- Google Fonts: Newsreader, Hanken Grotesk, JetBrains Mono
 - GBIF API: `api.gbif.org/v1/species/match` and `api.gbif.org/v1/occurrence/search`
 - CDFP: `philippineplants.org/Families/[Family].html` (link-out only, no scraping)
 - IPNI: `ipni.org/search` (link-out only)
@@ -432,6 +397,7 @@ This exists because the app declares `apple-mobile-web-app-capable`, so it can b
 - ~~No plant imagery~~ — CC-licensed GBIF occurrence photographs now appear in the species panel; roughly two thirds of taxa have at least one.
 - ~~Distribution data incomplete~~ — coverage measured at **1,232 of 1,237** (99.6%), and it now has its own table column.
 - ~~Script tag balance~~ — verified balanced (4 opens / 4 closes).
+- ~~`.ds-more` below AA~~ — the `+N` island counter used `--fa-deco` at 2.37:1. It now takes `--fa` and stays quieter than the island names by size, face (mono) and a small well, not by a failing tone.
 - ~~Desktop responsive breakpoint~~ — column widths re-measured against real content at every breakpoint; verified at 375, 768, 800, 1001, 1100, 1261 and 1440 in both languages.
 
 ---
@@ -442,7 +408,7 @@ A **herbarium sheet** — a mounted specimen with its determination label. It wa
 
 `logo.svg` is the master. The same geometry is duplicated as a `<symbol id="i-logo">` in the sprite inside `index.html`, and the header, landing plate and feedback sheet all draw it through `<use>` rather than fetching a raster — the page requests nothing at runtime, and that now includes its own logo.
 
-**Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a canvas cannot resolve custom properties. `#2d5a3d` must stay in step with `--g` by hand; `#f5f2e9` is the sheet.
+**Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a rasteriser cannot resolve custom properties. The plate and label are clay `#d97757` (`--accent`), the sheet ivory `#faf9f5` (`--bg`), the specimen ink `#141413` (`--ink`); keep them in step with those tokens by hand. The mark is the same in both themes — it is an icon with its own ground.
 
 The literals are *defaults* inside `var()`, so the mark has parts that can be switched off per placement. Custom properties inherit into a `<use>` shadow tree, which ordinary selectors cannot reach — this is the only way to restyle the mark's internals from outside.
 
@@ -453,11 +419,7 @@ The literals are *defaults* inside `var()`, so the mark has parts that can be sw
 | `--mark-ink` | stem and leaves |
 | `--mark-label` | the determination label block |
 
-**The landing page uses a reduced variant**: plate, sheet and label set to `transparent`, leaving only the specimen in `--g` on the disc. The full mark is a rounded square, and nesting a rounded square inside a circular container clipped its corners and read as two frames fighting each other. The sheet still carries the identity everywhere it has a ground of its own — header, favicon, home screen — so nothing is lost.
-
-That container is now `border-radius:50%`. It was `var(--r-lg)`, a fixed 24px, against a mark that is 64px, 52px or 48px depending on breakpoint — so it drew a squircle on desktop and a true circle on phones, and the shape changed with the viewport. A percentage cannot drift.
-
-The specimen alone only occupies the middle of the mark's box, so the landing variant carries `transform:scale(1.35)`. That is the last step before the stem crowds the lower edge; it costs nothing on a vector.
+**The cover does not use the mark.** It carries a larger drawing of the same idea: a hand-drawn herbarium sheet with a mounted specimen, straps and a determination label, in bold ink line with flat fills set a few units off-register — Anthropic's illustration manner. Every colour in it is a class (`.art-*`) reading `--art-*` tokens, so it follows the theme. Its leaves were generated as exact almond curves by a small script; it is inline in the cover markup, so edit it there.
 
 Files, and how to regenerate them:
 
@@ -469,7 +431,9 @@ Files, and how to regenerate them:
 
 The 16px PNG is drawn from a **simplified variant** — bigger sheet, thicker stem, one pair of leaves, no label — because the full mark's detail is below what 16 pixels resolve. Only one `apple-touch-icon` size is declared; iOS scales from 180 and the extra 152/192 files were doing nothing.
 
-There is no local rasteriser in this project. The PNGs were generated by drawing the SVG to a canvas in the browser and reading back `toDataURL`. If you regenerate them, check the PNG signature and the IHDR dimensions before writing — a silently truncated base64 still writes a file.
+`logo_180.png` is drawn **full-bleed** (square plate, no corner radius): iOS applies its own corner mask and fills transparent corners with black.
+
+There is no local rasteriser in this project. The PNGs are generated by rendering the SVG in a headless browser and screenshotting it at 1× with a transparent background. If you regenerate them, check the PNG signature and the IHDR dimensions before writing — a silently truncated file still writes.
 
 ---
 
