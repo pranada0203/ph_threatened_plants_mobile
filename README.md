@@ -20,12 +20,12 @@ A single unified HTML file serving phone, tablet and desktop via CSS breakpoints
 | Range | What changes |
 |---|---|
 | ≤768px | Phone. Two columns (Status, Species); family, habit and authority fold into the meta line under the binomial, common name beneath. The list runs edge to edge. Detail panel, modals and filters are bottom sheets. Category filter is the docked segmented bar. |
-| 769–1000px | Narrow tablet / small window. Common name and Distribution drop; common name stacks under the binomial. The header gives up its DAO pill and the Home label. |
+| 769–1000px | Narrow tablet / small window. Common name drops; common name stacks under the binomial. The header gives up its DAO pill and the Home label. |
 | 769–1260px | Tablet. Narrower sidebar (188px), tighter cell padding, keyboard hints hidden. |
 | 769–1600px | Detail panel **floats** over the table and slides in, rather than docking — docking took its width out of the one flexible column. |
 | ≥1601px | Detail panel docks inline beside the table. |
 
-The phone and desktop blocks are scoped to `screen`. A printed A4 page is ~680px wide, and without that scope it fell into the phone block and printed the fixed bottom bar on every page. Print has its own block: the table in ink on white, Distribution dropped.
+The phone and desktop blocks are scoped to `screen`. A printed A4 page is ~680px wide, and without that scope it fell into the phone block and printed the fixed bottom bar on every page. Print has its own block: the table in ink on white.
 
 Local preview: `.claude/serve.ps1` serves the repo root on `http://localhost:8642` (it derives its root from its own location, so it works on any checkout).
 
@@ -47,9 +47,7 @@ All 1,237 species are embedded as a JSON array (`var DATA=[...]`) in the `<scrip
   "division": "Angiosperm",
   "cites": null,
   "habit": "vine",
-  "habitConf": "verified",
-  "dist": "LUZON: Ilocos Norte",
-  "groups": ["Luzon Group"]
+  "habitConf": "verified"
 }
 ```
 
@@ -57,15 +55,10 @@ All 1,237 species are embedded as a JSON array (`var DATA=[...]`) in the `<scrip
 - `cat`: CR, EN, VU, OTS
 - `division`: Angiosperm, Gymnosperm, Pteridophyte
 - `cites`: null, "I", or "II"
+- `common`: common name, as given in DAO 2026-20
 - `endemic`: true/false (Philippine endemic)
 - `habit`: tree, shrub, herb, vine, liana — all verified by developer
 - `habitConf`: "verified" for all 1,237 entries
-- `dist`: raw distribution string from Co's Digital Flora of the Philippines (CDFP). All-caps = island name; mixed case = province/locality. May contain "(photos)" and "?" for uncertain localities.
-- `groups`: array of major island group strings for filter — "Luzon Group", "Visayas", "Mindanao Group", "Palawan", "Sulu Group"
-
-Two fields are computed once at load and cached on each record, so `render()` never parses distribution strings per row:
-- `_dIsl`: array of title-cased island names parsed from `dist` (falls back to `groups` for the 5 records with no parseable island)
-- `_dFull`: those names joined, used as the Distribution cell's hover title
 
 ### Known Data Corrections Applied
 12 species name corrections from CDFP verification:
@@ -88,16 +81,13 @@ Two fields are computed once at load and cached on each record, so `render()` ne
 - **Division**: Angiosperm, Gymnosperm, Pteridophyte
 - **CITES**: App. I, App. II
 - **Habit**: Tree, Shrub, Herb, Vine, Liana
-- **Island Group**: 5 major groups with expandable sub-island chips (mobile filter sheet)
-  - Luzon Group, Visayas, Mindanao Group, Palawan, Sulu Group
-  - Sub-islands filterable individually (e.g. Sibuyan, Polillo, Siargao)
 - **Flags**: Endemic only, Non-endemic highlight, No common name
 - **Family**: Sidebar (desktop) / Filter sheet (mobile)
 - **Search**: Accent-normalized (typing "pungapong" finds "pungápong"), searches name + authority + common + family + CITES
 
 Division, CITES and habit are still fully filterable and still shown in the species panel — they stopped being *table columns*, not data. See the colour contract below.
 
-Sortable columns: Status, Scientific Name, Family, Common Name. Distribution is derived, so it does not sort.
+Sortable columns: Status, Scientific Name, Family, Common Name.
 
 ### Species Detail Panel
 Opens from row click. Contains:
@@ -107,7 +97,6 @@ Opens from row click. Contains:
 - Photographs — CC-licensed GBIF occurrence media (see below); hidden when none qualify
 - External databases: IPNI, GBIF (with live occurrence data via GBIF API)
 - Co's Digital Flora of the Philippines (CDFP) photo link — links to family page
-- Local Distribution — parsed from dist field, all-caps = island label, mixed case = provinces, (photos) badge, ? uncertain badge
 - Similar species (same family + category)
 
 ### GBIF Integration
@@ -127,19 +116,8 @@ Up to three CC-licensed images per species, pulled from GBIF occurrence media (`
 ### Analytics Modal
 Charts describe the **current filtered view**, not the whole dataset.
 
-**Distribution map** (`buildIslandMap`) — a proportional-symbol map, not a heat map: the data records presence per island, so one circle per island sized by count is the honest form; interpolating a surface between them would invent a density gradient across water that nothing measured. Circle *area* scales with the count (radius by square root), 26 islands are plotted covering ~90% of island records, and it redraws with the filters like every other chart.
 
-`ISLAND_XY` holds the coordinates. They were geocoded **once** against OpenStreetMap via Nominatim and verified individually — do not regenerate them naively: a plain lookup returns real islets named "Panay Island" in Catanduanes and "Bohol Island" in Samar, and resolves Luzon and Palawan to local landmarks. Nothing is fetched at run time and no tiles are loaded. © OpenStreetMap contributors.
-
-`PH_COAST` is the basemap: the Philippine landmass baked into the page so the circles sit on a country instead of on blank paper. Natural Earth 1:10m Admin 0 (public domain), feature 608, reduced offline to **82 islands / ~1,460 points / 7.3 KB** — Douglas-Peucker at 0.02°, islands under ~1.6 px² dropped, coordinates quantised to 1/100° (~1.1 km, about 0.28 px at the size this draws). Rings are `|`-separated; within a ring the first two fields are the starting lon,lat in hundredths of a degree and every later point is a `dlon.dlat` delta, all base36. `coastRings()` decodes it once and memoises, because the modal rebuilds the map on every filter change.
-
-**Regenerate with `tools/derive-coastline.mjs`, never by hand.** Two things to know if you touch it:
-
-- The projection window is the land's own extent (lat 4.4–21.1, lon 116.6–127.0), measured from `PH_COAST`. The earlier window stopped at 19.9°N and drew Batanes off the top of the card. If you change the simplification, re-measure the extent.
-- 24 of the 26 `ISLAND_XY` points fall strictly inside a coastline polygon, and Biliran and Masbate land 0.8 km and 0.4 km offshore — inside Natural Earth's own generalisation at 1:10m, and ~0.02 px here. That point-in-polygon check is a free cross-validation of the geocoding; re-run it after editing either dataset.
-
-Land is drawn in `--land` (a quiet warm grey, lighter than the card in dark mode so islands never read as holes) with a `--bd-strong` coast stroke, on the white chart card. **No new hue** — the olive data symbols (`--g`) remain the only saturated thing in the card. Labels carry a halo of the card colour (`--sf`), and their font comes from CSS (`.island-map text`), which overrides the SVG presentation attribute.
- Top 15 Families, Threat Category (with a per-category breakdown table), Division donut with Endemicity by Division, CITES Listing Status, Growth Habit, Top Islands by Threatened Species.
+ Top 15 Families, Threat Category (with a per-category breakdown table), Division donut with Endemicity by Division, CITES Listing Status, Growth Habit.
 
 Chart conventions:
 - Bars are scaled to the largest value **in their own chart**, and each chart says so, because a full-width bar otherwise reads as "all of them" rather than "the most of any one".
@@ -147,7 +125,7 @@ Chart conventions:
 - CITES is a proportion bar plus figures, not a donut — 1,018 of 1,237 taxa are unlisted, so a donut spent 82% of its area drawing an absence and left App. I (13 taxa) as a hairline.
 
 ### Language Toggle
-EN/FIL flag button, on the cover and in the catalogue header (both carry `.js-lang-toggle`; `applyLang()` updates every one). Switches all UI chrome to Filipino. Scientific names, authorities, DAO references, CITES codes, island names and the four category names all stay in English/Latin. Translation object stored in `var T={en:{...}, fil:{...}}`. English interface labels are sentence case.
+EN/FIL flag button, on the cover and in the catalogue header (both carry `.js-lang-toggle`; `applyLang()` updates every one). Switches all UI chrome to Filipino. Scientific names, authorities, DAO references, CITES codes and the four category names all stay in English/Latin. Translation object stored in `var T={en:{...}, fil:{...}}`. English interface labels are sentence case.
 
 The flags (`#i-flag-ph`, `#i-flag-us` in the sprite) are drawn **for a circle** on a 32×32 canvas, not cropped from 4:3 flags: cropping cut the Philippine sun and two of its three stars, and the US stars never rendered at all (they were an SVG `<marker>`, which does not draw through `<use>`). Every star and sun ray is placed inside the circle; the US stars are round dots, since a star at 26px is under a pixel wide. Official colours: PH `#0038a8` / `#ce1126` / `#fcd116`, US `#b22234` / `#3c3b6e`.
 
@@ -165,9 +143,7 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 - Copy citation button
 - Share this tool (Web Share API with clipboard fallback)
 - Send Feedback panel (slide-up, with email + link to About)
-- **Methods & Citation paper** (`#paperOverlay`, opened by `.js-open-paper`, addressable at `#doc=1`) — scope, a provenance table separating what is reproduced from what is the author's, method, **distribution findings**, limitations, references and the recommended citation. This is the citable document; keep its figures in step with the dataset.
-
-  Section 4 summarises the parsed distribution data. Its headline results: 623 of 1,232 taxa (51%) are recorded from a single island; Critically Endangered taxa are sharply narrower-ranged than the rest (mean 1.77 islands, 70% single-island, against 2.8–3.3 and 42–47% for EN/VU/OTS); Palawan has the highest single-island share of any major island (42% of its 398 taxa, vs Luzon 34% and Mindanao 27%); pteridophytes range wider than angiosperms (mean 3.44 vs 2.72); and CITES listing shows no range signal, which is the expected null. Every figure is derived from `DATA` at the time of writing — **recompute before editing that section**, and keep its collection-effort caveat, which is what makes the rest of it honest.
+- **Methods & Citation paper** (`#paperOverlay`, opened by `.js-open-paper`, addressable at `#doc=1`) — scope, a provenance table separating what is reproduced from what is the author's, method, limitations, references and the recommended citation. This is the citable document; keep its figures in step with the dataset.
 - About panel (`#disclaimerOverlay`, opened by `.js-open-disclaimer`) — attribution, source terms, **privacy**, credits and licences, non-affiliation and AI-assistance statement, and warranty notice. Maintained in English only; the English text governs. The privacy text states exactly what is sent where; change it in the same commit as any change to what the page requests or stores.
 - No analytics, cookies or trackers. Vercel Analytics was removed.
 
@@ -176,7 +152,7 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 ## Layout Architecture
 
 ### Cover
-- A greeting: the herbarium-sheet illustration, the serif title, one search field (the "composer") with a clay send button, and a live match count beneath it.
+- A greeting: the herbarium-sheet illustration, the serif title, one search field (the "composer") with a green send button, and a live match count beneath it.
 - The list as one card: 1,237 in display serif, the category proportion bar, and four **category buttons** — each opens the catalogue already filtered (`.js-enter-cat`, which clicks the matching `.sc` tab so there is one filter path). "Explore the list" resets the category to All; other filters are left as they were.
 - Supporting documents as a quiet row: Methods & citation, the official PDF, Analytics.
 - Theme and language controls top right; About and the author in the footer.
@@ -194,7 +170,7 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 - Header row: mark, serif title, DAO pill, the category segmented control, theme, language, Return home.
 - Toolbar: search (with result count), Filters, Compact, Analytics, Export, Print, keyboard hints.
 - Family sidebar flat on the paper; the table is the single white card.
-- Five columns: Status, Scientific name & authority, Family, Common name, Distribution.
+- Four columns: Status, Scientific name & authority, Family, Common name.
 - Footer: count, Send feedback, and a legend of exactly what the table draws.
 - Filters and feedback open as centred dialogs.
 - A closed panel is `visibility:hidden` once its slide finishes, so its links leave the tab order.
@@ -203,11 +179,11 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 
 ## Design System
 
-This is not an Anthropic product and is not endorsed by Anthropic. The look: warm ivory paper, near-black ink, one clay accent, an editorial serif for anything read as a name or a title, a quiet grotesque for the interface, hairlines and soft light instead of boxes. The stylesheet is token-driven; component rules read tokens, never literals, and the dark theme is a second set of values for the same names — no component knows which theme it is in.
+This is not an Anthropic product and is not endorsed by Anthropic. The look: warm ivory paper, near-black ink, one green accent, an editorial serif for anything read as a name or a title, a quiet grotesque for the interface, hairlines and soft light instead of boxes. The stylesheet is token-driven; component rules read tokens, never literals, and the dark theme is a second set of values for the same names — no component knows which theme it is in.
 
 ### Colour contract
 
-**Clay is the interface, never the data.** `--accent` marks the interface's own state — the send button, the focus ring, the open row's leading rule, the filter-count badge, the brand plate, links. It encodes nothing about a plant, so it can never be mistaken for a threat category, even though CR and EN are warm hues too.
+**Green is the interface, never the data.** `--accent` marks the interface's own state — the send button, the focus ring, the open row's leading rule, the filter-count badge, the brand plate, links. It encodes nothing about a plant, so it can never be mistaken for a threat category. Its hue (~152°, a cool forest green) is kept well clear of the olive data greens (`--g`, `--endemic`, ~85°) and of the gymnosperm teal, so green here never reads as "endemic" or as a chart series.
 
 Data colour keeps the three-tier rule — colour means *exception*, not *attribute*:
 
@@ -219,11 +195,11 @@ Data colour keeps the three-tier rule — colour means *exception*, not *attribu
 
 1,044 of 1,237 taxa are Angiosperms and 1,018 are unlisted by CITES, so those render nothing; the marks appear only on the 27 Gymnosperms, 166 Pteridophytes, 219 CITES-listed and 14 infraspecific taxa. Endemism stays on all 920 endemics as a bare olive dot. **Every selected filter chip is solid ink**, whatever it filters — "on" is a state, and hue stays with the data.
 
-Charts use one olive data hue, `--g`, for every single-series chart and the map, and the category colours for the category chart. The JS builders reference `--g` by name, which is why it keeps the old token.
+Charts use one olive data hue, `--g`, for every single-series chart, and the category colours for the category chart. The JS builders reference `--g` by name, which is why it keeps the old token.
 
 ### Neutrals
 
-`--fa` is for anything **read** at small sizes; it must clear 4.5:1 on all three grounds. `--fa-deco` is decoration only — rules, `aria-hidden` separators, disabled glyphs — and never carries text. The "—" placeholder for a missing common name or distribution is read — it says "none recorded" — so it takes `--fa`.
+`--fa` is for anything **read** at small sizes; it must clear 4.5:1 on all three grounds. `--fa-deco` is decoration only — rules, `aria-hidden` separators, disabled glyphs — and never carries text. The "—" placeholder for a missing common name is read — it says "none recorded" — so it takes `--fa`.
 
 | Token | Light | on `--bg` / `--bg-2` / `--sf` | Dark | on `--bg` / `--bg-2` / `--sf` |
 |---|---|---|---|---|
@@ -231,9 +207,9 @@ Charts use one olive data hue, `--g`, for every single-series chart and the map,
 | `--mu` | `#57564f` | 7.00 / 6.52 / 7.37 | `#c2c0b6` | 8.31 / 9.12 / 7.25 |
 | `--fa` | `#6b6a64` | 5.15 / 4.80 / 5.43 | `#a3a198` | 5.85 / 6.43 / 5.11 |
 | `--fa-deco` | `#b0aea5` | decoration | `#6b6a64` | decoration |
-| `--accent-ink` | `#a8492a` | 5.46 / 5.09 / 5.75 | `#e0896b` | 5.75 / 6.31 / 5.01 |
+| `--accent-ink` | `#1d6847` | 6.38 / 5.95 / 6.72 | `#7cc4a0` | 7.41 / 8.13 / 6.46 |
 
-Grounds: `--bg` ivory `#faf9f5` (the page), `--bg-2` `#f3f1ea` (tracks, wells, selected rows), `--sf` `#ffffff` (cards, table, sheets). Dark: `#262624` / `#1f1e1d` / `#30302e`. `--accent` itself (`#d97757`) is 2.96:1 on ivory, so it is a fill and mark colour only.
+Grounds: `--bg` ivory `#faf9f5` (the page), `--bg-2` `#f3f1ea` (tracks, wells, selected rows), `--sf` `#ffffff` (cards, table, sheets). Dark: `#262624` / `#1f1e1d` / `#30302e`. `--accent` itself (`#2f7d5a`) is 4.74:1 on ivory; text and focus rings still take `--accent-ink` (`#1d6847`), and icon-only buttons `--accent-fill` (`#26724f`, white glyph 5.83:1).
 
 `--bd` and `--bd-strong` are hairlines for the neutral grounds. Anything that must stay visible on a **category tint** takes `--bd-tint`, an alpha of ink that darkens whatever it sits on (the panel's nav buttons, its chips, the copy-citation button).
 
@@ -303,7 +279,7 @@ What the sweep needs to be trusted — each of these has produced a confidently 
 ### Column classes
 Responsive show/hide keys off these classes, never `:nth-child` — positional selectors silently retarget when the column order changes, which has already happened once.
 
-`.cc` Status · `.csp` Species · `.cf` Family · `.cco` Common name · `.cds` Distribution
+`.cc` Status · `.csp` Species · `.cf` Family · `.cco` Common name
 
 ### Performance constraints
 All 1,237 rows are in the DOM at once (~23,500 nodes), so two rules matter:
@@ -319,9 +295,6 @@ All 1,237 rows are in the DOM at once (~23,500 nodes), so two rules matter:
 | `getFiltered()` | Returns filtered+sorted DATA array |
 | `render()` | Renders tbody from getFiltered() — rebuilds all rows, so never bind it straight to an input event |
 | `debouncedRender()` | 120ms-debounced `render()`; what the search box is bound to |
-| `distIslands(dist)` | Pulls the all-caps island names out of a CDFP `dist` string |
-| `titleCaseIsland(s)` | Title-cases an all-caps island name for display |
-| `distCell(rec)` | Builds the Distribution cell — first two islands plus a `+N` counter, full list on hover |
 | `fetchGBIFMedia(token,key)` | Fetches occurrence media, filters to open licences, dedupes, renders the photo strip |
 | `mediaThumbUrl(u)` | Host-specific thumbnail rewrite (iNaturalist, Smithsonian NMNH) |
 | `licenceLabel(url)` | Turns a Creative Commons URI into a short code (CC0, CC BY-NC, …) |
@@ -330,8 +303,6 @@ All 1,237 rows are in the DOM at once (~23,500 nodes), so two rules matter:
 | `openPanel(s)` | Opens species detail panel |
 | `closePanel()` | Closes panel, clears active row |
 | `fetchGBIF(s)` | Live GBIF species match + occurrences |
-| `renderDist(dist, groups)` | Parses distribution string into island/province hierarchy |
-| `renderDistLine(text)` | Renders province line with photo/uncertain badges |
 | `normalize(s)` | Accent-strips string for search |
 | `getInfraRank(scientific)` | Detects var./subsp./f. from scientific name |
 | `buildAnalytics()` | Builds analytics modal HTML |
@@ -350,8 +321,6 @@ var fam=''         // Active family filter
 var div=''         // Active division filter
 var cites=''       // Active CITES filter ('I', 'II', or '')
 var habit=''       // Active habit filter
-var region=''      // Active island group ('Luzon Group', etc.)
-var island=''      // Active specific island ('SIBUYAN', etc.)
 var endemic=false  // Endemic only toggle
 var nocommon=false // No common name toggle
 var nonendem=false // Non-endemic highlight toggle
@@ -399,9 +368,7 @@ This exists because the app declares `apple-mobile-web-app-capable`, so it can b
 
 ### Resolved
 - ~~No plant imagery~~ — CC-licensed GBIF occurrence photographs now appear in the species panel; roughly two thirds of taxa have at least one.
-- ~~Distribution data incomplete~~ — coverage measured at **1,232 of 1,237** (99.6%), and it now has its own table column.
 - ~~Script tag balance~~ — verified balanced (4 opens / 4 closes).
-- ~~`.ds-more` below AA~~ — the `+N` island counter used `--fa-deco` at 2.37:1. It now takes `--fa` and stays quieter than the island names by size, face (mono) and a small well, not by a failing tone.
 - ~~Desktop responsive breakpoint~~ — column widths re-measured against real content at every breakpoint; verified at 375, 768, 800, 1001, 1100, 1261 and 1440 in both languages.
 
 ---
@@ -412,7 +379,7 @@ A **herbarium sheet** — a mounted specimen with its determination label. It wa
 
 `logo.svg` is the master. The same geometry is duplicated as a `<symbol id="i-logo">` in the sprite inside `index.html`, and the header, landing plate and feedback sheet all draw it through `<use>` rather than fetching a raster — the logo itself needs no request, and the page loads nothing from any third party when it opens.
 
-**Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a rasteriser cannot resolve custom properties. The plate and label are clay `#d97757` (`--accent`), the sheet ivory `#faf9f5` (`--bg`), the specimen ink `#141413` (`--ink`); keep them in step with those tokens by hand. The mark is the same in both themes — it is an icon with its own ground.
+**Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a rasteriser cannot resolve custom properties. The plate and label are forest green `#2f7d5a` (`--accent`), the sheet ivory `#faf9f5` (`--bg`), the specimen ink `#141413` (`--ink`); keep them in step with those tokens by hand. The mark is the same in both themes — it is an icon with its own ground.
 
 The literals are *defaults* inside `var()`, so the mark has parts that can be switched off per placement. Custom properties inherit into a `<use>` shadow tree, which ordinary selectors cannot reach — this is the only way to restyle the mark's internals from outside.
 
@@ -447,14 +414,12 @@ The in-app **Methods & Citation** paper and **About** panel are the authoritativ
 
 **Recommended citation** — Pranada, M.A.K. 2026. *Threatened Philippine Plants: an interactive reference to the Updated National List of Threatened Philippine Plants (DAO 2026-20)*. Version 1.0. https://dao202620.vercel.app
 
-Cite the sources directly for their own material: DAO 2026-20 for the taxa and threat categories, the CITES Appendices for appendix listings, CDFP for localities, the GBIF Backbone Taxonomy (doi.org/10.15468/39omei) for occurrence data, and each photographer for their image.
+Cite the sources directly for their own material: DAO 2026-20 for the taxa and threat categories, the CITES Appendices for appendix listings, the GBIF Backbone Taxonomy (doi.org/10.15468/39omei) for occurrence data, and each photographer for their image.
 
 - Developer: **Mc Andrew Pranada**, Botanist. Independent personal project — **not** a DENR or BMB publication, and carrying no official status. Where this tool and the official DAO 2026-20 text differ, the official text governs.
 - **Species list and threat categories**: DAO 2026-20, DENR Philippines — an official government issuance. No authorship of the legal instrument or the list is claimed.
 - **CITES appendix listings**: from the CITES Appendices themselves, **not** from DAO 2026-20, which does not carry them. Do not attribute these to the DENR.
 - **Growth habit**: not part of DAO 2026-20. Assigned species by species by the developer; professional judgment, not an official determination.
-- **Distribution**: Co's Digital Flora of the Philippines (Pelser, Barcelona & Nickrent, 2011–). Condensed from their records; CDFP is authoritative.
-- **Map coastline**: Natural Earth 1:10m Admin 0 — **public domain**, no attribution required; credited anyway as good practice. Simplified for drawing, so it is a schematic outline and **not a survey boundary**: nothing on the map states anything about territory, maritime limits or disputed areas. Island positions from OpenStreetMap via Nominatim, © OpenStreetMap contributors, under the ODbL. Both are baked into the page; no tile server is contacted.
 - **Photographs**: served live from GBIF occurrence records, never hosted or modified here. Open licences only (CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA, Public Domain Mark); All Rights Reserved and unlicensed images are not shown. Copyright stays with each photographer, each image is credited with its licence and links to its source record, and takedown requests are honoured.
 - **Warranty**: provided as is, without warranty. Not for permitting, enforcement, compliance, commercial or legal use.
 - Built with Claude (Anthropic)
@@ -493,8 +458,8 @@ The lead editor's standard for all their projects, recorded here on 1 October 20
 | Licence files kept with items | **Met** for the fonts (`fonts/OFL-*.txt`). |
 | No implied affiliation | **Met.** Non-affiliation statement in About; Anthropic-style wording removed. |
 | AI assistance disclosed specifically | **Met.** About → Independence and AI assistance, and Methods §8. |
-| No sensitive locations | **Met.** Only counts and photographs are fetched; the map is island-level. Residual: the "GBIF record" link-out may show a photographed specimen's coordinates, as GBIF publishes them. |
-| Data sources' terms | **OPEN — release blocker.** Permission to redistribute a condensed form of CDFP's distribution records is not established. See `NOTICE.md`. Do not release to `main` until it is cleared or the Distribution column is withdrawn. |
+| No sensitive locations | **Met.** Only counts and photographs are fetched; there is no map or locality data. Residual: the "GBIF record" link-out may show a photographed specimen's coordinates, as GBIF publishes them. |
+| Data sources' terms | **Met.** The distribution data (a condensed copy of CDFP's records), the island map and every other bulk import from CDFP were removed on 12 October 2026, rather than seeking permission. CDFP is now only linked to and consulted to verify twelve name spellings; none of its records, text or images is reproduced. |
 | `presentation-deck.html` | **Not yet audited.** It is served publicly from the repository root. It loads nothing external, but its text and credits have not been checked against this standard. |
 
 ---
