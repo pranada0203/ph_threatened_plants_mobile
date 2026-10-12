@@ -264,7 +264,6 @@ function applyLang(){
 }
 
 </script>
-<script defer src="/_vercel/insights/script.js" onerror="void(0)"></script>
 <meta name="description" content="A reference for threatened plant species of the Philippines. Currently covers DAO 2026-20's 1,237 taxa with CITES status, growth habit, and endemicity data.">
 <!-- Browser chrome follows the page ground: ivory in light, warm charcoal in
      dark. The JS theme toggle rewrites #metaTheme when the reader overrides
@@ -285,12 +284,11 @@ function applyLang(){
 <link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="logo_16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
-<!-- preconnect starts the DNS/TLS handshake to Google's font servers as
-     early as possible, so the actual font files (requested below) have
-     less to wait on once the browser gets to them. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- display=optional (not swap) — swap was the cause of the "text
+<!-- Fonts are self-hosted from /fonts and nothing is requested from a font
+     service: opening the page contacts no third party. Licences (SIL OFL 1.1)
+     sit beside the files; see NOTICE.md.
+
+     display=optional (not swap) — swap was the cause of the "text
      flashes bold for a moment" report: it always paints in the fallback
      serif/mono font first, then swaps to the real webfont the instant
      it arrives, and a fallback rendered at this app's heavier weights
@@ -302,6 +300,8 @@ function applyLang(){
      cached) before that first paint; if it isn't, the page just keeps
      the fallback for that view instead of swapping later, trading "the
      branded font always eventually appears" for "no visible flash."
+     The three Latin faces are preloaded so that window is met on a first
+     visit too.
 
      Three families, each variable, so every weight the page uses is a real
      cut rather than a synthesised one:
@@ -311,9 +311,39 @@ function applyLang(){
                        drawn for their size
        Hanken Grotesk  interface text
        JetBrains Mono  codes and figures (CR, CITES II, counts)
+     Only the latin and latin-ext subsets are shipped; the page's text,
+     including the dataset, sits wholly inside them.
      Fallbacks are Georgia / system-ui, which is what a first visit renders
      under display=optional, so both were chosen to hold the layout. -->
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Hanken+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="preload" href="fonts/newsreader-normal-400-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/newsreader-italic-400-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/hanken-grotesk-normal-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:400 700;font-display:optional;
+  src:url(fonts/hanken-grotesk-normal-400-700-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:400 700;font-display:optional;
+  src:url(fonts/hanken-grotesk-normal-400-700-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 500;font-display:optional;
+  src:url(fonts/jetbrains-mono-normal-400-500-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 500;font-display:optional;
+  src:url(fonts/jetbrains-mono-normal-400-500-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Newsreader';font-style:italic;font-weight:400 600;font-display:optional;
+  src:url(fonts/newsreader-italic-400-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Newsreader';font-style:italic;font-weight:400 600;font-display:optional;
+  src:url(fonts/newsreader-italic-400-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Newsreader';font-style:normal;font-weight:400 600;font-display:optional;
+  src:url(fonts/newsreader-normal-400-600-latin-ext.woff2) format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Newsreader';font-style:normal;font-weight:400 600;font-display:optional;
+  src:url(fonts/newsreader-normal-400-600-latin.woff2) format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+</style>
 <style>
 /* ══════════════════════════════════════════════════════════════
    DESIGN TOKENS
@@ -1152,6 +1182,9 @@ mark{background:var(--mark-bg);color:inherit;border-radius:3px;padding:0 1px}
 .disclaimer-body p:last-child{margin-bottom:0}
 .disclaimer-body h4{font-family:var(--font-sans);font-size:var(--t-sm);font-weight:600;color:var(--ink);
   margin:26px 0 6px}
+.disclaimer-body ul{margin:0 0 16px 20px;padding:0}
+.disclaimer-body li{margin-bottom:8px;color:var(--ink)}
+.disclaimer-body code{font-family:var(--font-mono,monospace);font-size:.88em}
 .disclaimer-body h4:first-of-type{margin-top:22px}
 .disclaimer-body strong{font-weight:600}
 .disclaimer-colophon{font-family:var(--font-sans);font-size:var(--t-xs)!important;color:var(--fa)!important;
@@ -2381,8 +2414,31 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
       <p>Occurrence counts and taxonomic matches are fetched from GBIF at the moment you view a species. They are not independently verified, reflect the state of those databases at that moment, and may differ from official Philippine taxonomic determinations. A GBIF name match is a database match, not a taxonomic opinion.</p>
 
 
+      <h4>Privacy</h4>
+      <p>This tool has no accounts, cookies, advertising or analytics, and the author collects no personal information through it. It runs in your browser from a single page.</p>
+      <p><strong>When you open the page</strong>, your browser fetches the page, its fonts and its logos from this site&rsquo;s host, Vercel Inc. Like any web host, Vercel receives your IP address and ordinary request details (browser type, time) and may keep them in its server logs under <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">its own privacy policy</a>. No other company&rsquo;s server is contacted at this point; the fonts are hosted here, not loaded from a font service.</p>
+      <p><strong>When you open a species</strong>, the page asks <a href="https://www.gbif.org" target="_blank" rel="noopener">GBIF</a> (api.gbif.org) for a name match, occurrence counts and photographs. GBIF therefore receives the species&rsquo; scientific name and your IP address. The photographs are then loaded directly from the servers of the institutions and platforms that hold them (iNaturalist&rsquo;s image servers are one example), so those servers see your IP address too. Nothing is sent to any of these services until you open a species, and the author does not receive any of it. Each service&rsquo;s own privacy policy applies.</p>
+      <p><strong>What is stored on your device:</strong> your theme and language choice, in your browser&rsquo;s local storage (<code>dao-theme</code>, <code>dao-lang</code>). They never leave your device and clearing your browser&rsquo;s site data removes them. Your current filters and search words are kept in the page address after the &ldquo;#&rdquo; so you can share a link; that part of an address is not sent to any server.</p>
+      <p><strong>Links and email:</strong> following a link to another site, or the feedback link, leaves this tool. The feedback link opens your own email program; a message you send reaches the author&rsquo;s inbox and is used only to reply to you and correct the tool.</p>
+
       <h4>Accuracy and warranty</h4>
       <p>This tool is provided as a reference only, <strong>as is and without warranty of any kind</strong>, express or implied. Care has been taken in compiling and presenting the information, but no guarantee is made that it is complete, current or free of error, and no liability is accepted for any loss or decision arising from its use. Do not rely on it for permitting, enforcement, compliance, commercial or legal purposes &mdash; consult the official DAO&nbsp;2026-20 text and the DENR directly.</p>
+
+      <h4>Credits and licences</h4>
+      <p>Everything reproduced or used from someone else, with its licence and how this tool complies. The same list is kept in <code>NOTICE.md</code> in the project repository.</p>
+      <ul>
+        <li><strong>DAO&nbsp;2026-20, DENR</strong> &mdash; the species list and threat categories; a public government issuance. Cited as the source; no authorship of it is claimed.</li>
+        <li><strong>CITES Appendices</strong> &mdash; appendix listings, taken from the Convention&rsquo;s own appendices and cited to them.</li>
+        <li><strong>Co&rsquo;s Digital Flora of the Philippines</strong> (Pelser, Barcelona &amp; Nickrent) &mdash; distribution. A condensed reading of their records, credited and linked; CDFP is authoritative.</li>
+        <li><strong>GBIF</strong> &mdash; name matches and occurrence counts, fetched live; GBIF Backbone Taxonomy (doi.org/10.15468/39omei). Photographs are served live under their own Creative Commons licences, credited to each photographer, never copied or altered.</li>
+        <li><strong>Natural Earth</strong> &mdash; coastline, public domain; credited as good practice.</li>
+        <li><strong>OpenStreetMap contributors</strong> (via Nominatim) &mdash; island positions, &copy; OpenStreetMap contributors, Open Database Licence (ODbL).</li>
+        <li><strong>Newsreader, Hanken Grotesk, JetBrains Mono</strong> &mdash; fonts, SIL Open Font Licence 1.1; hosted with this tool, with their licence files kept alongside.</li>
+      </ul>
+
+      <h4>Independence and AI assistance</h4>
+      <p>This tool is not affiliated with, endorsed by or sponsored by the DENR, the Biodiversity Management Bureau, GBIF, CDFP, CITES, Anthropic or any other organisation named here. Names are used only to say where something comes from.</p>
+      <p>The page was written by the author working with Claude, an AI assistant made by Anthropic, as a coding and design-review assistant. Claude is a tool, not an author: every taxonomic judgment, habit assignment, correction and editorial decision is the author&rsquo;s, and responsibility for them rests with the author.</p>
 
       <h4>Using this tool</h4>
       <p>You are welcome to use, cite and share it for research, education and conservation. Please cite DAO&nbsp;2026-20 as the source of the list, and CDFP and the individual photographers for their own material, rather than citing this tool as the origin of data it did not create.</p>
@@ -2390,7 +2446,7 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
       <h4>Corrections and contact</h4>
       <p>Corrections, taxonomic notes and takedown requests are welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a>, or through Send Feedback in the app.</p>
 
-      <p class="disclaimer-colophon">Developed by Mc Andrew Pranada, botanist. Built with Claude (Anthropic). This notice is maintained in English; translations elsewhere in the app are provided for convenience and the English text governs.</p>
+      <p class="disclaimer-colophon">Developed by Mc Andrew Pranada, botanist. Built with the assistance of Claude (Anthropic); see &ldquo;Independence and AI assistance&rdquo; above. This notice is maintained in English; translations elsewhere in the app are provided for convenience and the English text governs.</p>
     </div>
   </div>
 </div>
@@ -2531,11 +2587,11 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
       <p class="paper-note">Please <strong>do not cite this tool as the source of the list itself</strong>. For taxa and threat categories cite reference&nbsp;1; for CITES appendix listings cite reference&nbsp;4; for localities cite reference&nbsp;2; for occurrence data cite reference&nbsp;3; for a photograph cite its photographer and licence as shown beside it.</p>
 
       <h4>8 &middot; Software and acknowledgements</h4>
-      <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Cormorant Garamond, Inter and IBM Plex Mono. Hosted on Vercel.</p>
-      <p>The distribution map is drawn from two sets of coordinates held in the page itself, so <strong>no map tiles are fetched and nothing is requested at run time</strong>. The coastline is <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a> 1:10m Admin&nbsp;0 (public domain), reduced offline to 82 islands and about 1,460 points. The 26 island positions carrying the circles were geocoded once against <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> data via Nominatim and checked individually; 24 of the 26 fall inside a Natural Earth coastline polygon and the other two within a kilometre of one, which is inside that dataset&rsquo;s own generalisation at this scale. &copy; OpenStreetMap contributors.</p>
+      <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Newsreader, Hanken Grotesk and JetBrains Mono, all under the SIL Open Font Licence and hosted with the page. Hosted on Vercel; the page loads no analytics, and what is sent to GBIF when a species is opened is set out under Privacy in the About notice.</p>
+      <p>The distribution map is drawn from two sets of coordinates held in the page itself, so <strong>no map tiles are fetched and the map itself requests nothing</strong>. The coastline is <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a> 1:10m Admin&nbsp;0 (public domain), reduced offline to 82 islands and about 1,460 points. The 26 island positions carrying the circles were geocoded once against <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> data via Nominatim and checked individually; 24 of the 26 fall inside a Natural Earth coastline polygon and the other two within a kilometre of one, which is inside that dataset&rsquo;s own generalisation at this scale. &copy; OpenStreetMap contributors.</p>
       <p>The interface was written by the author working with <strong>Claude (Anthropic)</strong> as a coding assistant, which also carried out the design review the present layout follows. Claude is a tool, not an author: every taxonomic judgment, habit assignment, correction and editorial decision here is the author&rsquo;s, and responsibility for them rests with the author. Contributors to CDFP and GBIF, and the photographers whose images appear, are gratefully acknowledged &mdash; this tool would show very little without them.</p>
 
-      <p class="paper-colophon">Mc Andrew K. Pranada, botanist &middot; Version 1.0, 2026 &middot; Corrections welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a><br>See also the <button type="button" class="paper-inline-link js-open-disclaimer">About notice</button> for rights, terms of use and warranty.</p>
+      <p class="paper-colophon">Mc Andrew K. Pranada, botanist &middot; Version 1.0, 2026 &middot; Corrections welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a><br>See also the <button type="button" class="paper-inline-link js-open-disclaimer">About notice</button> for rights, privacy, terms of use and warranty.</p>
 
     </div>
   </div>

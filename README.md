@@ -168,8 +168,8 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 - **Methods & Citation paper** (`#paperOverlay`, opened by `.js-open-paper`, addressable at `#doc=1`) — scope, a provenance table separating what is reproduced from what is the author's, method, **distribution findings**, limitations, references and the recommended citation. This is the citable document; keep its figures in step with the dataset.
 
   Section 4 summarises the parsed distribution data. Its headline results: 623 of 1,232 taxa (51%) are recorded from a single island; Critically Endangered taxa are sharply narrower-ranged than the rest (mean 1.77 islands, 70% single-island, against 2.8–3.3 and 42–47% for EN/VU/OTS); Palawan has the highest single-island share of any major island (42% of its 398 taxa, vs Luzon 34% and Mindanao 27%); pteridophytes range wider than angiosperms (mean 3.44 vs 2.72); and CITES listing shows no range signal, which is the expected null. Every figure is derived from `DATA` at the time of writing — **recompute before editing that section**, and keep its collection-effort caveat, which is what makes the rest of it honest.
-- About panel (`#disclaimerOverlay`, opened by `.js-open-disclaimer`) — attribution, source terms, licensing and warranty notice. Maintained in English only; the English text governs.
-- Vercel Analytics (`/_vercel/insights/script.js`)
+- About panel (`#disclaimerOverlay`, opened by `.js-open-disclaimer`) — attribution, source terms, **privacy**, credits and licences, non-affiliation and AI-assistance statement, and warranty notice. Maintained in English only; the English text governs. The privacy text states exactly what is sent where; change it in the same commit as any change to what the page requests or stores.
+- No analytics, cookies or trackers. Vercel Analytics was removed.
 
 ---
 
@@ -203,7 +203,7 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 
 ## Design System
 
-The design language is Anthropic's: warm ivory paper, near-black ink, one clay accent, an editorial serif for anything read as a name or a title, a quiet grotesque for the interface, hairlines and soft light instead of boxes. The stylesheet is token-driven; component rules read tokens, never literals, and the dark theme is a second set of values for the same names — no component knows which theme it is in.
+This is not an Anthropic product and is not endorsed by Anthropic. The look: warm ivory paper, near-black ink, one clay accent, an editorial serif for anything read as a name or a title, a quiet grotesque for the interface, hairlines and soft light instead of boxes. The stylesheet is token-driven; component rules read tokens, never literals, and the dark theme is a second set of values for the same names — no component knows which theme it is in.
 
 ### Colour contract
 
@@ -364,11 +364,11 @@ var activeSpecies=null // Currently open species
 ---
 
 ## External Dependencies
-- Google Fonts: Newsreader, Hanken Grotesk, JetBrains Mono
+- Fonts (Newsreader, Hanken Grotesk, JetBrains Mono): **self-hosted** in `fonts/`, SIL OFL 1.1, licence files alongside. Nothing is loaded from a font service.
 - GBIF API: `api.gbif.org/v1/species/match` and `api.gbif.org/v1/occurrence/search`
 - CDFP: `philippineplants.org/Families/[Family].html` (link-out only, no scraping)
 - IPNI: `ipni.org/search` (link-out only)
-- Vercel Analytics: `/_vercel/insights/script.js`
+- Photograph hosts: GBIF returns each image's own URL, so thumbnails load straight from the holding institution or platform (iNaturalist, Smithsonian NMNH and others). Only when a species is opened.
 
 ---
 
@@ -378,7 +378,9 @@ var activeSpecies=null // Currently open species
 - **Files needed in repo root**:
   - `index.html`
   - `vercel.json`
-  - `logo_512.png`, `logo_192.png`, `logo_180.png`, `logo_152.png`, `logo_32.png`, `logo_16.png`
+  - `logo_180.png`, `logo_32.png`, `logo_16.png`, `logo.svg`
+  - `fonts/` (the `.woff2` files and their `OFL-*.txt` licences)
+  - `NOTICE.md`
 
 ### Caching — read this before debugging anything on a phone
 `vercel.json` sets `Cache-Control: public, max-age=0, must-revalidate` on `/` and `/index.html`, so the HTML is revalidated on every load. The logos keep a week-long cache; they never change.
@@ -386,7 +388,7 @@ var activeSpecies=null // Currently open species
 This exists because the app declares `apple-mobile-web-app-capable`, so it can be added to the iOS Home Screen and run standalone — and a standalone web app caches its HTML far more stubbornly than a Safari tab. While diagnosing a layout bug, **three correct deploys in a row never reached the device at all**; the only fix was deleting and re-adding the Home Screen icon.
 
 **Verify changes in Safari, not from the Home Screen icon.** If the icon shows something stale, delete and re-add it.
-- **Enable Vercel Analytics** in project dashboard after deploy
+- **Do not enable Vercel Analytics or Speed Insights** in the project dashboard: the page no longer loads their script, and the privacy notice says it uses none.
 
 ---
 
@@ -408,7 +410,7 @@ This exists because the app declares `apple-mobile-web-app-capable`, so it can b
 
 A **herbarium sheet** — a mounted specimen with its determination label. It was chosen over the previous conifer for a reason worth keeping: conifers are 27 of 1,237 taxa, the smallest of the three divisions, so the old mark depicted 2% of the list and read as temperate rather than Philippine. A herbarium sheet says what the tool actually is, which is a taxonomic reference tied to a legal instrument, not a nature app.
 
-`logo.svg` is the master. The same geometry is duplicated as a `<symbol id="i-logo">` in the sprite inside `index.html`, and the header, landing plate and feedback sheet all draw it through `<use>` rather than fetching a raster — the page requests nothing at runtime, and that now includes its own logo.
+`logo.svg` is the master. The same geometry is duplicated as a `<symbol id="i-logo">` in the sprite inside `index.html`, and the header, landing plate and feedback sheet all draw it through `<use>` rather than fetching a raster — the logo itself needs no request, and the page loads nothing from any third party when it opens.
 
 **Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a rasteriser cannot resolve custom properties. The plate and label are clay `#d97757` (`--accent`), the sheet ivory `#faf9f5` (`--bg`), the specimen ink `#141413` (`--ink`); keep them in step with those tokens by hand. The mark is the same in both themes — it is an icon with its own ground.
 
@@ -421,7 +423,7 @@ The literals are *defaults* inside `var()`, so the mark has parts that can be sw
 | `--mark-ink` | stem and leaves |
 | `--mark-label` | the determination label block |
 
-**The cover does not use the mark.** It carries a larger drawing of the same idea: a hand-drawn herbarium sheet with a mounted specimen, straps and a determination label, in bold ink line with flat fills set a few units off-register — Anthropic's illustration manner. Every colour in it is a class (`.art-*`) reading `--art-*` tokens, so it follows the theme. Its leaves were generated as exact almond curves by a small script; it is inline in the cover markup, so edit it there.
+**The cover does not use the mark.** It carries a larger drawing of the same idea: a hand-drawn herbarium sheet with a mounted specimen, straps and a determination label, in bold ink line with flat fills set a few units off-register. It is original to this project, made with Claude's assistance, and carries no third-party artwork. Every colour in it is a class (`.art-*`) reading `--art-*` tokens, so it follows the theme. Its leaves were generated as exact almond curves by a small script; it is inline in the cover markup, so edit it there.
 
 Files, and how to regenerate them:
 
@@ -456,6 +458,44 @@ Cite the sources directly for their own material: DAO 2026-20 for the taxa and t
 - **Photographs**: served live from GBIF occurrence records, never hosted or modified here. Open licences only (CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA, Public Domain Mark); All Rights Reserved and unlicensed images are not shown. Copyright stays with each photographer, each image is credited with its licence and links to its source record, and takedown requests are honoured.
 - **Warranty**: provided as is, without warranty. Not for permitting, enforcement, compliance, commercial or legal use.
 - Built with Claude (Anthropic)
+
+---
+
+## Release standard: clean and conflict-free
+
+The lead editor's standard for all their projects, recorded here on 1 October 2026 and applied to the Flora on 12 October 2026. The text is theirs, unchanged.
+
+> I avoid conflict. I don't want to violate terms of use, use other people's original work without permission, or be careless with rights. If anything we make could become public, the failure I most want to avoid is a complaint, a rights claim or a terms-of-use dispute. If a risk like that can't be cleared, I would rather not release the thing at all. Treat "someone could reasonably object" as a defect to fix before release, not after.
+>
+> Before adding anything made by someone else, check its licence or terms of use. That includes a library, font, image, icon, map, dataset, quotation or online service.
+> - Prefer permissive licences. Keep each item's own licence file with it.
+> - Give the correct credit. Check it against the original source, because repackaged copies sometimes credit the wrong owner.
+> - List every third-party item, its licence and how we comply in one place (a NOTICE file, README, About page or acknowledgements). Do this in the same step that adds the item.
+>
+> **Other people's work.** Don't copy text, figures, images, code or designs unless their owner allows it or the licence permits it. Quote briefly, with a citation. Never suggest that an organisation is affiliated with or endorses the work. Use other people's names, logos and trademarks only to describe or refer to them, never as branding.
+>
+> **Privacy.** Nothing should contact another company's server just because someone opens the page or file. Self-host fonts and scripts instead of loading them from outside services. Use no cookies or tracking unless they are actually needed. Say plainly what is sent where, and what is stored.
+>
+> **Data.** Follow each data source's terms and citation requirements (dataset licences, DOIs). Don't publish sensitive details, such as the exact locations of threatened species or private information about people.
+>
+> **Honesty.** Disclaimers must be accurate: what the work is and isn't (for example, preliminary or unofficial) and that it comes with no warranty. Disclose AI assistance accurately and specifically. Never overclaim.
+>
+> When unsure: don't ship it and don't decide quietly. Tell me what the risk is, give me the options and recommend one. I'd rather hear about a problem before release than after.
+
+### Where the Flora stands
+
+| Rule | Status |
+|---|---|
+| Nothing contacts a third party on open | **Met.** Fonts self-hosted; analytics removed. The only third-party requests happen after the reader opens a species (GBIF, and the photo hosts it names). |
+| No cookies or tracking | **Met.** `localStorage` holds only `dao-theme` and `dao-lang`. |
+| Say what is sent where | **Met.** About → Privacy. Keep it in step with the code. |
+| One list of third-party items | **Met.** `NOTICE.md`, mirrored in About → Credits and licences. |
+| Licence files kept with items | **Met** for the fonts (`fonts/OFL-*.txt`). |
+| No implied affiliation | **Met.** Non-affiliation statement in About; Anthropic-style wording removed. |
+| AI assistance disclosed specifically | **Met.** About → Independence and AI assistance, and Methods §8. |
+| No sensitive locations | **Met.** Only counts and photographs are fetched; the map is island-level. Residual: the "GBIF record" link-out may show a photographed specimen's coordinates, as GBIF publishes them. |
+| Data sources' terms | **OPEN — release blocker.** Permission to redistribute a condensed form of CDFP's distribution records is not established. See `NOTICE.md`. Do not release to `main` until it is cleared or the Distribution column is withdrawn. |
+| `presentation-deck.html` | **Not yet audited.** It is served publicly from the repository root. It loads nothing external, but its text and credits have not been checked against this standard. |
 
 ---
 
