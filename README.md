@@ -152,7 +152,7 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 ## Layout Architecture
 
 ### Cover
-- A greeting: the herbarium-sheet illustration, the serif title, one search field (the "composer") with a green send button, and a live match count beneath it.
+- A greeting: the herbarium-sheet illustration, the serif title, one search field (the "composer") with a mint send button, and a live match count beneath it.
 - The list as one card: 1,237 in display serif, the category proportion bar, and four **category buttons** — each opens the catalogue already filtered (`.js-enter-cat`, which clicks the matching `.sc` tab so there is one filter path). "Explore the list" resets the category to All; other filters are left as they were.
 - Supporting documents as a quiet row: Methods & citation, the official PDF, Analytics.
 - Theme and language controls top right; About and the author in the footer.
@@ -179,11 +179,11 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 
 ## Design System
 
-This is not an Anthropic product and is not endorsed by Anthropic. The look: warm ivory paper, near-black ink, one green accent, an editorial serif for anything read as a name or a title, a quiet grotesque for the interface, hairlines and soft light instead of boxes. The stylesheet is token-driven; component rules read tokens, never literals, and the dark theme is a second set of values for the same names — no component knows which theme it is in.
+This is not an Anthropic product and is not endorsed by Anthropic. The look: warm ivory paper, near-black ink, one pastel-mint accent, an editorial serif for anything read as a name or a title, a quiet grotesque for the interface, hairlines and soft light instead of boxes. The stylesheet is token-driven; component rules read tokens, never literals, and the dark theme is a second set of values for the same names — no component knows which theme it is in.
 
 ### Colour contract
 
-**Green is the interface, never the data.** `--accent` marks the interface's own state — the send button, the focus ring, the open row's leading rule, the filter-count badge, the brand plate, links. It encodes nothing about a plant, so it can never be mistaken for a threat category. Its hue (~152°, a cool forest green) is kept well clear of the olive data greens (`--g`, `--endemic`, ~85°) and of the gymnosperm teal, so green here never reads as "endemic" or as a chart series.
+**Mint is the interface, never the data.** `--accent` marks the interface's own state — the send button, the focus ring, the open row's leading rule, the filter-count badge, the brand plate, links. It encodes nothing about a plant, so it can never be mistaken for a threat category. Its hue (~152°, a cool pastel mint) is kept well clear of the olive data greens (`--g`, `--endemic`, ~85°) and of the gymnosperm teal, so green here never reads as "endemic" or as a chart series.
 
 Data colour keeps the three-tier rule — colour means *exception*, not *attribute*:
 
@@ -207,9 +207,9 @@ Charts use one olive data hue, `--g`, for every single-series chart, and the cat
 | `--mu` | `#57564f` | 7.00 / 6.52 / 7.37 | `#c2c0b6` | 8.31 / 9.12 / 7.25 |
 | `--fa` | `#6b6a64` | 5.15 / 4.80 / 5.43 | `#a3a198` | 5.85 / 6.43 / 5.11 |
 | `--fa-deco` | `#b0aea5` | decoration | `#6b6a64` | decoration |
-| `--accent-ink` | `#1d6847` | 6.38 / 5.95 / 6.72 | `#7cc4a0` | 7.41 / 8.13 / 6.46 |
+| `--accent-ink` | `#2e7352` | 5.4 / 5.04 / 5.69 | `#9fd8bb` | 9.4 / 10.31 / 8.2 |
 
-Grounds: `--bg` ivory `#faf9f5` (the page), `--bg-2` `#f3f1ea` (tracks, wells, selected rows), `--sf` `#ffffff` (cards, table, sheets). Dark: `#262624` / `#1f1e1d` / `#30302e`. `--accent` itself (`#2f7d5a`) is 4.74:1 on ivory; text and focus rings still take `--accent-ink` (`#1d6847`), and icon-only buttons `--accent-fill` (`#26724f`, white glyph 5.83:1).
+Grounds: `--bg` ivory `#faf9f5` (the page), `--bg-2` `#f3f1ea` (tracks, wells, selected rows), `--sf` `#ffffff` (cards, table, sheets). Dark: `#262624` / `#1f1e1d` / `#30302e`. `--accent` (`#7dc2a0`) and `--accent-fill` (`#9fd3b8`) are **pastel fills** — plate, rules, button grounds — at 1.97:1 or lighter on ivory, so they never carry text and nothing relies on them alone to be seen. The glyph on `--accent-fill` is near-black `#141413` (10.96:1). Text and links take `--accent-ink`; the focus ring takes `--focus` (`#378060`, 4.51:1 on ivory, 4.19:1 on the tint).
 
 `--bd` and `--bd-strong` are hairlines for the neutral grounds. Anything that must stay visible on a **category tint** takes `--bd-tint`, an alpha of ink that darkens whatever it sits on (the panel's nav buttons, its chips, the copy-citation button).
 
@@ -379,7 +379,7 @@ A **herbarium sheet** — a mounted specimen with its determination label. It wa
 
 `logo.svg` is the master. The same geometry is duplicated as a `<symbol id="i-logo">` in the sprite inside `index.html`, and the header, landing plate and feedback sheet all draw it through `<use>` rather than fetching a raster — the logo itself needs no request, and the page loads nothing from any third party when it opens.
 
-**Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a rasteriser cannot resolve custom properties. The plate and label are forest green `#2f7d5a` (`--accent`), the sheet ivory `#faf9f5` (`--bg`), the specimen ink `#141413` (`--ink`); keep them in step with those tokens by hand. The mark is the same in both themes — it is an icon with its own ground.
+**Colours are literal, not `var()`.** The same geometry is rasterised into the PNG favicons, and a rasteriser cannot resolve custom properties. The plate and label are pastel mint `#7dc2a0` (`--accent`), the sheet ivory `#faf9f5` (`--bg`), the specimen ink `#141413` (`--ink`); keep them in step with those tokens by hand. The mark is the same in both themes — it is an icon with its own ground.
 
 The literals are *defaults* inside `var()`, so the mark has parts that can be switched off per placement. Custom properties inherit into a `<use>` shadow tree, which ordinary selectors cannot reach — this is the only way to restyle the mark's internals from outside.
 

@@ -391,21 +391,24 @@ function applyLang(){
   --hover:rgba(20,20,19,.045);
   --press:rgba(20,20,19,.08);
   --overlay:rgba(20,20,19,.34);
-  --mark-bg:#cfe6da;  /* search-match highlight */
+  --mark-bg:#d4ecdd;  /* search-match highlight */
 
-  /* ── Accent: forest green ──
+  /* ── Accent: pastel mint ──
      The voice of the interface — the send button, focus, selection, the
      brand plate. Never used to encode data, so it can't be mistaken for
      a threat category: its hue (~152°, cool) sits well away from the olive
      of the data greens (--g, --endemic, ~85°) and from the teal of
-     gymnosperms. --accent is 4.74:1 on ivory (marks and fills). Text takes
-     --accent-ink (6.38:1); icon-only buttons take --accent-fill (white
-     glyph 5.83:1); --focus is 6.38:1 on ivory and 5.73:1 on the tint. */
-  --accent:#2f7d5a;
-  --accent-ink:#1d6847;
-  --accent-fill:#26724f;
-  --accent-tint:#e3f0e9;
-  --focus:#1d6847;
+     gymnosperms. Pastel means light, so the roles are split by contrast:
+     --accent and --accent-fill are soft fills (1.97:1 and lighter on
+     ivory — plate, rules, button grounds; the glyph on --accent-fill is
+     near-black, 10.96:1). Anything READ takes --accent-ink (5.40:1 on
+     ivory, 5.04:1 on the sunk ground); --focus is 4.51:1 on ivory and
+     4.19:1 on the tint, above the 3:1 a focus ring needs. */
+  --accent:#7dc2a0;
+  --accent-ink:#2e7352;
+  --accent-fill:#9fd3b8;
+  --accent-tint:#e6f4ec;
+  --focus:#378060;
 
   /* ── Data ──
      --g is the single hue every single-series chart and the map use.
@@ -438,7 +441,7 @@ function applyLang(){
 
   /* ── Illustration ── */
   --art-line:var(--ink);--art-paper:var(--sf);--art-paper-2:var(--bg-2);
-  --art-leaf:#b4c298;--art-bloom:#4d9f7a;--art-fruit:#cf4a3c;--art-tape:#e8d9b5;--art-disc:#dcebe2;
+  --art-leaf:#b4c298;--art-bloom:#86c7a4;--art-fruit:#cf4a3c;--art-tape:#e8d9b5;--art-disc:#e1f1e8;
 
   /* ── Shape ── */
   --r-2xs:4px;--r-xs:6px;--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-pill:999px;
@@ -476,7 +479,7 @@ function applyLang(){
     --bd:#3b3b38;--bd-strong:#4d4c48;--bd-soft:rgba(250,249,245,.07);--bd-tint:rgba(250,249,245,.18);
     --hover:rgba(250,249,245,.05);--press:rgba(250,249,245,.09);--overlay:rgba(0,0,0,.56);
     --mark-bg:#2e5445;
-    --accent-ink:#7cc4a0;--accent-tint:#243a30;--focus:#7cc4a0;
+    --accent-ink:#9fd8bb;--accent-tint:#243a30;--focus:#9fd8bb;
     --g:#9aae7c;--gl:#a3b58a;--gbg:#2e3328;--g-light:#3a4232;
     --cr:#f08a78;--cr-bg:#3a2724;--cr-bd:#6e3b33;--cr-panel:#3d2824;
     --en:#eb9b5b;--en-bg:#382b20;--en-bd:#6b4a2c;--en-panel:#3b2c1f;
@@ -501,7 +504,7 @@ function applyLang(){
     --bd:#3b3b38;--bd-strong:#4d4c48;--bd-soft:rgba(250,249,245,.07);--bd-tint:rgba(250,249,245,.18);
     --hover:rgba(250,249,245,.05);--press:rgba(250,249,245,.09);--overlay:rgba(0,0,0,.56);
     --mark-bg:#2e5445;
-    --accent-ink:#7cc4a0;--accent-tint:#243a30;--focus:#7cc4a0;
+    --accent-ink:#9fd8bb;--accent-tint:#243a30;--focus:#9fd8bb;
     --g:#9aae7c;--gl:#a3b58a;--gbg:#2e3328;--g-light:#3a4232;
     --cr:#f08a78;--cr-bg:#3a2724;--cr-bd:#6e3b33;--cr-panel:#3d2824;
     --en:#eb9b5b;--en-bg:#382b20;--en-bd:#6b4a2c;--en-panel:#3b2c1f;
@@ -665,7 +668,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visibl
 .mob-filter-btn svg{width:15px;height:15px;color:var(--mu)}
 .mob-filter-btn .mob-filter-count{display:none;align-items:center;justify-content:center;
   min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-pill);
-  background:var(--accent-fill);color:#fff;font-size:var(--t-micro);font-weight:600;
+  background:var(--accent-fill);color:#141413;font-size:var(--t-micro);font-weight:600;
   font-variant-numeric:tabular-nums}
 .mob-filter-btn .mob-filter-count.has-filters{display:inline-flex}
 
@@ -1464,9 +1467,9 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
 .landing-search-input::-webkit-search-decoration,
 .landing-search-input::-webkit-search-cancel-button{-webkit-appearance:none}
 .landing-search-go{flex-shrink:0;width:40px;height:40px;border:none;border-radius:var(--r-md);
-  background:var(--accent-fill);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;
+  background:var(--accent-fill);color:#141413;font-size:17px;display:flex;align-items:center;justify-content:center;
   transition:var(--transition)}
-.landing-search-go:hover{background:var(--focus)}
+.landing-search-go:hover{background:var(--accent)}
 .landing-search-go:active{transform:scale(.93)}
 /* Reserves its own line so the card below does not jump as the count
    appears and disappears. */
@@ -1886,12 +1889,12 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
   <!-- Brand mark: a herbarium sheet, a mounted specimen with its determination
        label. Colours are literal rather than var() because the same geometry is
        rasterised into the PNG favicons, and those cannot resolve custom
-       properties: #2f7d5a is the green plate (--accent), #faf9f5 the ivory sheet
+       properties: #7dc2a0 is the mint plate (--accent), #faf9f5 the ivory sheet
        (--bg), #141413 the specimen (--ink). Regenerate the PNGs from logo.svg if
        this changes. The literals are defaults inside var(), so a placement can
        switch parts of the mark off — see the brand-mark notes in the README. -->
   <symbol id="i-logo" viewBox="0 0 48 48">
-    <rect width="48" height="48" rx="11" fill="var(--mark-plate,#2f7d5a)"/>
+    <rect width="48" height="48" rx="11" fill="var(--mark-plate,#7dc2a0)"/>
     <rect x="10" y="5" width="28" height="38" rx="3" fill="var(--mark-sheet,#faf9f5)"
           stroke="var(--mark-sheet-edge,none)" stroke-width="2.2"/>
     <path d="M24 35.5V15.5" stroke="var(--mark-ink,#141413)" stroke-width="2.2" stroke-linecap="round"/>
@@ -1899,7 +1902,7 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
     <path d="M24 21.6c3.5 0 6.3-2.4 6.3-5.3-3.5 0-6.3 2.4-6.3 5.3Z" fill="var(--mark-ink,#141413)"/>
     <path d="M24 29.8c-3.5 0-6.3-2.4-6.3-5.3 3.5 0 6.3 2.4 6.3 5.3Z" fill="var(--mark-ink,#141413)"/>
     <path d="M24 29.8c3.5 0 6.3-2.4 6.3-5.3-3.5 0-6.3 2.4-6.3 5.3Z" fill="var(--mark-ink,#141413)"/>
-    <rect x="25.2" y="37.2" width="10.8" height="4" rx="1.3" fill="var(--mark-label,#2f7d5a)"/>
+    <rect x="25.2" y="37.2" width="10.8" height="4" rx="1.3" fill="var(--mark-label,#7dc2a0)"/>
   </symbol>
   <!-- Interface glyphs, one stroke weight throughout. -->
   <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></symbol>
@@ -1914,7 +1917,7 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
        dotted ghost of the specimen, blank label, a lens held over it. Colours
        are var() attributes (the brand-mark technique): custom properties
        inherit into a <use> clone where class rules do not reliably reach. -->
-  <symbol id="i-empty" viewBox="0 0 132 104"><circle cx="72" cy="50" r="40" fill="var(--art-disc,#dcebe2)"/><rect x="38" y="12" width="56" height="74" rx="3" transform="rotate(5 66 49)" fill="var(--art-paper-2,#f3f1ea)" stroke="var(--art-line,#141413)" stroke-width="2"/><g transform="rotate(-4 62 48)"><rect x="34" y="10" width="56" height="76" rx="3" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="2"/><path fill="none" stroke="var(--fa-deco,#b0aea5)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0.1 3.6" d="M60.5 72C59.5 60 63 50 61.5 40S61 30 63 24M61.0 62.0Q58.7 49.8 47.0 54.0Q49.3 66.2 61.0 62.0ZM61.5 56.0Q73.8 59.6 76.0 47.0Q63.7 43.4 61.5 56.0ZM61.5 44.0Q60.7 33.2 50.0 35.0Q50.8 45.8 61.5 44.0ZM62.0 39.0Q71.8 39.9 72.0 30.0Q62.2 29.1 62.0 39.0Z"/><path fill="var(--art-tape,#e8d9b5)" d="M53 59.5l14-2.4.8 4.4-14 2.4zM54.5 72.5l11.5-1.2.5 4.2-11.5 1.2z"/><rect x="67" y="73" width="18" height="9" rx="1.2" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="1.5"/><path stroke="var(--fa-deco,#b0aea5)" stroke-width="1.3" stroke-linecap="round" d="M70.5 76.4h11M70.5 79h6.5"/></g><circle cx="98.6" cy="62.2" r="13" fill="var(--art-bloom,#2f7d5a)" fill-opacity=".45"/><circle cx="96" cy="60" r="13" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="2.4"/><path fill="none" stroke="var(--art-line,#141413)" stroke-width="1.6" stroke-linecap="round" d="M88.8 56.2a8 8 0 0 1 5.4-4.5"/><path fill="none" stroke="var(--art-line,#141413)" stroke-width="5" stroke-linecap="round" d="M105.4 69.6l10.4 10.6"/></symbol>
+  <symbol id="i-empty" viewBox="0 0 132 104"><circle cx="72" cy="50" r="40" fill="var(--art-disc,#e1f1e8)"/><rect x="38" y="12" width="56" height="74" rx="3" transform="rotate(5 66 49)" fill="var(--art-paper-2,#f3f1ea)" stroke="var(--art-line,#141413)" stroke-width="2"/><g transform="rotate(-4 62 48)"><rect x="34" y="10" width="56" height="76" rx="3" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="2"/><path fill="none" stroke="var(--fa-deco,#b0aea5)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0.1 3.6" d="M60.5 72C59.5 60 63 50 61.5 40S61 30 63 24M61.0 62.0Q58.7 49.8 47.0 54.0Q49.3 66.2 61.0 62.0ZM61.5 56.0Q73.8 59.6 76.0 47.0Q63.7 43.4 61.5 56.0ZM61.5 44.0Q60.7 33.2 50.0 35.0Q50.8 45.8 61.5 44.0ZM62.0 39.0Q71.8 39.9 72.0 30.0Q62.2 29.1 62.0 39.0Z"/><path fill="var(--art-tape,#e8d9b5)" d="M53 59.5l14-2.4.8 4.4-14 2.4zM54.5 72.5l11.5-1.2.5 4.2-11.5 1.2z"/><rect x="67" y="73" width="18" height="9" rx="1.2" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="1.5"/><path stroke="var(--fa-deco,#b0aea5)" stroke-width="1.3" stroke-linecap="round" d="M70.5 76.4h11M70.5 79h6.5"/></g><circle cx="98.6" cy="62.2" r="13" fill="var(--art-bloom,#7dc2a0)" fill-opacity=".45"/><circle cx="96" cy="60" r="13" fill="var(--art-paper,#fff)" stroke="var(--art-line,#141413)" stroke-width="2.4"/><path fill="none" stroke="var(--art-line,#141413)" stroke-width="1.6" stroke-linecap="round" d="M88.8 56.2a8 8 0 0 1 5.4-4.5"/><path fill="none" stroke="var(--art-line,#141413)" stroke-width="5" stroke-linecap="round" d="M105.4 69.6l10.4 10.6"/></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></symbol>
   <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></symbol>
   <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></symbol>
