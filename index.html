@@ -256,6 +256,7 @@ function applyLang(){
 }
 
 </script>
+<script defer src="/_vercel/insights/script.js" onerror="void(0)"></script>
 <meta name="description" content="A reference for threatened plant species of the Philippines. Currently covers DAO 2026-20's 1,237 taxa with CITES status, growth habit, and endemicity data.">
 <!-- Browser chrome follows the page ground: ivory in light, warm charcoal in
      dark. The JS theme toggle rewrites #metaTheme when the reader overrides
@@ -2333,8 +2334,8 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
 
 
       <h4>Privacy</h4>
-      <p>This tool has no accounts, cookies, advertising or analytics, and the author collects no personal information through it. It runs in your browser from a single page.</p>
-      <p><strong>When you open the page</strong>, your browser fetches the page, its fonts and its logos from this site&rsquo;s host, Vercel Inc. Like any web host, Vercel receives your IP address and ordinary request details (browser type, time) and may keep them in its server logs under <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">its own privacy policy</a>. No other company&rsquo;s server is contacted at this point; the fonts are hosted here, not loaded from a font service.</p>
+      <p>This tool has no accounts, cookies or advertising, and the author collects no personal information through it. The only measurement is anonymous page-view counts, collected with <a href="https://vercel.com/docs/analytics" target="_blank" rel="noopener">Vercel Web Analytics</a>: no cookies are set. It runs in your browser from a single page.</p>
+      <p><strong>When you open the page</strong>, your browser fetches the page, its fonts and its logos from this site&rsquo;s host, Vercel Inc. Like any web host, Vercel receives your IP address and ordinary request details (browser type, time) and may keep them in its server logs under <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">its own privacy policy</a>. The page also sends a page-view count to Vercel&rsquo;s analytics service, served from this same site, and sets no cookie for it. No other company&rsquo;s server is contacted at this point; the fonts are hosted here, not loaded from a font service.</p>
       <p><strong>When you open a species</strong>, the page asks <a href="https://www.gbif.org" target="_blank" rel="noopener">GBIF</a> (api.gbif.org) for a name match, occurrence counts and photographs. GBIF therefore receives the species&rsquo; scientific name and your IP address. The photographs are then loaded directly from the servers of the institutions and platforms that hold them (iNaturalist&rsquo;s image servers are one example), so those servers see your IP address too. Nothing is sent to any of these services until you open a species, and the author does not receive any of it. Each service&rsquo;s own privacy policy applies.</p>
       <p><strong>What is stored on your device:</strong> your theme and language choice, in your browser&rsquo;s local storage (<code>dao-theme</code>, <code>dao-lang</code>). They never leave your device and clearing your browser&rsquo;s site data removes them. Your current filters and search words are kept in the page address after the &ldquo;#&rdquo; so you can share a link; that part of an address is not sent to any server.</p>
       <p><strong>Links and email:</strong> following a link to another site, or the feedback link, leaves this tool. The feedback link opens your own email program; a message you send reaches the author&rsquo;s inbox and is used only to reply to you and correct the tool.</p>
@@ -2349,6 +2350,7 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
         <li><strong>CITES Appendices</strong> &mdash; appendix listings, taken from the Convention&rsquo;s own appendices and cited to them.</li>
         <li><strong>Co&rsquo;s Digital Flora of the Philippines</strong> (Pelser, Barcelona &amp; Nickrent) &mdash; consulted to verify twelve name spellings, and linked from each species panel. None of its records, text or images is reproduced here.</li>
         <li><strong>GBIF</strong> &mdash; name matches and occurrence counts, fetched live; GBIF Backbone Taxonomy (doi.org/10.15468/39omei). Photographs are served live under their own Creative Commons licences, credited to each photographer, never copied or altered.</li>
+        <li><strong>Vercel</strong> &mdash; hosting, and anonymous page-view counts through Vercel Web Analytics (no cookies). Vercel&rsquo;s terms and privacy policy apply to it.</li>
         <li><strong>Newsreader, Hanken Grotesk, JetBrains Mono</strong> &mdash; fonts, SIL Open Font Licence 1.1; hosted with this tool, with their licence files kept alongside.</li>
       </ul>
 
@@ -2446,7 +2448,7 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
       <p class="paper-note">Please <strong>do not cite this tool as the source of the list itself</strong>. For taxa and threat categories cite reference&nbsp;1; for CITES appendix listings cite reference&nbsp;4; for occurrence data cite reference&nbsp;3; for a photograph cite its photographer and licence as shown beside it.</p>
 
       <h4>7 &middot; Software and acknowledgements</h4>
-      <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Newsreader, Hanken Grotesk and JetBrains Mono, all under the SIL Open Font Licence and hosted with the page. Hosted on Vercel; the page loads no analytics, and what is sent to GBIF when a species is opened is set out under Privacy in the About notice.</p>
+      <p>A single self-contained HTML page &mdash; no framework, no build step, no backend. Typeset in Newsreader, Hanken Grotesk and JetBrains Mono, all under the SIL Open Font Licence and hosted with the page. Hosted on Vercel, which also provides the anonymous page-view counts (Vercel Web Analytics, no cookies); what is sent to GBIF when a species is opened is set out under Privacy in the About notice.</p>
       <p>The interface was written by the author working with <strong>Claude (Anthropic)</strong> as a coding assistant, which also carried out the design review the present layout follows. Claude is a tool, not an author: every taxonomic judgment, habit assignment, correction and editorial decision here is the author&rsquo;s, and responsibility for them rests with the author. Contributors to CDFP and GBIF, and the photographers whose images appear, are gratefully acknowledged &mdash; this tool would show very little without them.</p>
 
       <p class="paper-colophon">Mc Andrew K. Pranada, botanist &middot; Version 1.0, 2026 &middot; Corrections welcome at <a href="mailto:pranada55@gmail.com">pranada55@gmail.com</a><br>See also the <button type="button" class="paper-inline-link js-open-disclaimer">About notice</button> for rights, privacy, terms of use and warranty.</p>

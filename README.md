@@ -145,7 +145,7 @@ Light and dark, following the system by default. The sun/moon button (`.js-theme
 - Send Feedback panel (slide-up, with email + link to About)
 - **Methods & Citation paper** (`#paperOverlay`, opened by `.js-open-paper`, addressable at `#doc=1`) — scope, a provenance table separating what is reproduced from what is the author's, method, limitations, references and the recommended citation. This is the citable document; keep its figures in step with the dataset.
 - About panel (`#disclaimerOverlay`, opened by `.js-open-disclaimer`) — attribution, source terms, **privacy**, credits and licences, non-affiliation and AI-assistance statement, and warranty notice. Maintained in English only; the English text governs. The privacy text states exactly what is sent where; change it in the same commit as any change to what the page requests or stores.
-- No analytics, cookies or trackers. Vercel Analytics was removed.
+- No cookies. Anonymous page-view counts only, via Vercel Web Analytics (`/_vercel/insights/script.js`, served from this site's own domain). It was removed on 12 October 2026 and restored the same day at the editor's decision; the privacy text discloses it.
 
 ---
 
@@ -357,7 +357,7 @@ var activeSpecies=null // Currently open species
 This exists because the app declares `apple-mobile-web-app-capable`, so it can be added to the iOS Home Screen and run standalone — and a standalone web app caches its HTML far more stubbornly than a Safari tab. While diagnosing a layout bug, **three correct deploys in a row never reached the device at all**; the only fix was deleting and re-adding the Home Screen icon.
 
 **Verify changes in Safari, not from the Home Screen icon.** If the icon shows something stale, delete and re-add it.
-- **Do not enable Vercel Analytics or Speed Insights** in the project dashboard: the page no longer loads their script, and the privacy notice says it uses none.
+- **Enable Vercel Web Analytics** in the project dashboard (Analytics tab), or the script collects nothing. Do not enable Speed Insights or any other measurement without updating the privacy notice first.
 
 ---
 
@@ -451,8 +451,8 @@ The lead editor's standard for all their projects, recorded here on 1 October 20
 
 | Rule | Status |
 |---|---|
-| Nothing contacts a third party on open | **Met.** Fonts self-hosted; analytics removed. The only third-party requests happen after the reader opens a species (GBIF, and the photo hosts it names). |
-| No cookies or tracking | **Met.** `localStorage` holds only `dao-theme` and `dao-lang`. |
+| Nothing contacts a third party on open | **Met.** Fonts self-hosted. The analytics script is Vercel's, served from this site's own domain, and Vercel is already the host. The only other-company requests happen after the reader opens a species (GBIF, and the photo hosts it names). |
+| No cookies or tracking unless needed | **Met, by the editor's decision.** No cookies; `localStorage` holds only `dao-theme` and `dao-lang`. Anonymous page-view counts via Vercel Web Analytics are kept on purpose (as on the editor's other project) and disclosed in About → Privacy. |
 | Say what is sent where | **Met.** About → Privacy. Keep it in step with the code. |
 | One list of third-party items | **Met.** `NOTICE.md`, mirrored in About → Credits and licences. |
 | Licence files kept with items | **Met** for the fonts (`fonts/OFL-*.txt`). |
