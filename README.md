@@ -193,7 +193,7 @@ Data colour keeps the three-tier rule — colour means *exception*, not *attribu
 | 2 — Exception marks | CITES, non-Angiosperm division, infraspecific rank | One neutral chip (`.mk`), meaning carried by a 6px dot. Rendered **only** for the exception. |
 | 3 — Taxonomy & habit | Family, division, habit | No colour. |
 
-1,044 of 1,237 taxa are Angiosperms and 1,018 are unlisted by CITES, so those render nothing; the marks appear only on the 27 Gymnosperms, 166 Pteridophytes, 219 CITES-listed and 14 infraspecific taxa. Endemism stays on all 920 endemics as a bare olive dot. **Every selected filter chip is solid ink**, whatever it filters — "on" is a state, and hue stays with the data.
+1,044 of 1,237 taxa are Angiosperms and 1,018 are unlisted by CITES, so those render nothing; the marks appear only on the 27 Gymnosperms, 166 Pteridophytes, 219 CITES-listed and 27 infraspecific taxa. Endemism stays on all 920 endemics as a bare olive dot. **Every selected filter chip is solid ink**, whatever it filters — "on" is a state, and hue stays with the data.
 
 Charts use one olive data hue, `--g`, for every single-series chart, and the category colours for the category chart. The JS builders reference `--g` by name, which is why it keeps the old token.
 

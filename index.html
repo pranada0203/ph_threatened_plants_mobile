@@ -2388,7 +2388,7 @@ body.entering .body-wrap{animation:app-in .32s var(--ease)}
       <p class="paper-lede">This note records what this tool contains, where each part of it came from, how the parts that are not simply reproduced were arrived at, and how to cite it. It is written so that the boundary between the official record, other people&rsquo;s scholarship, and the author&rsquo;s own work is unambiguous.</p>
 
       <h4>1 &middot; Scope</h4>
-      <p>The tool presents the <strong>1,237 vascular plant taxa</strong> of the Updated National List of Threatened Philippine Plants, issued as DENR Administrative Order No.&nbsp;2026-20. They span <strong>399 genera in 120 families</strong> &mdash; 1,044 angiosperms, 166 pteridophytes and 27 gymnosperms, of which 14 are infraspecific taxa (variety, subspecies or form).</p>
+      <p>The tool presents the <strong>1,237 vascular plant taxa</strong> of the Updated National List of Threatened Philippine Plants, issued as DENR Administrative Order No.&nbsp;2026-20. They span <strong>399 genera in 120 families</strong> &mdash; 1,044 angiosperms, 166 pteridophytes and 27 gymnosperms, of which 27 are infraspecific taxa (variety, subspecies or form).</p>
       <p>Threat categories follow the order as issued: Critically Endangered (270), Endangered (304), Vulnerable (433) and Other Threatened Species (230). 920 taxa are Philippine endemics. A further 219 carry a CITES listing &mdash; 13 on Appendix&nbsp;I and 206 on Appendix&nbsp;II &mdash; taken from the Convention's own appendices rather than from the order, which does not carry them.</p>
       <p>This is a <strong>reference to an existing legal instrument, not an assessment</strong>. No taxon was added, removed or recategorised, and nothing here revises the order.</p>
 
@@ -2703,6 +2703,7 @@ function getInfraRank(scientific){
   var s=scientific.replace(/\n/g,' ');
   if(/\bvar\.\s+[a-z]/.test(s)||/\bvar\s+[a-z]/.test(s))return 'var.';
   if(/\bsubsp\.\s+[a-z]/.test(s))return 'subsp.';
+  if(/\bssp\.\s+[a-z]/.test(s))return 'ssp.';
   if(/\bforma\s+[a-z]/.test(s))return 'f.';
   if(/\bf\.\s+[a-z]/.test(s))return 'f.';
   return null;
